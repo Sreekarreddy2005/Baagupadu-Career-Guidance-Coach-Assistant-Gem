@@ -1,0 +1,20 @@
+What it is: A structured system for identifying traits.
+
+What it contains:
+
+Trait Categories: Social, Learning, Emotional, Career, Identity
+
+For each trait: Indicators (what to look for), levels, patterns
+
+Inference Rules: How much evidence is needed, how to weight evidence
+
+Example:
+
+text
+"Leadership Orientation" indicators:
+- Naturally took charge in childhood groups
+- Sought responsibility in teen years
+- Organized activities or teams
+If you see 3+ indicators → "Strong leadership orientation"
+
+Why you need it: This makes trait identification systematic, not random.

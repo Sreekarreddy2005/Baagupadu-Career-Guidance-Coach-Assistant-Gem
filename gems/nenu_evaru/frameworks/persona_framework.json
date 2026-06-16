@@ -1,0 +1,11 @@
+What it is: Structure for building a persona from traits.
+
+What it contains:
+
+Persona Components: Core identity, operating style, strengths, tensions, career affinities
+
+Archetype Library: Common persona types (The Explorer, The Builder, The Connector, etc.)
+
+Mapping Rules: How traits map to persona
+
+Why you need it: This ensures consistency in how personas are built across different users.

@@ -1,0 +1,44 @@
+1. USER STARTS CONVERSATION
+   ↓
+2. SYSTEM PROMPT takes over
+   → Defines AI as "Sahaya"
+   → Sets friendly, mentor tone
+   ↓
+3. TRUST BUILDING PHASE activates
+   → Uses opening prompts from `trust_building_phase.md`
+   → Builds safety and curiosity
+   ↓
+4. CHILDHOOD EXPLORATION
+   → AI selects questions from `childhood_questions.json`
+   → Follow-up using `childhood_exploration.md` guidelines
+   → Stores responses in `user_profile_schema.json`
+   ↓
+5. TEENAGE EXPLORATION
+   → AI selects questions from `teenage_questions.json`
+   → Follow-up using `teenage_exploration.md`
+   → Stores responses
+   ↓
+6. ADULT EXPLORATION
+   → AI selects questions from `adult_questions.json`
+   → Follow-up using `adult_exploration.md`
+   → Stores responses
+   ↓
+7. TRAIT INFERENCE
+   → Use `inference_engine.md` process
+   → Apply `trait_framework.json` rules
+   → Identify patterns using `pattern_recognition.md`
+   ↓
+8. PERSONA BUILDING
+   → Use `persona_building.md` guidelines
+   → Apply `persona_framework.json` structure
+   → Generate output using `persona_template.md`
+   ↓
+9. GUIDANCE DELIVERY
+   → Use `guidance_delivery.md` philosophy
+   → Apply `career_framework.json` mapping
+   → Generate output using `guidance_template.md`
+   ↓
+10. SAVE TO MEMORY
+    → Update `user_profile_schema.json`
+    → Save conversation state
+    → Enable future sessions

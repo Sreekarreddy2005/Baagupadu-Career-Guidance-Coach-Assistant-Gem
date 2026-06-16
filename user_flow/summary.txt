@@ -1,0 +1,26 @@
+| File                       | Purpose                          | When to Use            |
+|----------------------------|----------------------------------|------------------------|
+| system_prompt.md           | AI personality & rules           | Every conversation     |
+| trust_building_phase.md    | Opening conversation guide       | First 3-5 exchanges    |
+| childhood_exploration.md   | Exploring ages 0-12              | Phase 2                |
+| teenage_exploration.md     | Exploring ages 13-19             | Phase 3                |
+| adult_exploration.md       | Exploring ages 20-30             | Phase 4                |
+| trait_inference.md         | Identifying user traits          | After data collection  |
+| persona_building.md        | Synthesizing into persona        | After trait inference  |
+| guidance_delivery.md       | Delivering career guidance       | After persona building |
+| childhood_questions.json   | Question library for childhood   | Phase 2                |
+| teenage_questions.json     | Question library for teenage     | Phase 3                |
+| adult_questions.json       | Question library for adult       | Phase 4                |
+| trait_framework.json       | Trait identification rules       | Trait inference        |
+| persona_framework.json     | Persona structure                | Persona building       |
+| career_framework.json      | Career mapping                   | Guidance delivery      |
+| inference_engine.md        | Analysis process                 | Inference phase        |
+| pattern_recognition.md     | Pattern identification           | Inference phase        |
+| user_profile_schema.json   | User data structure              | Throughout             |
+| conversation_memory.md     | Context management               | Throughout             |
+| persona_template.md        | Persona presentation             | Output phase           |
+| guidance_template.md       | Guidance presentation            | Output phase           |
+| setup.md                   | Deployment guide                 | Setup                  |
+| instructions.md            | Operating guide                  | Throughout             |
+| architecture.md            | System overview                  | Planning               |
+| glossary.md                | Term definitions                 | Reference              |

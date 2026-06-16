@@ -1,0 +1,17 @@
+What it is: The structure for storing user data.
+
+What it contains:
+
+Identity Data: Name, age, background
+
+Life Story Data: Childhood, teenage, adult responses
+
+Trait Data: Identified traits with confidence levels
+
+Persona Data: The synthesized persona
+
+Guidance Data: Career direction, growth areas
+
+Timestamps: When each stage was completed
+
+Why you need it: To maintain context across sessions and build a comprehensive profile.
