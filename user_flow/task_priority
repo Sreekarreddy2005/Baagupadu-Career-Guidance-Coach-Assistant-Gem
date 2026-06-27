@@ -1,5 +1,5 @@
 STARTING FILES & STEP-BY-STEP BUILD PLAN
-Based on what you're building (Baagupadu - "Nenu Evaru?" Gemini Gem), let me give you a practical, focused plan for what to build first.
+Based on what you're building (Bagupadu - "Nenu Evaru?" Gemini Gem), let me give you a practical, focused plan for what to build first.
 
 📋 CORE PHILOSOPHY: Start Simple, Test Fast
 Key Principle: You don't need ALL 24 files to start. You need just enough to:
@@ -29,7 +29,7 @@ text
     └── adult_questions.json      ← Questions for 20-30 yrs
 What Each File Does
 File	Purpose	Why You Need It NOW
-system_prompt.md	Defines Sahaya's personality, tone, rules	Without this, your AI has no personality
+system_prompt.md	Defines Sahayam's personality, tone, rules Without this, your AI has no personality
 trust_building_phase.md	Opening conversation scripts	First impressions matter - this builds trust
 childhood_questions.json	Questions about 0-12 years	Core data for understanding user
 teenage_questions.json	Questions about 13-19 years	Core data for understanding user
@@ -170,7 +170,7 @@ bash
 ⚡ QUICK START: What to Build RIGHT NOW
 Step 1: Create Folder Structure
 bash
-baagupadu/
+Bagupadu/
 └── gems/
     └── nenu_evaru/
         ├── prompts/
@@ -180,7 +180,7 @@ markdown
 # Nenu Evaru? - System Prompt
 
 ## Role Definition
-You are "Sahaya" - a trusted companion and mentor...
+You are "Sahayam" - a trusted companion and mentor...
 
 [Copy the full system prompt I provided earlier]
 Step 3: Create trust_building_phase.md
@@ -188,7 +188,7 @@ markdown
 # Trust Building Phase
 
 ## Opening Statements
-"Hi there! I'm Sahaya..."
+"Hi there! I'm Sahayam..."
 
 [Copy the trust building content I provided]
 Step 4: Create 3 Question Banks

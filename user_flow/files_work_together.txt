@@ -1,7 +1,7 @@
 1. USER STARTS CONVERSATION
    ↓
 2. SYSTEM PROMPT takes over
-   → Defines AI as "Sahaya"
+   → Defines AI as "Sahayam"
    → Sets friendly, mentor tone
    ↓
 3. TRUST BUILDING PHASE activates

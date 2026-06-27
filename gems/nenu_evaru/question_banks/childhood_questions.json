@@ -1,14 +1,1107 @@
-What it is: A collection of questions about ages 0-12.
-
-What it contains:
-
-Categories: Family environment, curiosity, confidence, social development, challenge/failure
-
-Each question has: The question itself, its purpose, its tone
-
-Follow-up strategies: What to say based on user response
-
-Example
-"What was the one question you kept asking as a child?" → Reveals curiosity pattern
-"Who in your family made you feel like you could be completely yourself?" → Reveals attachment style
-Why you need it: You can't ask good questions on the fly. This is your curated question library.
+{
+  "phase": "childhood_exploration",
+  "description": "This phase explores childhood experiences (ages 0-12) to understand patterns in family, learning, social dynamics, and emotional development that shape who the user is today.",
+  "total_questions": 153,
+  "categories": [
+    {
+      "category": "family_environment",
+      "name": "Family Environment & Attachment",
+      "description": "Understanding the home environment, family dynamics, and early attachment patterns",
+      "source": "UNICEF ECDI, Children's Worlds Survey",
+      "questions": [
+        {
+          "id": "fam_001",
+          "direct_question": "What is your earliest memory of home?",
+          "purpose": "Understanding narrative identity formation",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "fam_002",
+          "direct_question": "If you could describe your childhood home in one word, what would it be?",
+          "purpose": "Revealing emotional atmosphere and core feeling",
+          "tone": "playful",
+          "transformation_rule": "imagined_scenario",
+          "scenario_hook": "Think about the feeling you get when you remember being home as a child."
+        },
+        {
+          "id": "fam_003",
+          "direct_question": "Who spent the most time with you during your childhood?",
+          "purpose": "Identifying primary attachment figures and caregiving patterns",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Remember your daily routine when you were little."
+        },
+        {
+          "id": "fam_004",
+          "direct_question": "How would you describe the atmosphere in your childhood home?",
+          "purpose": "Understanding family dynamics and emotional environment",
+          "tone": "reflective",
+          "transformation_rule": "sensory_recall",
+          "sensory_hook": "Think about the feeling of walking through your front door after school."
+        },
+        {
+          "id": "fam_005",
+          "direct_question": "Who made you feel safest as a child?",
+          "purpose": "Identifying secure attachment figures",
+          "tone": "affectionate",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Remember a time when you were scared or hurt."
+        },
+        {
+          "id": "fam_006",
+          "direct_question": "Who influenced your behavior the most during childhood?",
+          "purpose": "Revealing influential role models and early imprinting",
+          "tone": "reflective",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "fam_007",
+          "direct_question": "Did you feel emotionally close to your parents or caregivers?",
+          "purpose": "Assessing emotional bonding and attachment quality",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what it felt like to be with your parents."
+        },
+        {
+          "id": "fam_008",
+          "direct_question": "When you cried, who usually comforted you?",
+          "purpose": "Identifying support systems and emotional regulation patterns",
+          "tone": "compassionate",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Remember a time when you were really upset as a child."
+        },
+        {
+          "id": "fam_009",
+          "direct_question": "Did you feel understood as a child?",
+          "purpose": "Assessing emotional validation and being heard",
+          "tone": "gentle",
+          "transformation_rule": "reflection",
+          "reflection_hook": "What did it feel like to have people listen to you?"
+        },
+        {
+          "id": "fam_010",
+          "direct_question": "Who did you live with most of the time?",
+          "purpose": "Understanding family structure and living situation",
+          "tone": "simple",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about who was usually at home when you woke up."
+        },
+        {
+          "id": "fam_011",
+          "direct_question": "Did you grow up in a joint family or nuclear family?",
+          "purpose": "Understanding extended family influence and support",
+          "tone": "simple",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "fam_012",
+          "direct_question": "Which family member influenced you most?",
+          "purpose": "Revealing key relationships and values transmission",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Remember a time when a family member taught you something meaningful."
+        },
+        {
+          "id": "fam_013",
+          "direct_question": "Did your family spend quality time together?",
+          "purpose": "Assessing family cohesion and bonding",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about the best times you spent with your family."
+        },
+        {
+          "id": "fam_014",
+          "direct_question": "Were family meals common in your home?",
+          "purpose": "Assessing family connection and sharing rituals",
+          "tone": "playful",
+          "transformation_rule": "sensory_recall",
+          "sensory_hook": "Think about what dinnertime felt like in your home."
+        },
+        {
+          "id": "fam_015",
+          "direct_question": "Did adults listen to your opinions as a child?",
+          "purpose": "Assessing validation and feeling of being heard",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Remember a time when you said something important and someone listened."
+        },
+        {
+          "id": "fam_016",
+          "direct_question": "Did you feel safe at home?",
+          "purpose": "Assessing emotional and physical safety",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what it felt like to be at home at night."
+        },
+        {
+          "id": "fam_017",
+          "direct_question": "Did you enjoy spending time at home?",
+          "purpose": "Assessing comfort and belonging",
+          "tone": "playful",
+          "transformation_rule": "sensory_recall",
+          "sensory_hook": "Think about a typical weekend at home when you were little."
+        },
+        {
+          "id": "fam_018",
+          "direct_question": "Were there frequent arguments at home?",
+          "purpose": "Understanding family conflict dynamics",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what it felt like when family members disagreed."
+        },
+        {
+          "id": "fam_019",
+          "direct_question": "Did your family encourage your interests?",
+          "purpose": "Revealing support for identity development",
+          "tone": "affectionate",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about something you were really excited about as a child."
+        },
+        {
+          "id": "fam_020",
+          "direct_question": "What is your strongest family memory from childhood?",
+          "purpose": "Identifying most impactful family experiences",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        }
+      ]
+    },
+    {
+      "category": "learning_and_curiosity",
+      "name": "Learning & Curiosity Patterns",
+      "description": "Understanding early learning experiences, curiosity, and cognitive development",
+      "source": "UNICEF ECDI, NSCH",
+      "questions": [
+        {
+          "id": "learn_001",
+          "direct_question": "What subject or topic made you the most curious as a child?",
+          "purpose": "Revealing natural curiosity and passion",
+          "tone": "playful",
+          "transformation_rule": "imagined_scenario",
+          "scenario_hook": "Imagine being in a classroom where you could learn anything you wanted."
+        },
+        {
+          "id": "learn_002",
+          "direct_question": "Were books common in your house?",
+          "purpose": "Assessing early literacy environment and stimulation",
+          "tone": "simple",
+          "transformation_rule": "sensory_recall",
+          "sensory_hook": "Think about what you remember seeing around your childhood home."
+        },
+        {
+          "id": "learn_003",
+          "direct_question": "Did someone regularly read stories to you?",
+          "purpose": "Assessing early literacy experiences and bonding",
+          "tone": "affectionate",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Remember a time when someone read you a story."
+        },
+        {
+          "id": "learn_004",
+          "direct_question": "What kind of stories do you remember hearing?",
+          "purpose": "Understanding what captured the user's imagination",
+          "tone": "playful",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about the stories that stayed with you."
+        },
+        {
+          "id": "learn_005",
+          "direct_question": "Were you encouraged to ask questions as a child?",
+          "purpose": "Revealing intellectual nurturing and curiosity support",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Remember a time when you had many questions about something."
+        },
+        {
+          "id": "learn_006",
+          "direct_question": "Did adults explain things patiently to you?",
+          "purpose": "Assessing quality of learning support and intellectual safety",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you really wanted to understand something."
+        },
+        {
+          "id": "learn_007",
+          "direct_question": "What fascinated you the most as a child?",
+          "purpose": "Revealing natural interests and passion areas",
+          "tone": "playful",
+          "transformation_rule": "imagined_scenario",
+          "scenario_hook": "Imagine being completely free to explore anything."
+        },
+        {
+          "id": "learn_008",
+          "direct_question": "Did you enjoy learning before school became serious?",
+          "purpose": "Assessing natural love for learning",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when learning felt like play."
+        },
+        {
+          "id": "learn_009",
+          "direct_question": "Were you encouraged to learn independently?",
+          "purpose": "Revealing self-directed learning capacity",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Remember a time when you taught yourself something."
+        },
+        {
+          "id": "learn_010",
+          "direct_question": "Before starting school, were you known for talking a lot?",
+          "purpose": "Understanding early verbal and social expression",
+          "tone": "playful",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what people said about you when you were very young."
+        },
+        {
+          "id": "learn_011",
+          "direct_question": "Did you enjoy asking 'what', 'where', and 'who' questions?",
+          "purpose": "Revealing exploratory curiosity style",
+          "tone": "playful",
+          "transformation_rule": "imagined_scenario",
+          "scenario_hook": "Imagine being a young child discovering the world for the first time."
+        },
+        {
+          "id": "learn_012",
+          "direct_question": "Did you frequently ask 'why' and 'how' questions?",
+          "purpose": "Revealing deeper curiosity and analytical inclination",
+          "tone": "playful",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Remember a time when you asked 'why' over and over again."
+        },
+        {
+          "id": "learn_013",
+          "direct_question": "Were you good at explaining things for your age?",
+          "purpose": "Assessing early communication and cognitive skills",
+          "tone": "affectionate",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you helped someone understand something."
+        },
+        {
+          "id": "learn_014",
+          "direct_question": "Did adults consider you curious because of the questions you asked?",
+          "purpose": "External validation of curiosity",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what adults said about your curiosity."
+        },
+        {
+          "id": "learn_015",
+          "direct_question": "Did you enjoy telling stories to others?",
+          "purpose": "Revealing narrative and communication style",
+          "tone": "playful",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about a time when you told a story that made others laugh or listen."
+        }
+      ]
+    },
+    {
+      "category": "play_and_imagination",
+      "name": "Play, Imagination & Exploration",
+      "description": "Understanding play patterns, creativity, and how the user explored the world",
+      "source": "UNICEF ECDI, Children's Worlds Survey",
+      "questions": [
+        {
+          "id": "play_001",
+          "direct_question": "What did you spend most of your time playing with?",
+          "purpose": "Revealing preferences and natural interests",
+          "tone": "playful",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a typical day of play when you were young."
+        },
+        {
+          "id": "play_002",
+          "direct_question": "Did you prefer outdoor play or indoor play?",
+          "purpose": "Understanding environmental preferences",
+          "tone": "simple",
+          "transformation_rule": "sensory_recall",
+          "sensory_hook": "Think about what made you happiest — being inside or outside."
+        },
+        {
+          "id": "play_003",
+          "direct_question": "Were you encouraged to explore freely?",
+          "purpose": "Assessing freedom vs. constraint in childhood",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Remember a time when you explored somewhere new or interesting."
+        },
+        {
+          "id": "play_004",
+          "direct_question": "Did adults participate in your games?",
+          "purpose": "Understanding adult engagement in play",
+          "tone": "affectionate",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when an adult played with you."
+        },
+        {
+          "id": "play_005",
+          "direct_question": "Did you often invent your own games?",
+          "purpose": "Revealing creativity and leadership",
+          "tone": "playful",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about a game you created when you were young."
+        },
+        {
+          "id": "play_006",
+          "direct_question": "Did you spend more time alone or with others?",
+          "purpose": "Assessing social orientation and comfort",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you usually spent your free time."
+        },
+        {
+          "id": "play_007",
+          "direct_question": "Were you physically active as a child?",
+          "purpose": "Understanding energy levels and physicality",
+          "tone": "simple",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what your body loved to do when you were young."
+        },
+        {
+          "id": "play_008",
+          "direct_question": "Did you enjoy building or creating things?",
+          "purpose": "Revealing creativity and hands-on learning",
+          "tone": "playful",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about something you built or created."
+        },
+        {
+          "id": "play_009",
+          "direct_question": "What activity could keep you engaged for hours?",
+          "purpose": "Revealing flow states and natural passions",
+          "tone": "reflective",
+          "transformation_rule": "imagined_scenario",
+          "scenario_hook": "Imagine having a whole day to do whatever you loved most."
+        },
+        {
+          "id": "play_010",
+          "direct_question": "What game or activity made you the happiest?",
+          "purpose": "Identifying pure joy and authentic play",
+          "tone": "playful",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about a time when you felt pure happiness as a child."
+        },
+        {
+          "id": "play_011",
+          "direct_question": "How did you spend most of your free time?",
+          "purpose": "Understanding life interests and hobbies",
+          "tone": "simple",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what you were doing on a typical weekend."
+        },
+        {
+          "id": "play_012",
+          "direct_question": "Did you enjoy reading?",
+          "purpose": "Assessing learning and imagination habits",
+          "tone": "simple",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about whether reading was something you looked forward to."
+        },
+        {
+          "id": "play_013",
+          "direct_question": "What hobby excited you the most?",
+          "purpose": "Identifying passion areas",
+          "tone": "playful",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about something you were completely obsessed with."
+        },
+        {
+          "id": "play_014",
+          "direct_question": "Did you watch TV regularly?",
+          "purpose": "Understanding media influence and screen time",
+          "tone": "simple",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what you remember watching on TV as a child."
+        },
+        {
+          "id": "play_015",
+          "direct_question": "What games did you play most often?",
+          "purpose": "Revealing social, competitive, or creative tendencies",
+          "tone": "playful",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about the games you and your friends played."
+        }
+      ]
+    },
+    {
+      "category": "social_dynamics",
+      "name": "Social Dynamics & Friendships",
+      "description": "Understanding social patterns, friendships, and belonging in childhood",
+      "source": "SDQ, Children's Worlds Survey",
+      "questions": [
+        {
+          "id": "social_001",
+          "direct_question": "Did you make friends easily?",
+          "purpose": "Assessing social confidence and approachability",
+          "tone": "simple",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you met the friends you had when you were growing up."
+        },
+        {
+          "id": "social_002",
+          "direct_question": "Did you have one best friend or many friends?",
+          "purpose": "Understanding friendship style and social preferences",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about your friendships when you were young."
+        },
+        {
+          "id": "social_003",
+          "direct_question": "What role did you play in your friend group?",
+          "purpose": "Revealing leadership, support, or followership patterns",
+          "tone": "reflective",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about what you were like with your friends."
+        },
+        {
+          "id": "social_004",
+          "direct_question": "Were you usually the leader or follower in games?",
+          "purpose": "Revealing leadership tendencies",
+          "tone": "playful",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about the games you played with other children."
+        },
+        {
+          "id": "social_005",
+          "direct_question": "Did you trust friends easily?",
+          "purpose": "Assessing trust and vulnerability in relationships",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you trusted a friend."
+        },
+        {
+          "id": "social_006",
+          "direct_question": "Did you enjoy group activities?",
+          "purpose": "Assessing social comfort and collaboration",
+          "tone": "simple",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt in groups of children."
+        },
+        {
+          "id": "social_007",
+          "direct_question": "Were you included by others?",
+          "purpose": "Assessing social acceptance and belonging",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt when you wanted to join in."
+        },
+        {
+          "id": "social_008",
+          "direct_question": "Did you ever feel left out?",
+          "purpose": "Revealing experiences of exclusion and resilience",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you felt like you didn't belong."
+        },
+        {
+          "id": "social_009",
+          "direct_question": "Did you maintain long-term friendships?",
+          "purpose": "Revealing relationship sustainability and loyalty",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about the friendships that lasted through your childhood."
+        },
+        {
+          "id": "social_010",
+          "direct_question": "What quality made people want to be your friend?",
+          "purpose": "Revealing strengths and how others perceive the user",
+          "tone": "affectionate",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about what you were like as a friend."
+        },
+        {
+          "id": "social_011",
+          "direct_question": "During primary school, were you considerate of other people's feelings?",
+          "purpose": "Assessing empathy and emotional intelligence",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when someone was upset and you noticed."
+        },
+        {
+          "id": "social_012",
+          "direct_question": "If a friend was upset, would you usually try to help them?",
+          "purpose": "Revealing empathy in action",
+          "tone": "affectionate",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about a time when you helped a friend who was struggling."
+        },
+        {
+          "id": "social_013",
+          "direct_question": "Did you naturally care about how others felt?",
+          "purpose": "Assessing natural empathy disposition",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt when others were hurt or sad."
+        },
+        {
+          "id": "social_014",
+          "direct_question": "Were you kind toward younger children?",
+          "purpose": "Revealing nurturing tendencies and protection instincts",
+          "tone": "affectionate",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you treated children who were younger than you."
+        },
+        {
+          "id": "social_015",
+          "direct_question": "Did teachers or family members describe you as helpful?",
+          "purpose": "External validation of helpfulness and cooperation",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what people said about you when you were growing up."
+        },
+        {
+          "id": "social_016",
+          "direct_question": "Were you known as a generous child?",
+          "purpose": "Assessing sharing and abundance mindset",
+          "tone": "affectionate",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about whether you shared things with others."
+        },
+        {
+          "id": "social_017",
+          "direct_question": "Did you have at least one close friend?",
+          "purpose": "Assessing ability to form deep connections",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about the person you were closest to when you were young."
+        },
+        {
+          "id": "social_018",
+          "direct_question": "Were friendships easy or difficult for you?",
+          "purpose": "Understanding relationship challenges and patterns",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what it was like to build friendships."
+        },
+        {
+          "id": "social_019",
+          "direct_question": "Did you feel accepted by your classmates?",
+          "purpose": "Assessing sense of belonging",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt in your classroom."
+        },
+        {
+          "id": "social_020",
+          "direct_question": "Did you ever feel excluded by your peers?",
+          "purpose": "Revealing experiences of isolation and resilience",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you felt left out."
+        }
+      ]
+    },
+    {
+      "category": "emotional_development",
+      "name": "Emotional Development & Self-Awareness",
+      "description": "Understanding emotional patterns, self-regulation, and early self-perception",
+      "source": "SDQ, UNICEF ECDI",
+      "questions": [
+        {
+          "id": "emo_001",
+          "direct_question": "As a child, were you mostly cheerful or serious?",
+          "purpose": "Identifying baseline emotional temperament",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what you were like when you were surrounded by friends."
+        },
+        {
+          "id": "emo_002",
+          "direct_question": "Were you comfortable around new people?",
+          "purpose": "Assessing social openness and adaptability",
+          "tone": "simple",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt when meeting new children."
+        },
+        {
+          "id": "emo_003",
+          "direct_question": "Did you feel lonely often?",
+          "purpose": "Revealing emotional isolation patterns",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you felt like you were alone."
+        },
+        {
+          "id": "emo_004",
+          "direct_question": "Did you express your emotions openly?",
+          "purpose": "Understanding emotional expression patterns",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about whether you showed your feelings or kept them inside."
+        },
+        {
+          "id": "emo_005",
+          "direct_question": "Did you get upset easily?",
+          "purpose": "Assessing emotional sensitivity and regulation",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you reacted when things didn't go your way."
+        },
+        {
+          "id": "emo_006",
+          "direct_question": "Did you feel accepted by the people around you?",
+          "purpose": "Assessing sense of belonging and validation",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt when you were with others."
+        },
+        {
+          "id": "emo_007",
+          "direct_question": "Were you generally happy during childhood?",
+          "purpose": "Assessing overall emotional well-being",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what made you feel good when you were young."
+        },
+        {
+          "id": "emo_008",
+          "direct_question": "Did you often feel sad or lonely?",
+          "purpose": "Identifying emotional challenges",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you felt sad as a child."
+        },
+        {
+          "id": "emo_009",
+          "direct_question": "What made you happiest at that age?",
+          "purpose": "Identifying sources of joy",
+          "tone": "playful",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about the thing that made you smile the most."
+        },
+        {
+          "id": "emo_010",
+          "direct_question": "Did you feel emotionally secure?",
+          "purpose": "Assessing core emotional safety",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what it felt like to be you when you were young."
+        },
+        {
+          "id": "emo_011",
+          "direct_question": "Were you sensitive to criticism?",
+          "purpose": "Assessing emotional sensitivity and impact of feedback",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt when someone corrected you."
+        },
+        {
+          "id": "emo_012",
+          "direct_question": "Did you lose your temper easily?",
+          "purpose": "Assessing emotional regulation",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you got really angry as a child."
+        },
+        {
+          "id": "emo_013",
+          "direct_question": "When upset, did you calm down quickly or stay upset for a long time?",
+          "purpose": "Revealing emotional recovery patterns",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt after being upset."
+        },
+        {
+          "id": "emo_014",
+          "direct_question": "Did small frustrations affect you strongly?",
+          "purpose": "Assessing reactivity and emotional sensitivity",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you reacted to small disappointments."
+        },
+        {
+          "id": "emo_015",
+          "direct_question": "How did you react when things didn't go your way?",
+          "purpose": "Revealing coping and frustration tolerance",
+          "tone": "reflective",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about a time when something you wanted didn't happen."
+        }
+      ]
+    },
+    {
+      "category": "discipline_and_boundaries",
+      "name": "Discipline, Boundaries & Parenting Style",
+      "description": "Understanding how rules, discipline, and boundaries shaped the user",
+      "source": "UNICEF ECDI, SDQ",
+      "questions": [
+        {
+          "id": "disc_001",
+          "direct_question": "How did adults react when you misbehaved?",
+          "purpose": "Understanding discipline patterns and parenting style",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you got into trouble as a child."
+        },
+        {
+          "id": "disc_002",
+          "direct_question": "Were rules explained to you or simply enforced?",
+          "purpose": "Assessing authoritative vs. authoritarian parenting",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how adults explained things to you."
+        },
+        {
+          "id": "disc_003",
+          "direct_question": "Were you encouraged to learn from mistakes?",
+          "purpose": "Revealing growth mindset vs. fixed mindset",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how your family handled mistakes."
+        },
+        {
+          "id": "disc_004",
+          "direct_question": "Were punishments common in your childhood?",
+          "purpose": "Understanding discipline intensity",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how consequences worked in your home."
+        },
+        {
+          "id": "disc_005",
+          "direct_question": "Were rewards common for good behavior?",
+          "purpose": "Assessing positive reinforcement patterns",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about whether good behavior was celebrated."
+        },
+        {
+          "id": "disc_006",
+          "direct_question": "Did adults raise their voice frequently?",
+          "purpose": "Assessing emotional climate and safety",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what it sounded like at home during disagreements."
+        },
+        {
+          "id": "disc_007",
+          "direct_question": "Were you afraid of disappointing your parents?",
+          "purpose": "Revealing fear-based motivation and approval seeking",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt when you thought you had disappointed someone."
+        },
+        {
+          "id": "disc_008",
+          "direct_question": "Did your parents focus more on discipline or understanding?",
+          "purpose": "Assessing parenting style and emotional safety",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how your parents handled your mistakes."
+        },
+        {
+          "id": "disc_009",
+          "direct_question": "Did mistakes make you anxious?",
+          "purpose": "Revealing perfectionism and fear of failure",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt when you made a mistake."
+        },
+        {
+          "id": "disc_010",
+          "direct_question": "Did you feel safe expressing your opinions?",
+          "purpose": "Assessing psychological safety in family",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about whether you could share your thoughts freely."
+        },
+        {
+          "id": "disc_011",
+          "direct_question": "Did you generally follow rules?",
+          "purpose": "Assessing rule-following vs. questioning tendency",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what kind of child you were when it came to rules."
+        },
+        {
+          "id": "disc_012",
+          "direct_question": "Did adults consider you obedient?",
+          "purpose": "External view of rule-following",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what adults said about your behavior."
+        },
+        {
+          "id": "disc_013",
+          "direct_question": "Did you question rules often?",
+          "purpose": "Revealing autonomy, critical thinking, and authority testing",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about whether you accepted rules or asked 'why'."
+        },
+        {
+          "id": "disc_014",
+          "direct_question": "Were you known for good behavior?",
+          "purpose": "Assessing how behavior was perceived",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what people said about your behavior."
+        },
+        {
+          "id": "disc_015",
+          "direct_question": "Did you usually listen to teachers and parents?",
+          "purpose": "Assessing respect for authority",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you responded to adults in charge."
+        }
+      ]
+    },
+    {
+      "category": "confidence_and_self_identity",
+      "name": "Confidence, Self-Identity & Values",
+      "description": "Understanding self-perception, values, and identity formation",
+      "source": "SDQ, Children's Worlds Survey",
+      "questions": [
+        {
+          "id": "conf_001",
+          "direct_question": "Were you confident speaking in class?",
+          "purpose": "Assessing academic confidence and public speaking",
+          "tone": "simple",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt when you had to speak in front of others."
+        },
+        {
+          "id": "conf_002",
+          "direct_question": "Were you comfortable meeting new people?",
+          "purpose": "Assessing social confidence and openness",
+          "tone": "simple",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt when meeting someone new."
+        },
+        {
+          "id": "conf_003",
+          "direct_question": "Did new environments make you nervous?",
+          "purpose": "Assessing anxiety in unfamiliar situations",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about how you felt in a new place."
+        },
+        {
+          "id": "conf_004",
+          "direct_question": "Did you lose confidence easily?",
+          "purpose": "Assessing resilience of self-belief",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you felt unsure of yourself."
+        },
+        {
+          "id": "conf_005",
+          "direct_question": "How did you react to unfamiliar situations?",
+          "purpose": "Assessing coping patterns with new experiences",
+          "tone": "reflective",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about a time when you faced something new."
+        },
+        {
+          "id": "conf_006",
+          "direct_question": "What were you known for between ages 5 and 12?",
+          "purpose": "Revealing core identity and reputation",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what people would say about you back then."
+        },
+        {
+          "id": "conf_007",
+          "direct_question": "What did teachers praise most about you?",
+          "purpose": "Identifying validated strengths",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what your teachers said about you."
+        },
+        {
+          "id": "conf_008",
+          "direct_question": "What did friends appreciate most about you?",
+          "purpose": "Revealing relational strengths",
+          "tone": "affectionate",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what your friends liked about you."
+        },
+        {
+          "id": "conf_009",
+          "direct_question": "What was your biggest childhood strength?",
+          "purpose": "Identifying natural competencies",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what you were really good at when you were young."
+        },
+        {
+          "id": "conf_010",
+          "direct_question": "What was your biggest childhood challenge?",
+          "purpose": "Revealing growth areas and adversity",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what was difficult for you as a child."
+        },
+        {
+          "id": "conf_011",
+          "direct_question": "What made you feel confident?",
+          "purpose": "Identifying sources of self-worth",
+          "tone": "reflective",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about a time when you felt really sure of yourself."
+        },
+        {
+          "id": "conf_012",
+          "direct_question": "What made you feel insecure?",
+          "purpose": "Revealing vulnerability and self-doubt",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you felt uncertain about yourself."
+        },
+        {
+          "id": "conf_013",
+          "direct_question": "What did you want to become when you grew up?",
+          "purpose": "Revealing early aspirations and values",
+          "tone": "playful",
+          "transformation_rule": "imagined_scenario",
+          "scenario_hook": "Imagine someone asking you at age 8 what you wanted to be."
+        },
+        {
+          "id": "conf_014",
+          "direct_question": "Who inspired you most as a child?",
+          "purpose": "Identifying role models and aspirational figures",
+          "tone": "affectionate",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about who you looked up to when you were young."
+        },
+        {
+          "id": "conf_015",
+          "direct_question": "Did you believe you could achieve your dreams?",
+          "purpose": "Assessing hope and self-efficacy",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about whether you believed in yourself."
+        },
+        {
+          "id": "conf_016",
+          "direct_question": "What values were most important to your family?",
+          "purpose": "Revealing value transmission from family",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what your family believed was important."
+        },
+        {
+          "id": "conf_017",
+          "direct_question": "What dream from childhood still exists today?",
+          "purpose": "Connecting past aspirations to current identity",
+          "tone": "reflective",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about a dream that has stayed with you."
+        },
+        {
+          "id": "conf_018",
+          "direct_question": "If someone met 10-year-old you, how would they describe you?",
+          "purpose": "Revealing core identity and childhood persona",
+          "tone": "playful",
+          "transformation_rule": "imagined_scenario",
+          "scenario_hook": "Imagine a stranger meeting you at age 10."
+        }
+      ]
+    },
+    {
+      "category": "root_cause_discovery",
+      "name": "Root-Cause Discovery & Core Memories",
+      "description": "Understanding formative experiences that continue to influence the user today",
+      "source": "Custom (based on psychological reflection)",
+      "questions": [
+        {
+          "id": "root_001",
+          "direct_question": "What is the happiest memory from your childhood?",
+          "purpose": "Identifying core positive experiences",
+          "tone": "affectionate",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about a time when you felt pure joy."
+        },
+        {
+          "id": "root_002",
+          "direct_question": "What is the strongest memory from your childhood?",
+          "purpose": "Identifying most impactful experiences",
+          "tone": "reflective",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about a memory that has stayed with you."
+        },
+        {
+          "id": "root_003",
+          "direct_question": "What made you feel loved as a child?",
+          "purpose": "Understanding love language and security",
+          "tone": "affectionate",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you felt truly loved."
+        },
+        {
+          "id": "root_004",
+          "direct_question": "What made you feel afraid?",
+          "purpose": "Revealing fear patterns and early anxieties",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you were really scared."
+        },
+        {
+          "id": "root_005",
+          "direct_question": "What made you feel proud?",
+          "purpose": "Identifying sources of pride and validation",
+          "tone": "affectionate",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about a time when you felt really proud of yourself."
+        },
+        {
+          "id": "root_006",
+          "direct_question": "What made you feel embarrassed?",
+          "purpose": "Revealing vulnerability and social fear",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a time when you felt embarrassed."
+        },
+        {
+          "id": "root_007",
+          "direct_question": "What did adults praise you for most?",
+          "purpose": "Understanding externally validated strengths",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what people said you were good at."
+        },
+        {
+          "id": "root_008",
+          "direct_question": "What did adults criticize you for most?",
+          "purpose": "Understanding core perceived weaknesses",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what people said you needed to work on."
+        },
+        {
+          "id": "root_009",
+          "direct_question": "What do you think shaped your confidence at that age?",
+          "purpose": "Understanding origins of self-belief",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what made you feel capable or unsure."
+        },
+        {
+          "id": "root_010",
+          "direct_question": "What part of your childhood still influences you today?",
+          "purpose": "Connecting past to present and current identity",
+          "tone": "reflective",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about something from childhood that still affects you."
+        }
+      ]
+    }
+  ],
+  "follow_up_strategies": {
+    "if_emotional": "That sounds like a meaningful memory. What do you think that experience taught you about yourself?",
+    "if_brief": "I'm curious about that—what made that so memorable?",
+    "if_resistant": "That's okay. We can come back to it later if you'd prefer. Let's try another question.",
+    "if_reflective": "That's a beautiful way to put it. What do you think that says about who you are today?",
+    "if_general": "That's interesting. Can you tell me more about that?",
+    "if_hesitant": "Take your time. Sometimes the best answers come when we let them find us.",
+    "if_surprising": "That's fascinating—I didn't expect that. What do you think made you react that way?"
+  },
+  "transformation_rules": {
+    "storytelling": "Tell me about {story_hook}... {direct_question}?",
+    "memory_recall": "Remember when {memory_hook}? {direct_question}?",
+    "imagined_scenario": "Imagine {scenario_hook}. {direct_question}?",
+    "sensory_recall": "Think about {sensory_hook}. {direct_question}?",
+    "reflection": "Think about {reflection_hook}. {direct_question}?"
+  }
+}

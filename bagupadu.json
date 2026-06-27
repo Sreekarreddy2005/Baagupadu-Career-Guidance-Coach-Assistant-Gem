@@ -1,0 +1,65 @@
+{
+  "project_name": "Baagupadu",
+  "description": "AI-powered mentoring ecosystem with Sahaya mentor",
+  "target_users": "Gen Z and Millennials (16-30)",
+  "timeline": "6 weeks",
+  
+  "proposed_stack": {
+    "frontend": {
+      "language": "TypeScript",
+      "framework": "React + Next.js 14/15",
+      "styling": "TailwindCSS",
+      "state_management": ["TanStack Query", "Zustand"],
+      "hosting": "AWS S3 + CloudFront"
+    },
+    "backend_api": {
+      "language": "Python 3.11+",
+      "framework": "FastAPI",
+      "orchestration": "LangGraph + CrewAI",
+      "deployment": "AWS ECS Fargate + ALB"
+    },
+    "ai_service": {
+      "language": "Python 3.11+",
+      "framework": "LangChain + LangGraph",
+      "checkpointer": "PostgresSaver (RDS)",
+      "queue": "Redis (ElastiCache) + Celery"
+    },
+    "database": {
+      "engine": "PostgreSQL 15+",
+      "extension": "pgvector",
+      "deployment": "AWS RDS (Multi-AZ)"
+    },
+    "cache_queue": {
+      "engine": "Redis 7+",
+      "deployment": "AWS ElastiCache"
+    },
+    "infrastructure": {
+      "language": "TypeScript",
+      "framework": "AWS CDK",
+      "container": "Docker",
+      "deployment": "AWS ECS Fargate"
+    },
+    "auth": {
+      "provider": "AWS Cognito"
+    },
+    "secrets": {
+      "provider": "AWS Secrets Manager"
+    },
+    "development": {
+      "ide": "Antigravity IDE (Classic)",
+      "agent_workflow": "Spec-Kit + refine-agent-kit (21 agents)",
+      "ci_cd": "GitHub Actions"
+    },
+    "testing": {
+      "e2e": "Playwright + Gemini 2.5",
+      "unit": "Pytest (Python) / Vitest (TypeScript)",
+      "integration": "FastAPI TestClient"
+    }
+  },
+  
+  "target_throughput": 100,
+  "data_consistency": "strong",
+  "runtime_environment": "python3.11 + node20-alpine",
+  "compliance_requirements": ["gdpr"],
+  "deployment_model": "hybrid"
+}
