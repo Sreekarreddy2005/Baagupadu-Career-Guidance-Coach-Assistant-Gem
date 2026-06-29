@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* ───────── Color Tokens ───────── */
+  --color-background: #0F0F1F;
+  --color-surface:    #1A1A2E;
+  --color-primary:    #4F46E5;
+  --color-secondary:  #7C3AED;
+  --color-accent:     #EC4899;
+  --color-success:    #10B981;
+  --color-agent-glow: #7C3AED;
+
+  --color-text-primary:   #FFFFFF;
+  --color-text-secondary: #94A3B8;
+
+  /* ───────── Typography ───────── */
+  --font-sans: "Inter", "Geist Sans", system-ui, sans-serif;
+  --font-mono: "Geist Mono", monospace;
+}
+
+/* Force dark mode */
+:root {
+  color-scheme: dark;
+}
+
+/* Base styles */
+html, body {
+  background-color: #0F0F1F;
+  color: #FFFFFF;
+  font-family: var(--font-sans);
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ───────── Custom Scrollbars ───────── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.22);
+}
+
+/* Hide scrollbar utility (used in chat) */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Thin scrollbar utility */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.12) transparent;
+}
+
+/* ───────── Glassmorphism ───────── */
+.glass {
+  background: rgba(26, 26, 46, 0.5);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-card {
+  background: rgba(26, 26, 46, 0.5);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+}
+.glass-input:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: rgba(79, 70, 229, 0.4);
+  border-color: rgba(79, 70, 229, 0.4);
+}
+
+/* ───────── Gradient Text ───────── */
+.gradient-text {
+  background: linear-gradient(135deg, #818CF8, #7C3AED, #EC4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ───────── Glow Shadows ───────── */
+.glow-primary {
+  box-shadow: 0 0 30px rgba(79, 70, 229, 0.3), 0 0 60px rgba(79, 70, 229, 0.1);
+}
+.glow-accent {
+  box-shadow: 0 0 30px rgba(236, 72, 153, 0.3);
+}
+.glow-agent {
+  box-shadow: 0 0 50px rgba(124, 58, 237, 0.4), 0 0 100px rgba(124, 58, 237, 0.15);
+}
+
+/* ───────── React Flow Override ───────── */
+.react-flow__renderer {
+  background: transparent !important;
+}
