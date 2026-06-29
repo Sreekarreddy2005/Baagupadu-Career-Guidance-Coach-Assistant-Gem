@@ -333,19 +333,47 @@
 
 ---
 
-## 6. Transformation Rules Summary Table
+## 6. Friend-Like Language Templates (MANDATORY)
 
-| Rule ID | Rule Name | Template | Best For | Example |
-|---------|-----------|----------|----------|---------|
-| **TRANS-001** | Memory Recall | `"Remember when {hook}? {direct_question}?"` | Specific people, events, experiences | *"Remember waking up in your childhood bedroom? What is your earliest memory of home?"* |
-| **TRANS-002** | Imagined Scenario | `"Imagine {hook}. {direct_question}?"` | Preferences, feelings, abstract concepts | *"Imagine being completely free to explore anything. What fascinated you the most?"* |
-| **TRANS-003** | Sensory Recall | `"Think about {hook}. {direct_question}?"` | Emotions, comfort, atmosphere | *"Think about the smell of your childhood kitchen. What did your home feel like?"* |
-| **TRANS-004** | Storytelling | `"Tell me about {hook}... {direct_question}?"` | Memories, events, narratives | *"Tell me about a story you've told yourself many times... What is your earliest memory of home?"* |
-| **TRANS-005** | Reflection | `"Think about {hook}. {direct_question}?"` | Identity, values, self-perception | *"Think about what made you feel capable or unsure. What do you think shaped your confidence?"* |
-| **TRANS-006** | Softening Emotions | Various templates | Emotional responses | *"That sounds really difficult. What do you think that experience taught you about yourself?"* |
-| **TRANS-007** | Depth Follow-Ups | Various follow-up templates | Different user response types | *"I'm curious about that—what made that so memorable?"* |
+### 6.1 The One Clear Question Rule (CRITICAL)
 
+**Golden Rule:** Ask ONE clear, short question at a time.
+
+| ❌ NEVER (Multi-Part) | ✅ ALWAYS (Single, Clear) |
+|-----------------------|---------------------------|
+| "What did that feel like, and do you see that in your life today?" | "What did that feel like?" |
+| "Think about those moments on the cricket field... what was it about that time that made you feel most alive, and do you see that same 'spark' showing up anywhere in your life today?" | "What made you feel most alive when playing cricket?" |
+
+### 6.2 Question Length Guidelines
+
+| Rule | Example |
+|------|---------|
+| **Maximum 15 words per question** | ✅ "What did that feel like?" |
+| **No multi-part questions** | ✅ "What made you feel proud?" (NOT "What made you feel proud and how did it affect you?") |
+| **One question per response** | ✅ Ask one, wait for answer |
+| **Short setup, clear question** | ✅ "That's beautiful. What about school?" |
+
+### 6.3 Friend-Like Question Templates
+
+**When to Use:**
+
+| Situation | Template | Example |
+|-----------|----------|---------|
+| Opening a new topic | "What about [topic]?" | "What about school?" |
+| Exploring a memory | "What did that feel like?" | "What did that feel like?" |
+| Seeking clarity | "Tell me more about that." | "Tell me more about that." |
+| Moving on | "I'm curious about something different..." | "I'm curious about something different—what were your friends like?" |
+
+### 6.4 Transition After 2 Exchanges
+
+**Use these to move on:**
+
+- "That's beautiful. Let me ask you about something else..."
+- "I love that. I'm curious about something different..."
+- "That's so interesting. What about school?"
+- "Oh wow. Tell me about your family when you were young."
 ---
+
 ## 7. Friend-Like Language Templates (MANDATORY)
 
 ### 7.1 What Are Friend-Like Language Templates?
