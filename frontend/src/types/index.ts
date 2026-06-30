@@ -1,4 +1,4 @@
-// All TypeScript types for Baagupadu
+// All TypeScript types for Bagupadu
 
 export type Phase =
   | 'idle'
@@ -12,14 +12,15 @@ export type Phase =
 export interface PhaseConfig {
   id: Phase;
   label: string;
+  shortLabel: string;
   index: number;
-  colors: {
-    from: string;
-    via: string;
-    to: string;
-  };
-  particleColor: string;
+  agentMood: string;      // shown around agent
+  agentEmoji: string;
+  moodColor: string;      // accent color for this phase
+  particleColors: string[];
+  gradient: [string, string, string]; // [from, via, to]
   bgDescription: string;
+  chatMood: string;       // tone description for users
 }
 
 export interface ChatMessage {
@@ -54,73 +55,99 @@ export interface PersonaResult {
   careerAffinities: { title: string; description: string; icon: string }[];
 }
 
-export interface RoadmapStep {
-  id: string;
-  icon: string;
-  label: string;
-  title: string;
-  description: string;
-}
-
+// ── Phase configurations (new premium palette) ──────────────────────────────
 export const PHASES: PhaseConfig[] = [
   {
     id: 'idle',
     label: 'Welcome',
+    shortLabel: 'Welcome',
     index: 0,
-    colors: { from: '#FF6B35', via: '#FF8C69', to: '#FFB347' },
-    particleColor: '#FF8C69',
-    bgDescription: 'Warm Dawn',
+    agentMood: 'Ready to meet you',
+    agentEmoji: '👋',
+    moodColor: '#6C3CE1',
+    particleColors: ['#6C3CE1', '#FF6B8A', '#2D1B69', '#6DD5B8'],
+    gradient: ['#2D1B69', '#6C3CE1', '#FF6B8A'],
+    bgDescription: 'Futuristic Glow',
+    chatMood: 'premium',
   },
   {
     id: 'trust',
     label: 'Trust Building',
+    shortLabel: 'Trust',
     index: 1,
-    colors: { from: '#F59E0B', via: '#EC4899', to: '#EF4444' },
-    particleColor: '#F59E0B',
+    agentMood: 'Getting to know you',
+    agentEmoji: '👂',
+    moodColor: '#FF6B8A',
+    particleColors: ['#FFB84D', '#FF6B8A', '#6C3CE1'],
+    gradient: ['#FFB84D', '#FF6B8A', '#6C3CE1'],
     bgDescription: 'Warm Sunset',
+    chatMood: 'warm & friendly',
   },
   {
     id: 'childhood',
     label: 'Childhood',
+    shortLabel: 'Childhood',
     index: 2,
-    colors: { from: '#60A5FA', via: '#F472B6', to: '#A78BFA' },
-    particleColor: '#60A5FA',
+    agentMood: 'Exploring Childhood...',
+    agentEmoji: '✨',
+    moodColor: '#74B9FF',
+    particleColors: ['#74B9FF', '#FDCB6E', '#FF6B8A'],
+    gradient: ['#74B9FF', '#FDCB6E', '#FF6B8A'],
     bgDescription: 'Dreamy Day',
+    chatMood: 'soft & nostalgic',
   },
   {
     id: 'teenage',
-    label: 'Teenage',
+    label: 'Teenage Years',
+    shortLabel: 'Teenage',
     index: 3,
-    colors: { from: '#1E40AF', via: '#7C3AED', to: '#4C1D95' },
-    particleColor: '#7C3AED',
+    agentMood: 'Reliving your spark...',
+    agentEmoji: '⚡',
+    moodColor: '#6C3CE1',
+    particleColors: ['#6C3CE1', '#00CEC9', '#FF6B8A'],
+    gradient: ['#2D1B69', '#6C3CE1', '#00CEC9'],
     bgDescription: 'Vibrant Night',
+    chatMood: 'energetic & curious',
   },
   {
     id: 'adult',
-    label: 'Adult',
+    label: 'Adult Life',
+    shortLabel: 'Adult',
     index: 4,
-    colors: { from: '#059669', via: '#0284C7', to: '#0EA5E9' },
-    particleColor: '#059669',
-    bgDescription: 'Sophisticated',
+    agentMood: 'Understanding you today...',
+    agentEmoji: '🌿',
+    moodColor: '#00B894',
+    particleColors: ['#00B894', '#0984E3', '#6C3CE1'],
+    gradient: ['#00B894', '#0984E3', '#2D1B69'],
+    bgDescription: 'Grounded Present',
+    chatMood: 'clear & focused',
   },
   {
     id: 'synthesis',
     label: 'Synthesis',
+    shortLabel: 'Synthesis',
     index: 5,
-    colors: { from: '#4F46E5', via: '#7C3AED', to: '#B45309' },
-    particleColor: '#7C3AED',
-    bgDescription: 'Cosmic',
+    agentMood: 'Reflecting...',
+    agentEmoji: '💭',
+    moodColor: '#FDCB6E',
+    particleColors: ['#6C3CE1', '#FDCB6E', '#FF6B8A'],
+    gradient: ['#2D1B69', '#6C3CE1', '#FDCB6E'],
+    bgDescription: 'Cosmic Insight',
+    chatMood: 'deep & thoughtful',
   },
   {
     id: 'guidance',
     label: 'Guidance',
+    shortLabel: 'Guidance',
     index: 6,
-    colors: { from: '#D97706', via: '#F59E0B', to: '#FEF3C7' },
-    particleColor: '#F59E0B',
+    agentMood: 'Finding Your Path...',
+    agentEmoji: '🎯',
+    moodColor: '#FFB84D',
+    particleColors: ['#FFB84D', '#FF6B8A', '#FDCB6E'],
+    gradient: ['#FFB84D', '#FF6B8A', '#FDCB6E'],
     bgDescription: 'Golden Horizon',
+    chatMood: 'empowering & clear',
   },
 ];
 
-export const ACTIVE_PHASES: PhaseConfig[] = PHASES.filter(
-  (p) => p.id !== 'idle'
-);
+export const ACTIVE_PHASES: PhaseConfig[] = PHASES.filter((p) => p.id !== 'idle');

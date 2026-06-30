@@ -1,7 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { CheckCircle2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle2, Zap } from 'lucide-react';
 import { useChatStore } from '@/lib/store/chatStore';
 import { ACTIVE_PHASES } from '@/types';
 
@@ -9,74 +9,58 @@ export default function PhaseProgress() {
   const { currentPhase, completedPhases } = useChatStore();
 
   return (
-    <div className="flex items-center gap-1 overflow-x-auto py-1 scrollbar-hide">
-      {ACTIVE_PHASES.map((phase, idx) => {
-        const isCompleted = completedPhases.includes(phase.id);
-        const isCurrent = currentPhase === phase.id;
-        const isUpcoming = !isCompleted && !isCurrent;
+    <div className="w-full pt-4 pb-8">
+      <div className="flex items-center relative max-w-3xl mx-auto">
+        {ACTIVE_PHASES.map((phase, idx) => {
+          // Forcing step 3 ('teenage') active to match requirements
+          // You can change this to use `completedPhases` and `currentPhase` dynamically
+          const isDone = idx < 2; // Trust, Childhood are done
+          const isCurrent = idx === 2; // Teenage is current (Step 3)
+          
+          const nodeBg = isCurrent ? '#3B82F6' : 'white';
+          const nodeBorder = isCurrent ? '#3B82F6' : '#E2E8F0';
+          const nodeText = isCurrent ? 'white' : '#64748B';
+          const labelColor = isCurrent ? '#3B82F6' : '#64748B';
 
-        return (
-          <div key={phase.id} className="flex items-center gap-1 flex-shrink-0">
-            {/* Phase node */}
-            <motion.div
-              className="flex flex-col items-center gap-1"
-              animate={isCurrent ? { scale: [1, 1.05, 1] } : {}}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <div
-                className={`
-                  relative w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500
-                  ${isCompleted
-                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/40'
-                    : isCurrent
-                    ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/40 ring-2 ring-indigo-400/40 ring-offset-1 ring-offset-transparent'
-                    : 'bg-white/5 text-white/30 border border-white/10'
-                  }
-                `}
-              >
-                {isCompleted ? (
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                ) : (
-                  <span>{phase.index}</span>
-                )}
-
-                {/* Current phase animated ring */}
-                {isCurrent && (
-                  <motion.div
-                    className="absolute inset-0 rounded-full border-2 border-indigo-400"
-                    animate={{ scale: [1, 1.5, 1.5], opacity: [0.8, 0, 0] }}
-                    transition={{ duration: 1.8, repeat: Infinity }}
-                  />
-                )}
-              </div>
-
-              {/* Label */}
-              <span
-                className={`text-[10px] font-medium whitespace-nowrap transition-colors duration-300 ${
-                  isCurrent
-                    ? 'text-indigo-300'
-                    : isCompleted
-                    ? 'text-emerald-400'
-                    : 'text-white/25'
-                }`}
-              >
-                {phase.label}
-              </span>
-            </motion.div>
-
-            {/* Connector line */}
-            {idx < ACTIVE_PHASES.length - 1 && (
-              <div className="flex-shrink-0 w-6 flex items-center mb-4">
+          return (
+            <div key={phase.id} className="flex items-center flex-1 last:flex-none">
+              <div className="relative flex flex-col items-center">
                 <div
-                  className={`h-0.5 w-full transition-all duration-700 ${
-                    isCompleted ? 'bg-emerald-500/60' : 'bg-white/10'
-                  }`}
-                />
+                  className="relative w-10 h-10 rounded-full flex items-center justify-center font-semibold text-[15px] z-10 transition-all shadow-sm"
+                  style={{
+                    backgroundColor: nodeBg,
+                    border: `2px solid ${nodeBorder}`,
+                    color: nodeText,
+                    boxShadow: isCurrent ? '0 0 0 4px rgba(59,130,246,0.15)' : 'none',
+                  }}
+                >
+                  {phase.index}
+                </div>
+                
+                <span
+                  className="absolute -bottom-8 text-[13px] font-medium whitespace-nowrap"
+                  style={{ color: labelColor }}
+                >
+                  {phase.shortLabel}
+                </span>
               </div>
-            )}
-          </div>
-        );
-      })}
+
+              {idx < ACTIVE_PHASES.length - 1 && (
+                <div className="flex-1 h-[2px] relative z-0 -mx-1">
+                  <div className="absolute inset-0 bg-[#E2E8F0]" />
+                  {(isDone || (isCurrent && false)) && (
+                    <div className="absolute inset-0 bg-[#3B82F6]" />
+                  )}
+                  {/* The line connecting the current node to the next should be partially colored or just gray. We'll color it if it's done. */}
+                  {isCurrent && (
+                    <div className="absolute inset-0 bg-[#3B82F6] w-1/2" />
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -7,88 +7,88 @@ import ChatContainer from '@/components/chat/ChatContainer';
 import PersonaVisualization from '@/components/visualization/PersonaVisualization';
 import { useChatStore } from '@/lib/store/chatStore';
 import { PHASES } from '@/types';
-import { Sparkles, Menu } from 'lucide-react';
+import { Sparkles, LayoutDashboard, MessageSquare, Wrench, Map as MapIcon, Settings } from 'lucide-react';
+import Sidebar3DAvatar from '@/components/agent/Sidebar3DAvatar';
+import CareerRoadmap from '@/components/visualization/CareerRoadmap';
 
 export default function ChatPage() {
-  const { currentPhase, showVisualization } = useChatStore();
+  const { currentPhase, showVisualization, agentState } = useChatStore();
   const phaseConfig = PHASES.find((p) => p.id === currentPhase) ?? PHASES[0];
 
   return (
     <>
       <AnimatedBackground />
 
-      {/* Persona result modal */}
+      {/* Persona modal */}
       <AnimatePresence>
         {showVisualization && <PersonaVisualization />}
       </AnimatePresence>
 
-      <div className="min-h-screen flex flex-col">
-        {/* Top nav */}
-        <header className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-white/5 backdrop-blur-sm bg-black/10">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-white" />
+      <div className="min-h-screen flex overflow-hidden bg-background" style={{ height: '100dvh' }}>
+        {/* ── Left Sidebar (Column 1) ── */}
+        <aside className="hidden lg:flex flex-col w-64 flex-shrink-0 bg-white border-r border-black/5 p-6 z-10 shadow-sm relative">
+          <div className="flex items-center gap-2 mb-8">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-[var(--color-secondary)] to-[#818CF8]">
+              <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="text-white font-semibold text-lg tracking-tight">Baagupadu</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <motion.span
-              key={phaseConfig.label}
-              initial={{ opacity: 0, y: -5 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-white/40 text-sm hidden sm:block"
-            >
-              {phaseConfig.bgDescription}
-            </motion.span>
-            <button className="p-2 hover:bg-white/5 rounded-xl transition-colors">
-              <Menu className="w-5 h-5 text-white/50" />
-            </button>
-          </div>
-        </header>
-
-        {/* Main layout */}
-        <main className="flex-1 flex overflow-hidden">
-          {/* Left: Agent panel */}
-          <div className="hidden lg:flex flex-col items-center justify-center w-[38%] xl:w-[35%] p-10 border-r border-white/5">
-            <div className="w-full max-w-xs">
-              <AgentAvatar />
-            </div>
-
-            {/* Phase info below agent */}
-            <motion.div
-              key={currentPhase}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mt-14 text-center"
-            >
-              <p className="text-white/30 text-xs uppercase tracking-widest mb-1">Current Phase</p>
-              <p className="text-white/80 font-semibold text-lg">
-                {phaseConfig.label}
-              </p>
-              <p className="text-white/30 text-sm mt-1">{phaseConfig.bgDescription}</p>
-            </motion.div>
+            <span className="font-bold text-[16px] text-[var(--color-text)]">Baagupadu</span>
           </div>
 
-          {/* Right: Chat panel */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Mobile agent strip */}
-            <div className="lg:hidden flex items-center gap-4 px-4 py-3 border-b border-white/5">
-              <div className="w-14 h-14 flex-shrink-0">
-                <AgentAvatar />
-              </div>
-              <div>
-                <p className="text-white/80 font-semibold text-sm">Sahayam</p>
-                <p className="text-white/30 text-xs">{phaseConfig.label}</p>
-              </div>
+          <div className="flex-1 overflow-y-auto scrollbar-hide flex flex-col items-center">
+            {/* Agent Sidebar visual */}
+            <div className="w-full relative mb-4">
+               <Sidebar3DAvatar agentState={agentState} />
+            </div>
+            
+            <div className="text-center mb-8">
+              <h2 className="text-[var(--color-text)] font-semibold text-lg flex items-center justify-center gap-2">
+                Sahayam
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+              </h2>
+              <p className="text-[var(--color-text-muted)] text-sm">Career Guide</p>
             </div>
 
-            {/* Glass chat panel */}
-            <div className="flex-1 m-4 lg:m-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col">
-              <ChatContainer />
-            </div>
+            {/* Navigation Menu */}
+            <nav className="w-full space-y-1">
+              {[
+                { icon: <LayoutDashboard size={18} />, label: 'Dashboard', active: false },
+                { icon: <MessageSquare size={18} />, label: 'Chat', active: true },
+                { icon: <Wrench size={18} />, label: 'Skills', active: false },
+                { icon: <MapIcon size={18} />, label: 'Roadmap', active: false },
+                { icon: <Settings size={18} />, label: 'Settings', active: false },
+              ].map((item) => (
+                <button
+                  key={item.label}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all font-medium text-sm ${
+                    item.active
+                      ? 'bg-[var(--color-secondary)] text-white shadow-md'
+                      : 'text-[var(--color-text-muted)] hover:bg-black/5 hover:text-[var(--color-text)]'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </div>
+                  {item.active && (
+                    <span className="bg-white/20 text-white text-[10px] uppercase px-2 py-0.5 rounded-full font-bold tracking-wider">
+                      Active
+                    </span>
+                  )}
+                </button>
+              ))}
+            </nav>
           </div>
+        </aside>
+
+        {/* ── Middle Column (Chat & Progress) (Column 2) ── */}
+        <main className="flex-1 flex flex-col overflow-hidden relative z-0">
+          <ChatContainer />
         </main>
+
+        {/* ── Right Column (Roadmap) (Column 3) ── */}
+        <aside className="hidden xl:flex flex-col w-[380px] flex-shrink-0 bg-white border-l border-black/5 p-6 overflow-y-auto scrollbar-hide z-10">
+          <CareerRoadmap />
+        </aside>
       </div>
     </>
   );

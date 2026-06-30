@@ -1,15 +1,17 @@
 {
-  "project_name": "Baagupadu",
+  "project_name": "Bagupadu",
   "description": "AI-powered mentoring ecosystem with Sahaya mentor",
   "target_users": "Gen Z and Millennials (16-30)",
   "timeline": "6 weeks",
-  
   "proposed_stack": {
     "frontend": {
       "language": "TypeScript",
       "framework": "React + Next.js 14/15",
       "styling": "TailwindCSS",
-      "state_management": ["TanStack Query", "Zustand"],
+      "state_management": [
+        "TanStack Query",
+        "Zustand"
+      ],
       "hosting": "AWS S3 + CloudFront"
     },
     "backend_api": {
@@ -56,10 +58,11 @@
       "integration": "FastAPI TestClient"
     }
   },
-  
   "target_throughput": 100,
   "data_consistency": "strong",
   "runtime_environment": "python3.11 + node20-alpine",
-  "compliance_requirements": ["gdpr"],
+  "compliance_requirements": [
+    "gdpr"
+  ],
   "deployment_model": "hybrid"
 }

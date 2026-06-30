@@ -37,12 +37,12 @@ export default function PersonaVisualization() {
     >
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+        className="fixed inset-0 bg-white/60 backdrop-blur-md"
         onClick={handleClose}
       />
 
       <motion.div
-        className="relative w-full max-w-4xl bg-[#0F0F1F] border border-white/10 rounded-3xl overflow-hidden shadow-2xl shadow-purple-500/20 my-8"
+        className="relative w-full max-w-4xl bg-[var(--color-background)] border border-black/5 rounded-3xl overflow-hidden shadow-2xl shadow-indigo-500/10 my-8"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -50,13 +50,13 @@ export default function PersonaVisualization() {
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+          className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center transition-colors"
         >
-          <X className="w-5 h-5 text-white/70" />
+          <X className="w-5 h-5 text-black/60" />
         </button>
 
         {/* Hero banner */}
-        <div className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 px-8 pt-10 pb-8 overflow-hidden">
+        <div className="relative bg-gradient-to-br from-indigo-500 via-purple-400 to-pink-400 px-8 pt-10 pb-8 overflow-hidden">
           <div className="absolute inset-0 opacity-20">
             {[...Array(20)].map((_, i) => (
               <motion.div
@@ -104,14 +104,14 @@ export default function PersonaVisualization() {
           {/* Radar chart + Strengths grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Radar chart */}
-            <motion.div variants={radarChartReveal} className="bg-white/5 border border-white/10 rounded-2xl p-6">
-              <h2 className="text-white font-semibold mb-4 text-center">Trait Profile</h2>
+            <motion.div variants={radarChartReveal} className="bg-white border border-black/5 shadow-sm rounded-2xl p-6">
+              <h2 className="text-[var(--color-text)] font-semibold mb-4 text-center">Trait Profile</h2>
               <ResponsiveContainer width="100%" height={260}>
                 <RadarChart data={radarData}>
-                  <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                  <PolarGrid stroke="rgba(0,0,0,0.1)" />
                   <PolarAngleAxis
                     dataKey="subject"
-                    tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 12 }}
+                    tick={{ fill: 'var(--color-text-muted)', fontSize: 12 }}
                   />
                   <Radar
                     name="Traits"
@@ -127,17 +127,17 @@ export default function PersonaVisualization() {
 
             {/* Strengths */}
             <motion.div variants={slideUpVariants} className="space-y-3">
-              <h2 className="text-white font-semibold mb-1">Your Superpowers</h2>
+              <h2 className="text-[var(--color-text)] font-semibold mb-1">Your Superpowers</h2>
               {personaResult.strengths.map((s, i) => (
                 <motion.div
                   key={s.label}
-                  className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3"
+                  className="flex items-center gap-3 bg-white border border-black/5 shadow-sm rounded-xl px-4 py-3"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 + i * 0.1 }}
                 >
                   <span className="text-2xl">{s.icon}</span>
-                  <span className="text-white/80 font-medium">{s.label}</span>
+                  <span className="text-[var(--color-text)] font-medium">{s.label}</span>
                 </motion.div>
               ))}
             </motion.div>
@@ -145,19 +145,19 @@ export default function PersonaVisualization() {
 
           {/* Career affinities */}
           <motion.div variants={slideUpVariants}>
-            <h2 className="text-white font-semibold mb-4">Career Affinities</h2>
+            <h2 className="text-[var(--color-text)] font-semibold mb-4">Career Affinities</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {personaResult.careerAffinities.map((ca, i) => (
                 <motion.div
                   key={ca.title}
-                  className="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-indigo-500/20 rounded-2xl p-5"
+                  className="bg-indigo-50 border border-indigo-100 rounded-2xl p-5"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 + i * 0.1 }}
                 >
                   <span className="text-3xl block mb-3">{ca.icon}</span>
-                  <h3 className="text-white font-semibold mb-1">{ca.title}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">{ca.description}</p>
+                  <h3 className="text-indigo-900 font-semibold mb-1">{ca.title}</h3>
+                  <p className="text-indigo-700/70 text-sm leading-relaxed">{ca.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -165,18 +165,18 @@ export default function PersonaVisualization() {
 
           {/* Growth areas */}
           <motion.div variants={slideUpVariants}>
-            <h2 className="text-white font-semibold mb-4">Growth Opportunities</h2>
+            <h2 className="text-[var(--color-text)] font-semibold mb-4">Growth Opportunities</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {personaResult.growthAreas.map((g, i) => (
                 <motion.div
                   key={g.label}
-                  className="bg-white/5 border border-white/10 rounded-2xl p-4"
+                  className="bg-orange-50 border border-orange-100 rounded-2xl p-4"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7 + i * 0.1 }}
                 >
-                  <h3 className="text-amber-400 font-medium mb-1">{g.label}</h3>
-                  <p className="text-white/50 text-sm">{g.description}</p>
+                  <h3 className="text-orange-600 font-semibold mb-1">{g.label}</h3>
+                  <p className="text-orange-800/70 text-sm">{g.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -187,7 +187,7 @@ export default function PersonaVisualization() {
             variants={slideUpVariants}
             className="flex items-center justify-center gap-4 pt-2"
           >
-            <button className="flex items-center gap-2 bg-white/5 border border-white/15 hover:bg-white/10 text-white/70 rounded-2xl px-6 py-3 text-sm font-medium transition-all">
+            <button className="flex items-center gap-2 bg-white border border-black/10 hover:bg-black/5 text-[var(--color-text-muted)] rounded-2xl px-6 py-3 text-sm font-medium transition-all">
               <Download className="w-4 h-4" />
               Download PDF
             </button>

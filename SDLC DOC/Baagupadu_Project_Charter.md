@@ -1,4 +1,4 @@
-# BAAGUPADU PROJECT CHARTER
+# Bagupadu PROJECT CHARTER
 ### AI-Powered Personalized Mentoring Ecosystem
 
 ---
@@ -26,13 +26,13 @@
 
 | Field                | Value                                                                                       |
 |----------------------|-----------------------------------------------------------------------------------------------|
-| **Document Title**   | Baagupadu Project Charter                                                                      |
+| **Document Title**   | Bagupadu Project Charter                                                                      |
 | **Document ID**      | BGP-CHTR-001                                                                           |
 | **Version**          | 1.0                                                                                             |
 | **Classification**   | Confidential / Internal Use Only                                                                |
 | **Distribution**     | Executive Board, Strategic Advisors, Project Leadership Team, Core Development Team, External Partners |
 | **Status**           | Pending Approval                                                                                 |
-| **Prepared By**      | Baagupadu Team                                                                                    |
+| **Prepared By**      | Bagupadu Team                                                                                    |
 | **Document Owner**   | Project Vision Holder                                                                           |
 | **Date Issued**      | June 18, 2026                                                                                    |
 | **Review Schedule**  | Weekly (Every Saturday)                                                                     |
@@ -42,7 +42,7 @@
 
 | Field                  | Value                                                              |
 |-------------------------|---------------------------------------------------------------------|
-| **Project Name**        | Baagupadu                                             |
+| **Project Name**        | Bagupadu                                             |
 | **Project Sponsor**      | Executive Sponsor                                                   |
 | **Project Vision Holder**| Project Vision Holder                                               |
 | **Project Manager**      | Project Manager                                                     |
@@ -53,7 +53,7 @@
 
 ## 1.3 Executive Summary
 
-**Baagupadu** is an AI-powered personalized mentoring ecosystem designed to help individuals—particularly **Gen Z and Millennials aged 16–30**—move past the **"Information Paradox,"** where unlimited access to content paradoxically produces decision paralysis, shallow learning, and a lack of career clarity rather than confidence and direction.
+**Bagupadu** is an AI-powered personalized mentoring ecosystem designed to help individuals—particularly **Gen Z and Millennials aged 16–30**—move past the **"Information Paradox,"** where unlimited access to content paradoxically produces decision paralysis, shallow learning, and a lack of career clarity rather than confidence and direction.
 
 At the center of the product is **Sahayam**, a conversational AI mentor with a deliberately engineered personality blend:
 
@@ -146,7 +146,7 @@ India presents a significant growth opportunity, with an estimated **250 million
 
 ### 2.4 Competitive Landscape
 
-| Competitor                       | Approach           | Weakness                          | Baagupadu's Advantage              |
+| Competitor                       | Approach           | Weakness                          | Bagupadu's Advantage              |
 |------------------------------------|---------------------|--------------------------------------|---------------------------------------|
 | Personality Tests (e.g., 16Personalities) | Static, survey-based | No depth, generic output            | Life-stage pattern recognition        |
 | AI Assistants (e.g., ChatGPT)      | Answer-based        | No memory, no accountability         | Long-term, persistent mentorship      |
@@ -157,7 +157,7 @@ India presents a significant growth opportunity, with an estimated **250 million
 
 ### 2.5 Strategic Alignment
 
-Baagupadu sits within the organization's broader AI & Digital Transformation portfolio, alongside other applied-AI initiatives. It extends the organization's track record of building AI-powered solutions for underserved engagement and accessibility gaps into the personal development and career-guidance domain, and is positioned as a foundation for a multi-module mentoring ecosystem beyond this initial release.
+Bagupadu sits within the organization's broader AI & Digital Transformation portfolio, alongside other applied-AI initiatives. It extends the organization's track record of building AI-powered solutions for underserved engagement and accessibility gaps into the personal development and career-guidance domain, and is positioned as a foundation for a multi-module mentoring ecosystem beyond this initial release.
 
 ---
 
@@ -210,7 +210,7 @@ Baagupadu sits within the organization's broader AI & Digital Transformation por
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                       Baagupadu ECOSYSTEM                       │
+│                       Bagupadu ECOSYSTEM                       │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                   │
 │  📱 GEMINI GEM (Phase 1)                                          │
@@ -769,7 +769,7 @@ The global AI Agent market is experiencing rapid growth, driven by advancements 
 
 **Source:** Industry benchmarks for educational and career guidance platforms.
 
-### 7.6 Baagupadu Budget — Using AI Agents & Agentic Workflows
+### 7.6 Bagupadu Budget — Using AI Agents & Agentic Workflows
 
 > **Note on Currency:** INR conversion assumed at approximately **₹85/USD**.
 
@@ -841,7 +841,7 @@ These examples demonstrate that the Indian market favors **low-cost, high-value 
 ---
 
 
-### Realistic Revenue Forecast — Baagupadu (Year 1 to Year 3)
+### Realistic Revenue Forecast — Bagupadu (Year 1 to Year 3)
 
 | Metric | Year 1 | Year 2 | Year 3 | Reasoning |
 |-------|-------|-------|-------|----------|
@@ -964,7 +964,7 @@ The Indian AI-powered career guidance ecosystem is still in its early stages, ch
 - **Referral and partnership-led growth**
 - **Strong market potential**, supported by India's large youth population, growing digital adoption, and increasing demand for personalized career guidance.
 
-These trends position **Baagupadu** to pursue a **sustainable, low-burn growth strategy** focused on accessibility, affordability, and long-term user engagement.
+These trends position **Bagupadu** to pursue a **sustainable, low-burn growth strategy** focused on accessibility, affordability, and long-term user engagement.
 
 
 ## SECTION 8: RISK MANAGEMENT (Revised — 6-Week Horizon)
@@ -1206,7 +1206,7 @@ A small sample size or incomplete journeys may leave important usability issues 
 
 ### Key Differentiator
 
-> **Life-stage pattern recognition + empathetic AI conversations** remain Baagupadu's unique advantage over generic career guidance tools.
+> **Life-stage pattern recognition + empathetic AI conversations** remain Bagupadu's unique advantage over generic career guidance tools.
 
 
 ### 8.4 Risk Response Timeline (6-Week Horizon)
@@ -1284,7 +1284,7 @@ WEEK 5-6: VALIDATION & LAUNCH RISKS
 
 ### Key Takeaway
 
-The **highest-priority risks** for the **6-week Baagupadu MVP timeline** are:
+The **highest-priority risks** for the **6-week Bagupadu MVP timeline** are:
 
 1. **Prompt Quality & Personality Consistency (BGP-RSK-001)**
 2. **Technical Integration Failures (BGP-RSK-002)**
@@ -1492,7 +1492,7 @@ The success of the **"Nenu Evaru?" Gemini Gem MVP** is defined by:
 
 ## SECTION 11: APPROVAL SECTION
 
-> I acknowledge that I have reviewed the Baagupadu Project Charter (Version 1.0) and agree with its contents. This document authorizes the project team to proceed with Phase 1: Foundation.
+> I acknowledge that I have reviewed the Bagupadu Project Charter (Version 1.0) and agree with its contents. This document authorizes the project team to proceed with Phase 1: Foundation.
 
 | Role | Signature | Date |
 |---|---|---|
@@ -1511,7 +1511,7 @@ The success of the **"Nenu Evaru?" Gemini Gem MVP** is defined by:
 
 | Term | Definition |
 |---|---|
-| Baagupadu | AI-powered mentoring ecosystem (Telugu: "Who Am I?") |
+| Bagupadu | AI-powered mentoring ecosystem (Telugu: "Who Am I?") |
 | Sahayam | AI mentor personality (Sanskrit/Telugu: "Companion") |
 | Nenu Evaru? | First Gemini Gem (Telugu: "Who Am I?") |
 | Persona | Synthesized understanding of who the user is |
@@ -1531,4 +1531,4 @@ The success of the **"Nenu Evaru?" Gemini Gem MVP** is defined by:
 
 ---
 
-*End of Document — Baagupadu Project Charter v1.0*
+*End of Document — Bagupadu Project Charter v1.0*

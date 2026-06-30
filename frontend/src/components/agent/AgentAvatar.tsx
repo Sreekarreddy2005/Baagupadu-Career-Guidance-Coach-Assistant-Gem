@@ -2,227 +2,201 @@
 
 import { motion, TargetAndTransition } from 'framer-motion';
 import { useChatStore } from '@/lib/store/chatStore';
-import { AgentState } from '@/types';
-import {
-  breathingAnimation,
-  listeningAnimation,
-  thinkingAnimation,
-  celebratingAnimation,
-  agentEntranceVariants,
-} from '@/lib/utils/animations';
+import { AgentState, PHASES } from '@/types';
+import { agentEntranceVariants } from '@/lib/utils/animations';
+import SahayamCharacter from './SahayamCharacter';
 
-function getBodyAnimation(state: AgentState): TargetAndTransition {
+/* ── Animation helpers ── */
+function getBodyAnim(state: AgentState): TargetAndTransition {
   switch (state) {
     case 'listening':
-      return listeningAnimation;
+      // Lean in, gentle tilt
+      return { rotate: [0, 4, 2], scale: [1, 1.05, 1.03], y: [0, 5, 2], transition: { duration: 2, repeat: Infinity, ease: 'easeInOut' as const } };
     case 'thinking':
-      return thinkingAnimation;
-    case 'celebrating':
-      return celebratingAnimation;
-    default:
-      return breathingAnimation;
-  }
-}
-
-function getGlowColors(state: AgentState) {
-  switch (state) {
-    case 'listening':
-      return ['#60A5FA', '#818CF8'];
-    case 'thinking':
-      return ['#C084FC', '#E879F9'];
+      // Tilt head, float up
+      return { rotate: [0, -6, 6, 0], y: [0, -12, -6, 0], transition: { duration: 3, repeat: Infinity, ease: 'easeInOut' as const } };
     case 'typing':
-      return ['#34D399', '#10B981'];
+      // Slight bounce
+      return { scale: [1, 1.02, 1], y: [0, -4, 0], transition: { duration: 1, repeat: Infinity, ease: 'easeInOut' as const } };
     case 'celebrating':
-      return ['#F59E0B', '#EC4899'];
+      return { scale: [1, 1.15, 1.08, 1.12, 1], rotate: [-5, 5, -3, 3, 0], transition: { duration: 0.8, ease: 'easeOut' as const } };
     case 'emphasizing':
-      return ['#EC4899', '#F43F5E'];
-    default:
-      return ['#7C3AED', '#4F46E5'];
+      // Quick lean in
+      return { scale: [1, 1.08, 1], y: [0, 4, 0], transition: { duration: 0.6, repeat: 2, ease: 'easeInOut' as const } };
+    default: // idle
+      // Gentle breathing
+      return { y: [0, -10, 0], scale: [1, 1.02, 1], transition: { duration: 5, repeat: Infinity, ease: 'easeInOut' as const } };
   }
 }
 
-function ThoughtBubble({ delay, x, text }: { delay: number; x: number; text: string }) {
+function getGlow(state: AgentState, phaseColor: string): [string, string, number] {
+  switch (state) {
+    case 'listening':   return ['#6C3CE1', '#FF6B8A', 0.6];
+    case 'thinking':   return ['#FFB84D', phaseColor, 0.7];
+    case 'typing':     return ['#6C3CE1', '#00CEC9', 0.5];
+    case 'celebrating':return ['#FFB84D', '#FF6B8A', 0.85];
+    case 'emphasizing':return ['#FF6B8A', phaseColor, 0.75];
+    default:           return [phaseColor, '#2D1B69', 0.5];
+  }
+}
+
+/* ── Thought Bubble ── */
+function ThoughtBubble({ delay, x, text, emoji }: { delay: number; x: number; text: string; emoji: string }) {
   return (
     <motion.div
-      className="absolute text-white/70 text-xs font-medium bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 pointer-events-none whitespace-nowrap"
-      style={{ left: `${x}%`, bottom: '100%' }}
+      className="absolute text-white/90 text-sm font-medium backdrop-blur-md rounded-full px-4 py-2 pointer-events-none whitespace-nowrap z-20 shadow-xl flex items-center gap-2"
+      style={{
+        left: `${x}%`,
+        bottom: '108%',
+        background: 'rgba(108,60,225,0.3)',
+        border: '1px solid rgba(108,60,225,0.4)',
+      }}
       initial={{ opacity: 0, y: 10, scale: 0.8 }}
-      animate={{ opacity: [0, 0.8, 0], y: [10, -30, -60], scale: [0.8, 1, 0.9] }}
-      transition={{ duration: 3, delay, repeat: Infinity, repeatDelay: 4 }}
+      animate={{ opacity: [0, 1, 0.8, 0], y: [10, -25, -50, -80], scale: [0.8, 1, 0.95, 0.85] }}
+      transition={{ duration: 4, delay, repeat: Infinity, repeatDelay: 3 }}
     >
-      {text}
+      <span>{emoji}</span> {text}
     </motion.div>
   );
 }
 
-const THOUGHTS = [
-  { text: 'Interesting...', x: 10, delay: 0 },
-  { text: 'Hmm, tell me more', x: 50, delay: 1.2 },
-  { text: 'I see a pattern!', x: 70, delay: 2.5 },
-];
+/* ── Sparkle burst (celebrating) ── */
+function Sparkles() {
+  const sparks = Array.from({ length: 12 }, (_, i) => ({
+    angle: (i / 12) * 360,
+    distance: 70 + Math.random() * 50,
+    delay: Math.random() * 0.4,
+  }));
+  return (
+    <div className="absolute inset-0 pointer-events-none z-30">
+      {sparks.map((s, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-2.5 h-2.5 rounded-full"
+          style={{
+            background: i % 2 === 0 ? '#FFB84D' : '#FF6B8A',
+            left: '50%', top: '30%',
+            boxShadow: '0 0 10px rgba(255,184,77,0.8)'
+          }}
+          initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+          animate={{
+            x: Math.cos((s.angle * Math.PI) / 180) * s.distance,
+            y: Math.sin((s.angle * Math.PI) / 180) * s.distance - 40,
+            opacity: 0,
+            scale: 0,
+          }}
+          transition={{ duration: 1, delay: s.delay, ease: 'easeOut' as const }}
+        />
+      ))}
+    </div>
+  );
+}
 
-export default function AgentAvatar() {
-  const { agentState } = useChatStore();
-  const [glowA, glowB] = getGlowColors(agentState);
-  const bodyAnim = getBodyAnimation(agentState);
+/* ── Main Avatar ── */
+export default function AgentAvatar({ size = 'full' }: { size?: 'full' | 'sm' }) {
+  const { agentState, currentPhase } = useChatStore();
+  const phaseConfig = PHASES.find((p) => p.id === currentPhase) ?? PHASES[0];
+  
+  const [glowA, glowB, glowOpacity] = getGlow(agentState, phaseConfig.moodColor);
+  const isSm = size === 'sm';
+
+  const thoughts = [
+    { text: 'Listening deeply...', x: 5, delay: 0, emoji: '👂' },
+    { text: 'Understanding...', x: 45, delay: 1.5, emoji: '🧠' },
+    { text: 'Reflecting...', x: 68, delay: 3, emoji: '💭' },
+  ];
 
   return (
     <motion.div
-      className="relative flex items-center justify-center select-none"
+      className={`relative flex flex-col items-center select-none ${isSm ? '' : 'pb-10 pt-4'}`}
       variants={agentEntranceVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Thought bubbles (only when thinking) */}
-      {agentState === 'thinking' &&
-        THOUGHTS.map((t) => (
-          <ThoughtBubble key={t.text} text={t.text} x={t.x} delay={t.delay} />
-        ))}
+      {/* Thought bubbles */}
+      {agentState === 'thinking' && !isSm && (
+        <div className="relative w-full">
+          {thoughts.map((t) => (
+            <ThoughtBubble key={t.text} text={t.text} x={t.x} delay={t.delay} emoji={t.emoji} />
+          ))}
+        </div>
+      )}
 
-      {/* Outer glow ring */}
+      {/* Sparkle burst on celebration */}
+      {agentState === 'celebrating' && !isSm && <Sparkles />}
+
+      {/* ── Outer ambient glow ── */}
       <motion.div
-        className="absolute rounded-full blur-3xl opacity-40"
+        className="absolute rounded-full pointer-events-none"
         style={{
-          width: '120%',
-          height: '120%',
-          background: `radial-gradient(circle, ${glowA}, ${glowB}, transparent 70%)`,
+          width: isSm ? '140%' : '140%',
+          height: isSm ? '140%' : '140%',
+          background: `radial-gradient(circle, ${glowA}55 0%, ${glowB}22 50%, transparent 75%)`,
+          filter: 'blur(35px)',
+          zIndex: 0,
         }}
-        animate={{ scale: [1, 1.08, 1], opacity: [0.3, 0.5, 0.3] }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        animate={{ scale: [1, 1.15, 1], opacity: [glowOpacity * 0.7, glowOpacity, glowOpacity * 0.7] }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' as const }}
       />
 
-      {/* Main agent body */}
+      {/* ── Secondary inner glow ring ── */}
       <motion.div
-        className="relative z-10"
-        animate={bodyAnim}
+        className="absolute rounded-full pointer-events-none"
+        style={{
+          width: '95%', height: '95%',
+          border: `1.5px solid ${glowA}66`,
+          filter: `drop-shadow(0 0 16px ${glowA}90)`,
+          zIndex: 1,
+        }}
+        animate={{ scale: [1, 1.08, 1], opacity: [0.4, 0.9, 0.4] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' as const }}
+      />
+
+      {/* ── Agent body ── */}
+      <motion.div
+        className="relative z-10 w-full flex items-center justify-center"
       >
-        <svg
-          viewBox="0 0 260 320"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full drop-shadow-2xl"
+        <SahayamCharacter mode={isSm ? 'sidebar' : 'hero'} />
+      </motion.div>
+
+      {/* ── Dynamic State & Phase Label ── */}
+      {!isSm && (
+        <motion.div
+          key={agentState + currentPhase}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mt-6 flex flex-col items-center gap-1.5"
         >
-          <defs>
-            <radialGradient id="bodyGrad" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stopColor="#818CF8" />
-              <stop offset="50%" stopColor="#7C3AED" />
-              <stop offset="100%" stopColor="#4F46E5" />
-            </radialGradient>
-            <radialGradient id="headGrad" cx="50%" cy="35%" r="60%">
-              <stop offset="0%" stopColor="#A78BFA" />
-              <stop offset="60%" stopColor="#7C3AED" />
-              <stop offset="100%" stopColor="#6D28D9" />
-            </radialGradient>
-            <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor={glowA} stopOpacity="0.6" />
-              <stop offset="100%" stopColor={glowB} stopOpacity="0" />
-            </radialGradient>
-            <filter id="softGlow">
-              <feGaussianBlur stdDeviation="4" result="coloredBlur" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          {/* Glow halo */}
-          <ellipse cx="130" cy="160" rx="110" ry="130" fill="url(#glowGrad)" />
-
-          {/* Body */}
-          <rect x="60" y="170" width="140" height="110" rx="30" fill="url(#bodyGrad)" />
-
-          {/* Neck */}
-          <rect x="110" y="155" width="40" height="25" rx="10" fill="#6D28D9" />
-
-          {/* Head */}
-          <ellipse cx="130" cy="130" rx="70" ry="65" fill="url(#headGrad)" filter="url(#softGlow)" />
-
-          {/* Eyes */}
-          {agentState === 'thinking' ? (
-            <>
-              {/* Squinting thinking eyes */}
-              <ellipse cx="104" cy="122" rx="14" ry="8" fill="white" opacity="0.95" />
-              <ellipse cx="156" cy="122" rx="14" ry="8" fill="white" opacity="0.95" />
-              <ellipse cx="106" cy="122" rx="7" ry="5" fill="#1E1B4B" />
-              <ellipse cx="158" cy="122" rx="7" ry="5" fill="#1E1B4B" />
-            </>
-          ) : agentState === 'listening' ? (
-            <>
-              {/* Wide open listening eyes */}
-              <ellipse cx="104" cy="120" rx="16" ry="18" fill="white" opacity="0.95" />
-              <ellipse cx="156" cy="120" rx="16" ry="18" fill="white" opacity="0.95" />
-              <ellipse cx="106" cy="121" rx="9" ry="11" fill="#1E1B4B" />
-              <ellipse cx="158" cy="121" rx="9" ry="11" fill="#1E1B4B" />
-              <circle cx="109" cy="118" r="3" fill="white" opacity="0.8" />
-              <circle cx="161" cy="118" r="3" fill="white" opacity="0.8" />
-            </>
-          ) : agentState === 'celebrating' ? (
-            <>
-              {/* Happy curved eyes */}
-              <path d="M 90 122 Q 104 110 118 122" stroke="white" strokeWidth="4" fill="none" strokeLinecap="round" />
-              <path d="M 142 122 Q 156 110 170 122" stroke="white" strokeWidth="4" fill="none" strokeLinecap="round" />
-            </>
-          ) : (
-            <>
-              {/* Default calm eyes */}
-              <ellipse cx="104" cy="122" rx="15" ry="16" fill="white" opacity="0.95" />
-              <ellipse cx="156" cy="122" rx="15" ry="16" fill="white" opacity="0.95" />
-              <ellipse cx="106" cy="123" rx="8" ry="9" fill="#1E1B4B" />
-              <ellipse cx="158" cy="123" rx="8" ry="9" fill="#1E1B4B" />
-              {/* Pupils shine */}
-              <circle cx="109" cy="120" r="2.5" fill="white" opacity="0.9" />
-              <circle cx="161" cy="120" r="2.5" fill="white" opacity="0.9" />
-            </>
+          {/* Action State */}
+          {agentState !== 'idle' && (
+            <div 
+              className="text-xs font-bold tracking-widest uppercase flex items-center gap-1.5 px-3 py-1 rounded-full"
+              style={{ color: glowA, backgroundColor: `${glowA}1A`, border: `1px solid ${glowA}40` }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+              {agentState === 'listening' ? 'Listening...' : 
+               agentState === 'thinking' ? 'Understanding...' : 
+               agentState === 'typing' ? 'Responding...' : 
+               agentState === 'celebrating' ? 'Celebrating!' : 'Present'}
+            </div>
           )}
-
-          {/* Subtle smile */}
-          <path
-            d={agentState === 'celebrating' ? 'M 108 148 Q 130 165 152 148' : 'M 112 148 Q 130 158 148 148'}
-            stroke="white"
-            strokeWidth="3"
-            fill="none"
-            strokeLinecap="round"
-            opacity="0.8"
-          />
-
-          {/* Body details — subtle lines */}
-          <rect x="100" y="195" width="60" height="8" rx="4" fill="white" opacity="0.1" />
-          <rect x="88" y="212" width="84" height="8" rx="4" fill="white" opacity="0.08" />
-
-          {/* Arms */}
-          <rect x="18" y="175" width="42" height="72" rx="21" fill="url(#bodyGrad)" />
-          <rect x="200" y="175" width="42" height="72" rx="21" fill="url(#bodyGrad)" />
-
-          {/* Ears / side nodes */}
-          <circle cx="60" cy="130" r="10" fill="#6D28D9" />
-          <circle cx="200" cy="130" r="10" fill="#6D28D9" />
-          <circle cx="60" cy="130" r="5" fill={glowA} opacity="0.8" />
-          <circle cx="200" cy="130" r="5" fill={glowA} opacity="0.8" />
-        </svg>
-      </motion.div>
-
-      {/* State label */}
-      <motion.div
-        className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium tracking-widest uppercase"
-        style={{ color: glowA }}
-        key={agentState}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.7 }}
-        transition={{ duration: 0.4 }}
-      >
-        {agentState === 'idle'
-          ? 'Present'
-          : agentState === 'listening'
-          ? 'Listening...'
-          : agentState === 'thinking'
-          ? 'Thinking...'
-          : agentState === 'typing'
-          ? 'Responding...'
-          : agentState === 'celebrating'
-          ? 'Celebrating! 🎉'
-          : ''}
-      </motion.div>
+          
+          {/* Phase Mood */}
+          <div 
+            className="text-sm font-medium flex items-center gap-2 px-4 py-1.5 rounded-full shadow-lg"
+            style={{ 
+              background: 'rgba(255,255,255,0.05)', 
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              color: phaseConfig.moodColor
+            }}
+          >
+            <span>{phaseConfig.agentEmoji}</span>
+            <span>{phaseConfig.agentMood}</span>
+          </div>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

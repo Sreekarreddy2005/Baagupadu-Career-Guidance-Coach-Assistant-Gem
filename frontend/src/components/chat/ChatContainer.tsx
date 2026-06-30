@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Send, Mic, MicOff } from 'lucide-react';
+import { Mic, MicOff, Paperclip } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import TypingIndicator from './TypingIndicator';
 import PhaseProgress from './PhaseProgress';
@@ -14,21 +14,21 @@ export default function ChatContainer() {
   const { sendMessage } = useDemoChat();
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isTyping = agentState === 'typing' || agentState === 'thinking';
+  const hasInput = input.trim().length > 0;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
   const handleSend = () => {
-    if (!input.trim() || isTyping) return;
+    if (!hasInput || isTyping) return;
     sendMessage(input.trim());
     setInput('');
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-    }
+    if (textareaRef.current) textareaRef.current.style.height = 'auto';
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -38,92 +38,98 @@ export default function ChatContainer() {
     }
   };
 
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     e.target.style.height = 'auto';
-    e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+    e.target.style.height = `${Math.min(e.target.scrollHeight, 110)}px`;
   };
 
   return (
     <div className="flex flex-col h-full">
-      {/* Phase progress header */}
-      <div className="px-4 pt-4 pb-3 border-b border-white/5 flex-shrink-0">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider">
-            Your Journey
-          </h3>
-        </div>
+
+      {/* ── Phase progress header ── */}
+      <div
+        className="px-5 pt-5 pb-4 flex-shrink-0"
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+      >
         <PhaseProgress />
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10">
+      {/* ── Message list ── */}
+      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3 scrollbar-thin">
         <AnimatePresence initial={false}>
           {messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} />
           ))}
         </AnimatePresence>
 
-        {isTyping && (
-          <motion.div
-            key="typing"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-          >
-            <TypingIndicator />
-          </motion.div>
-        )}
-        <div ref={bottomRef} />
+        <AnimatePresence>
+          {isTyping && (
+            <motion.div
+              key="typing"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25 }}
+            >
+              <TypingIndicator />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div ref={bottomRef} className="h-2" />
       </div>
 
-      {/* Input area */}
-      <div className="flex-shrink-0 p-4 border-t border-white/5">
-        <div className="relative flex items-end gap-3">
+      {/* ── Input area ── */}
+      <div className="flex-shrink-0 p-4 border-t border-black/5">
+        <motion.div
+          className="relative flex items-end gap-2.5 rounded-2xl p-2 transition-all duration-300 bg-white border border-black/10 shadow-sm"
+          animate={isFocused ? {
+            borderColor: 'var(--color-secondary)',
+            boxShadow: '0 0 0 2px rgba(99,102,241,0.2)',
+          } : {}}
+        >
           {/* Textarea */}
-          <div className="flex-1 relative">
-            <textarea
-              ref={textareaRef}
-              value={input}
-              onChange={handleTextareaChange}
-              onKeyDown={handleKeyDown}
-              placeholder="Share your thoughts with Sahayam..."
-              rows={1}
-              className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3.5 text-white placeholder-white/25 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/40 transition-all duration-200 scrollbar-hide leading-relaxed"
-              style={{ minHeight: '52px', maxHeight: '120px' }}
-            />
-          </div>
+          <textarea
+            ref={textareaRef}
+            value={input}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder="Type your message..."
+            rows={1}
+            className="flex-1 bg-transparent text-[var(--color-text)] placeholder-[var(--color-text-muted)] text-sm resize-none focus:outline-none leading-relaxed py-2 px-3 scrollbar-hide"
+            style={{ minHeight: '40px', maxHeight: '110px' }}
+          />
+
+          {/* Paperclip */}
+          <button className="flex-shrink-0 p-2 text-[var(--color-text-muted)] hover:text-[var(--color-secondary)] transition-colors">
+            <Paperclip className="w-5 h-5" />
+          </button>
 
           {/* Voice button */}
           <button
             onClick={() => setIsRecording((p) => !p)}
-            aria-label="Toggle voice input"
-            className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 ${
-              isRecording
-                ? 'bg-rose-500 shadow-lg shadow-rose-500/40'
-                : 'bg-white/5 border border-white/10 hover:bg-white/10'
+            className={`flex-shrink-0 p-2 transition-colors ${
+              isRecording ? 'text-red-500' : 'text-[var(--color-text-muted)] hover:text-[var(--color-secondary)]'
             }`}
           >
-            {isRecording ? (
-              <MicOff className="w-5 h-5 text-white" />
-            ) : (
-              <Mic className="w-5 h-5 text-white/60" />
-            )}
+            {isRecording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
           </button>
 
           {/* Send button */}
-          <motion.button
+          <button
             onClick={handleSend}
-            disabled={!input.trim() || isTyping}
-            aria-label="Send message"
-            whileTap={{ scale: 0.93 }}
-            className="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+            disabled={!hasInput || isTyping}
+            className="flex-shrink-0 bg-blue-500 hover:bg-blue-600 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-500/20"
           >
-            <Send className="w-5 h-5 text-white" />
-          </motion.button>
-        </div>
-        <p className="text-white/20 text-xs mt-2 text-center">
-          Press Enter to send · Shift+Enter for newline
+            Send
+          </button>
+        </motion.div>
+
+        {/* Hint */}
+        <p className="text-center text-[var(--color-text-muted)] opacity-60 text-[11px] mt-2">
+          Enter to send · Shift+Enter for newline
         </p>
       </div>
     </div>
