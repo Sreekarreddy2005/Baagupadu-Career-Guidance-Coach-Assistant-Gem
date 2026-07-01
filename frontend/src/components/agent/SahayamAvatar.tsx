@@ -112,8 +112,8 @@ export default function SahayamAvatar({ agentState = 'idle', isSm = false }: Sah
         shadow-mapSize-height={1024}
       />
       
-      {/* Environment for beautiful premium reflections */}
-      <Environment preset="studio" blur={0.5} />
+      {/* Replaced Environment preset with a fallback rim light to avoid network fetch errors */}
+      <directionalLight position={[-2, 0, -3]} intensity={0.5} color="#A5B4FC" />
 
       <Suspense fallback={null}>
         <AvatarModel state={agentState} isSm={isSm} />

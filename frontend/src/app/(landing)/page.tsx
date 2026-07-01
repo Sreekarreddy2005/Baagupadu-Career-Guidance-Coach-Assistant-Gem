@@ -8,6 +8,7 @@ import { containerVariants, slideUpVariants } from '@/lib/utils/animations';
 import SahayamCharacter from '@/components/agent/SahayamCharacter';
 import AuraOverlay from '@/components/agent/AuraOverlay';
 import Hero3DAvatar from '@/components/agent/Hero3DAvatar';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 const FEATURES = [
   { icon: <Brain className="w-8 h-8 text-[#FF6B8A]" />, title: 'Deep Self-Discovery', desc: 'We explore your foundational years—childhood (0-12) to uncover your core emotional blueprint, and teenage years (13-19) to map your identity and values.' },
@@ -62,6 +63,7 @@ export default function LandingPage() {
             </div>
             
             <div className="flex items-center gap-4">
+              <ThemeToggle />
               <Link href="#" className="hidden sm:block text-[var(--color-text-muted)] font-medium text-sm hover:text-[var(--color-text)] transition-colors">Login</Link>
               <Link href="/chat">
                 <button className="px-5 py-2 rounded-full border border-[var(--color-secondary)] text-[var(--color-secondary)] font-medium text-sm hover:bg-[var(--color-secondary)] hover:text-white transition-colors">
@@ -71,9 +73,8 @@ export default function LandingPage() {
             </div>
           </motion.nav>
 
-          {/* Hero Section */}
           <div className="flex flex-col lg:flex-row items-center justify-between gap-12 mb-32 px-4 md:px-8 text-left">
-            <div className="flex-1 max-w-2xl">
+            <div className="flex-1 max-w-xl">
               <motion.div
                 variants={slideUpVariants}
                 className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-indigo-50/80 backdrop-blur-sm border border-[var(--color-secondary)]/30 text-[var(--color-secondary)] font-bold text-[11px] uppercase tracking-widest mb-6 shadow-sm"
@@ -117,7 +118,7 @@ export default function LandingPage() {
               </motion.div>
             </div>
             
-            <div className="flex-1 w-full flex justify-center lg:justify-end relative">
+            <div className="flex-1 w-full flex justify-center lg:justify-end relative lg:translate-x-12">
               <motion.div variants={slideUpVariants} className="w-full max-w-[500px] aspect-square relative z-10">
                 <Hero3DAvatar />
               </motion.div>

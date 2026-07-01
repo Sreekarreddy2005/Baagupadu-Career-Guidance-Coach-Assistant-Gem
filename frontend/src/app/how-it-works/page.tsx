@@ -6,6 +6,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Sparkles, ArrowRight, Layers, Fingerprint, MapPin, Compass, Search, Target } from 'lucide-react';
 import AnimatedBackground from '@/components/ui/AnimatedBackground';
 import { containerVariants, slideUpVariants } from '@/lib/utils/animations';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 const PHASES = [
   {
@@ -112,6 +113,7 @@ export default function HowItWorksPage() {
             </div>
             
             <div className="flex items-center gap-4">
+              <ThemeToggle />
               <Link href="/chat">
                 <button className="px-5 py-2 rounded-full bg-[var(--color-secondary)] text-white font-medium text-sm hover:bg-[#4f51c7] transition-colors shadow-lg">
                   Start Now

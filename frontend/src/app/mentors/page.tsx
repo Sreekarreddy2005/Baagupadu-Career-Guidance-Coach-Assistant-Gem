@@ -6,6 +6,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Sparkles, ArrowRight, Heart, Brain, Compass, Target, BookOpen, ChevronRight } from 'lucide-react';
 import AnimatedBackground from '@/components/ui/AnimatedBackground';
 import { containerVariants, slideUpVariants } from '@/lib/utils/animations';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 const TRAITS = [
   { label: 'Close Friend', percentage: 40, color: '#FF6B8A', icon: <Heart className="w-5 h-5 text-white" />, desc: 'Offers empathy, non-judgmental support, and psychological safety.' },
@@ -58,6 +59,7 @@ export default function MentorsPage() {
             </div>
             
             <div className="flex items-center gap-4">
+              <ThemeToggle />
               <Link href="/chat">
                 <button className="px-5 py-2 rounded-full bg-[var(--color-secondary)] text-white font-medium text-sm hover:bg-[#4f51c7] transition-colors shadow-lg">
                   Start Now

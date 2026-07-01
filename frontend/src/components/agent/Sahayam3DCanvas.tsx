@@ -110,7 +110,8 @@ export default function Sahayam3DCanvas(props: Sahayam3DCanvasProps) {
         <directionalLight position={[10, 10, 5]} intensity={1.5} color="#FDFBF7" />
         <pointLight position={[-10, -10, -5]} intensity={1} color={props.moodColor || '#6366F1'} />
         
-        <Environment preset="city" />
+        {/* Replaced Environment preset with a fallback rim light to avoid network fetch errors */}
+        <directionalLight position={[-3, -5, -4]} intensity={0.5} color="#A5B4FC" />
         
         <SahayamModel {...props} />
         

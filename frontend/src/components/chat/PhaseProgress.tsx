@@ -12,10 +12,9 @@ export default function PhaseProgress() {
     <div className="w-full pt-4 pb-8">
       <div className="flex items-center relative max-w-3xl mx-auto">
         {ACTIVE_PHASES.map((phase, idx) => {
-          // Forcing step 3 ('teenage') active to match requirements
-          // You can change this to use `completedPhases` and `currentPhase` dynamically
-          const isDone = idx < 2; // Trust, Childhood are done
-          const isCurrent = idx === 2; // Teenage is current (Step 3)
+          const currentIdx = ACTIVE_PHASES.findIndex(p => p.id === currentPhase);
+          const isDone = idx < currentIdx || completedPhases.includes(phase.id);
+          const isCurrent = phase.id === currentPhase;
           
           const nodeBg = isCurrent ? '#3B82F6' : 'white';
           const nodeBorder = isCurrent ? '#3B82F6' : '#E2E8F0';

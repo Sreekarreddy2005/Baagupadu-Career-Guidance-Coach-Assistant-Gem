@@ -1,15 +1,17 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
 import AnimatedBackground from '@/components/ui/AnimatedBackground';
 import AgentAvatar from '@/components/agent/AgentAvatar';
 import ChatContainer from '@/components/chat/ChatContainer';
 import PersonaVisualization from '@/components/visualization/PersonaVisualization';
 import { useChatStore } from '@/lib/store/chatStore';
 import { PHASES } from '@/types';
-import { Sparkles, LayoutDashboard, MessageSquare, Wrench, Map as MapIcon, Settings } from 'lucide-react';
+import { Sparkles, LayoutDashboard, MessageSquare, Wrench, Map as MapIcon, Settings, RefreshCw } from 'lucide-react';
 import Sidebar3DAvatar from '@/components/agent/Sidebar3DAvatar';
 import CareerRoadmap from '@/components/visualization/CareerRoadmap';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 export default function ChatPage() {
   const { currentPhase, showVisualization, agentState } = useChatStore();
@@ -27,11 +29,14 @@ export default function ChatPage() {
       <div className="min-h-screen flex overflow-hidden bg-background" style={{ height: '100dvh' }}>
         {/* ── Left Sidebar (Column 1) ── */}
         <aside className="hidden lg:flex flex-col w-64 flex-shrink-0 bg-white border-r border-black/5 p-6 z-10 shadow-sm relative">
-          <div className="flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-[var(--color-secondary)] to-[#818CF8]">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-[16px] text-[var(--color-text)]">Baagupadu</span>
+          <div className="flex items-center justify-between mb-8">
+            <Link href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-[var(--color-secondary)] to-[#818CF8]">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-bold text-[16px] text-[var(--color-text)]">Baagupadu</span>
+            </Link>
+            <ThemeToggle />
           </div>
 
           <div className="flex-1 overflow-y-auto scrollbar-hide flex flex-col items-center">
@@ -77,6 +82,20 @@ export default function ChatPage() {
                 </button>
               ))}
             </nav>
+            
+            <div className="w-full mt-8 pt-6 border-t border-black/5">
+              <button
+                onClick={() => {
+                  if (confirm('Are you sure you want to restart your journey? All chat history will be lost.')) {
+                    useChatStore.getState().clearMessages();
+                  }
+                }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors font-medium text-sm"
+              >
+                <RefreshCw size={16} />
+                Restart Journey
+              </button>
+            </div>
           </div>
         </aside>
 

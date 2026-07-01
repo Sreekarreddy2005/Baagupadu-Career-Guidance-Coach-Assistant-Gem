@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { ChatMessage, AgentState, Phase, PersonaResult } from '@/types';
 
 interface ChatStore {
@@ -28,41 +29,61 @@ const INITIAL_MESSAGE: ChatMessage = {
   phase: 'idle',
 };
 
-export const useChatStore = create<ChatStore>((set) => ({
-  messages: [INITIAL_MESSAGE],
-  agentState: 'idle',
-  currentPhase: 'idle',
-  completedPhases: [],
-  isOpen: true,
-  personaResult: null,
-  showVisualization: false,
+export const useChatStore = create<ChatStore>()(
+  persist(
+    (set) => ({
+      messages: [INITIAL_MESSAGE],
+      agentState: 'idle',
+      currentPhase: 'trust',
+      completedPhases: [],
+      isOpen: true,
+      personaResult: null,
+      showVisualization: false,
 
-  addMessage: (msg) =>
-    set((state) => ({
-      messages: [
-        ...state.messages,
-        {
-          ...msg,
-          id: `msg-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-          timestamp: Date.now(),
-        },
-      ],
-    })),
+      addMessage: (msg) =>
+        set((state) => ({
+          messages: [
+            ...state.messages,
+            {
+              ...msg,
+              id: `msg-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+              timestamp: Date.now(),
+            },
+          ],
+        })),
 
-  setAgentState: (agentState) => set({ agentState }),
+      setAgentState: (agentState) => set({ agentState }),
 
-  setPhase: (currentPhase) => set({ currentPhase }),
+      setPhase: (currentPhase) => set({ currentPhase }),
 
-  completePhase: (phase) =>
-    set((state) => ({
-      completedPhases: state.completedPhases.includes(phase)
-        ? state.completedPhases
-        : [...state.completedPhases, phase],
-    })),
+      completePhase: (phase) =>
+        set((state) => ({
+          completedPhases: state.completedPhases.includes(phase)
+            ? state.completedPhases
+            : [...state.completedPhases, phase],
+        })),
 
-  setPersonaResult: (personaResult) => set({ personaResult }),
+      setPersonaResult: (personaResult) => set({ personaResult }),
 
-  setShowVisualization: (showVisualization) => set({ showVisualization }),
+      setShowVisualization: (showVisualization) => set({ showVisualization }),
 
-  clearMessages: () => set({ messages: [INITIAL_MESSAGE] }),
-}));
+      clearMessages: () => set({ 
+        messages: [INITIAL_MESSAGE], 
+        currentPhase: 'trust', 
+        completedPhases: [],
+        agentState: 'idle',
+        showVisualization: false,
+        personaResult: null,
+      }),
+    }),
+    {
+      name: 'baagupadu-chat-session',
+      partialize: (state) => ({
+        messages: state.messages,
+        currentPhase: state.currentPhase,
+        completedPhases: state.completedPhases,
+        personaResult: state.personaResult,
+      }),
+    }
+  )
+);

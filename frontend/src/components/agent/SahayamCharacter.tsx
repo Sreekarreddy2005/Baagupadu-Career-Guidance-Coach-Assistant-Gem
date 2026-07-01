@@ -110,7 +110,7 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
       <a.group position={[0, 1.7, 0]} rotation={fastSprings.headRot as any}>
         <mesh>
           <sphereGeometry args={[0.7, 64, 64]} />
-          <meshPhysicalMaterial color="#FFFFFF" roughness={0.1} metalness={0.1} clearcoat={1.0} />
+          <meshPhysicalMaterial color="#A5B4FC" roughness={0.1} metalness={0.1} clearcoat={1.0} />
         </mesh>
 
         <mesh position={[0, 0.05, 0.48]} rotation={[Math.PI / 2, 0, Math.PI / 2]}>
@@ -226,10 +226,11 @@ export default function SahayamCharacter({ mode = 'sidebar' }: Props) {
       }}
       shadows
     >
-      <ambientLight intensity={0.6} color="#FFF5E1" />
-      <directionalLight position={[3, 5, 4]} intensity={1.5} color="#FFF5E1" castShadow />
+      <ambientLight intensity={1.5} color="#FFFFFF" />
+      <directionalLight position={[3, 5, 4]} intensity={1.5} color="#FFFFFF" castShadow />
       
-      <Environment preset="city" blur={0.2} />
+      {/* Replaced Environment preset with a fallback rim light to avoid network fetch errors */}
+      <directionalLight position={[-3, -5, -4]} intensity={0.5} color="#A5B4FC" />
       
       <ProceduralBot mode={mode} />
       
