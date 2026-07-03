@@ -761,7 +761,7 @@ The Childhood Exploration Phase is complete when:
 - [Question 1]
 - [Question 2]
 
-## 8.3 How to Present the Persona
+### 8.3 How to Present the Persona
 
 Do **NOT** present the persona as a **"diagnosis"**, **"assessment"**, **"analysis report"**, or **"psychological profile."**
 
@@ -793,100 +793,7 @@ The goal is for the user to feel **understood**, **seen**, and **curious**, rath
 
 ---
 
-## 📄 Correction 4: `childhood_questions.json`
 
-### Add Root-Cause Discovery Category (As Fallback)
-
-```json
-{
-  "category": "root_cause_discovery",
-  "name": "Root-Cause Discovery & Core Memories",
-  "description": "Understanding formative experiences that continue to influence the user today",
-  "source": "Custom (based on psychological reflection)",
-  "questions": [
-    {
-      "id": "root_001",
-      "direct_question": "What is the happiest memory from your childhood?",
-      "purpose": "Identifying core positive experiences",
-      "tone": "affectionate",
-      "transformation_rule": "storytelling",
-      "story_hook": "Tell me about a time when you felt pure joy."
-    },
-    {
-      "id": "root_002",
-      "direct_question": "What is the strongest memory from your childhood?",
-      "purpose": "Identifying most impactful experiences",
-      "tone": "reflective",
-      "transformation_rule": "storytelling",
-      "story_hook": "Tell me about a memory that has stayed with you."
-    },
-    {
-      "id": "root_003",
-      "direct_question": "What made you feel loved as a child?",
-      "purpose": "Understanding love language and security",
-      "tone": "affectionate",
-      "transformation_rule": "memory_recall",
-      "memory_hook": "Think about a time when you felt truly loved."
-    },
-    {
-      "id": "root_004",
-      "direct_question": "What made you feel afraid?",
-      "purpose": "Revealing fear patterns and early anxieties",
-      "tone": "gentle",
-      "transformation_rule": "memory_recall",
-      "memory_hook": "Think about a time when you were really scared."
-    },
-    {
-      "id": "root_005",
-      "direct_question": "What made you feel proud?",
-      "purpose": "Identifying sources of pride and validation",
-      "tone": "affectionate",
-      "transformation_rule": "storytelling",
-      "story_hook": "Tell me about a time when you felt really proud of yourself."
-    },
-    {
-      "id": "root_006",
-      "direct_question": "What made you feel embarrassed?",
-      "purpose": "Revealing vulnerability and social fear",
-      "tone": "gentle",
-      "transformation_rule": "memory_recall",
-      "memory_hook": "Think about a time when you felt embarrassed."
-    },
-    {
-      "id": "root_007",
-      "direct_question": "What did adults praise you for most?",
-      "purpose": "Understanding externally validated strengths",
-      "tone": "reflective",
-      "transformation_rule": "memory_recall",
-      "memory_hook": "Think about what people said you were good at."
-    },
-    {
-      "id": "root_008",
-      "direct_question": "What did adults criticize you for most?",
-      "purpose": "Understanding core perceived weaknesses",
-      "tone": "gentle",
-      "transformation_rule": "memory_recall",
-      "memory_hook": "Think about what people said you needed to work on."
-    },
-    {
-      "id": "root_009",
-      "direct_question": "What do you think shaped your confidence at that age?",
-      "purpose": "Understanding origins of self-belief",
-      "tone": "reflective",
-      "transformation_rule": "memory_recall",
-      "memory_hook": "Think about what made you feel capable or unsure."
-    },
-    {
-      "id": "root_010",
-      "direct_question": "What part of your childhood still influences you today?",
-      "purpose": "Connecting past to present and current identity",
-      "tone": "reflective",
-      "transformation_rule": "storytelling",
-      "story_hook": "Tell me about something from childhood that still affects you."
-    }
-  ]
-}
-```
 ---
 
 ## 10. Example Full Conversation Flow
