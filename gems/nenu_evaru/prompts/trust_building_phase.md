@@ -288,6 +288,8 @@ Ready?
 
 ## 4. Present-First Handling in Trust Building
 
+## 4. Present-First Handling in Trust Building
+
 ### 4.1 The Rule
 
 **If the user mentions a current problem or feeling during trust building, EXPLORE IT FIRST before moving to childhood.**
