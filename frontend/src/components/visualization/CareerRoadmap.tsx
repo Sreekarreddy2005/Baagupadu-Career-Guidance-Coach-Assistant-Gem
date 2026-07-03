@@ -55,14 +55,14 @@ export default function CareerRoadmap() {
             />
             {/* Glowing active path */}
             <motion.path
-              d="M 10 0 C 10 50, 80 50, 80 100 C 80 150, 10 150, 10 200"
+              d="M 10 0 C 10 50, 80 50, 80 100 C 80 150, 10 150, 10 200 C 10 250, 80 250, 80 300 C 80 350, 10 350, 10 400 C 10 450, 80 450, 80 500"
               fill="transparent"
-              stroke="#00CEC9"
+              stroke="var(--color-secondary)"
               strokeWidth="4"
-              style={{ filter: 'drop-shadow(0 0 8px rgba(0,206,201,0.8))' }}
+              style={{ filter: 'drop-shadow(0 0 10px rgba(99,102,241,0.8))' }}
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 2, ease: "easeInOut" }}
+              transition={{ duration: 4, ease: "easeInOut" }}
             />
           </svg>
         </div>
@@ -75,22 +75,22 @@ export default function CareerRoadmap() {
           let shadow = 'none';
           
           if (step.status === 'active') {
-            nodeBg = 'rgba(0,206,201,0.2)';
-            nodeBorder = '#00CEC9';
-            shadow = '0 0 20px rgba(0,206,201,0.5)';
+            nodeBg = 'rgba(99,102,241,0.2)';
+            nodeBorder = 'var(--color-secondary)';
+            shadow = '0 0 20px rgba(99,102,241,0.5)';
           } else if (step.status === 'goal') {
-            nodeBg = 'rgba(16,185,129,0.2)';
-            nodeBorder = '#10B981';
-            shadow = '0 0 20px rgba(16,185,129,0.4)';
+            nodeBg = 'rgba(74,222,128,0.2)';
+            nodeBorder = '#4ADE80';
+            shadow = '0 0 20px rgba(74,222,128,0.4)';
           }
 
           return (
             <motion.div
               key={step.key}
               className={`flex items-center gap-4 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}
-              initial={{ opacity: 0, x: isLeft ? -20 : 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 + idx * 0.15 }}
+              initial={{ opacity: 0, scale: 0.8, x: isLeft ? -20 : 20 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{ delay: 1 + idx * 0.6, type: "spring" }}
             >
               {/* Icon Node */}
               <div

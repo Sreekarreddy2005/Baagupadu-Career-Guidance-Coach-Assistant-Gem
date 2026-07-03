@@ -13,6 +13,8 @@ interface Props {
 function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
   const { viewport } = useThree();
   const mainGroupRef = useRef<THREE.Group>(null);
+  const eyesGroupRef = useRef<THREE.Group>(null);
+  const mouthRef = useRef<THREE.Mesh>(null);
 
   // Dynamic Proportional Fit
   let scale = 1.0;
@@ -32,7 +34,7 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
     armRRot: [0, 0, 0] as [number, number, number],
     legLRot: [0, 0, 0] as [number, number, number],
     legRRot: [0, 0, 0] as [number, number, number],
-    config: { mass: 2, tension: 120, friction: 30 } // Much floatier
+    config: { mass: 2, tension: 120, friction: 30 }
   }));
 
   // Slow Drag Spring for forearms & calves (Fleshy Lag effect)
@@ -41,7 +43,7 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
     forearmRRot: [0, 0, 0] as [number, number, number],
     calfLRot: [0, 0, 0] as [number, number, number],
     calfRRot: [0, 0, 0] as [number, number, number],
-    config: { mass: 3, tension: 80, friction: 40 } // Extreme drag
+    config: { mass: 3, tension: 80, friction: 40 }
   }));
 
   useFrame((state, delta) => {
@@ -50,46 +52,67 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
     const py = state.pointer.y;
 
     if (mainGroupRef.current) {
+      // Breathing vertical oscillation
       const baseY = (mode === 'dashboard' ? -0.8 : -0.5) + Math.sin(t * 1.5) * 0.05;
       mainGroupRef.current.position.y = THREE.MathUtils.lerp(mainGroupRef.current.position.y, baseY, 5 * delta);
     }
+    
+    if (eyesGroupRef.current) {
+      // Blinking animation
+      const blinkCycle = t % 4; // blink every 4 seconds
+      const isBlinking = blinkCycle > 3.8;
+      const blinkScale = isBlinking ? 0.1 : 1.0;
+      eyesGroupRef.current.scale.y = THREE.MathUtils.lerp(eyesGroupRef.current.scale.y, blinkScale, 15 * delta);
+      
+      // Eye tracking (pupils follow mouse slightly more than head)
+      eyesGroupRef.current.position.x = px * 0.05;
+      eyesGroupRef.current.position.y = 0.05 - py * 0.05;
+    }
+
+    if (mouthRef.current) {
+      // Subtle smile (width increases slightly over time)
+      const smileWidth = 1 + Math.max(0, Math.sin(t * 0.5)) * 0.3;
+      mouthRef.current.scale.x = THREE.MathUtils.lerp(mouthRef.current.scale.x, smileWidth, 2 * delta);
+    }
 
     fastApi.start({
-      bodyRot: [-py * 0.2, px * 0.4, 0],
-      headRot: [-py * 0.6, px * 0.8, 0],
-      // Upper Arms swing wildly with mouse
-      armLRot: [0.15 - py * 0.8 + Math.cos(t * 1.2) * 0.1, 0, 0.4 + px * 0.6 + Math.sin(t * 1.2) * 0.1],
-      armRRot: [0.15 - py * 0.8 + Math.cos(t * 1.3) * 0.1, 0, -0.4 + px * 0.6 - Math.sin(t * 1.3) * 0.1],
+      // Body follows mouse slightly
+      bodyRot: [-py * 0.15 + Math.sin(t * 0.8) * 0.02, px * 0.2, 0],
+      // Head tilts naturally with mouse and time
+      headRot: [-py * 0.4 + Math.sin(t * 0.9) * 0.03, px * 0.6, Math.sin(t * 1.1) * 0.02],
+      // Upper Arms naturally rest 20-30 deg outward (Z) and forward (X)
+      armLRot: [-0.1 - py * 0.4 + Math.cos(t * 1.2) * 0.05, 0, 0.4 + px * 0.3 + Math.sin(t * 1.2) * 0.05],
+      armRRot: [-0.1 - py * 0.4 + Math.cos(t * 1.3) * 0.05, 0, -0.4 + px * 0.3 - Math.sin(t * 1.3) * 0.05],
       // Legs gently sway and follow
-      legLRot: [-0.1 - py * 0.3 + Math.sin(t * 1.0) * 0.05, 0, px * 0.3],
-      legRRot: [-0.1 - py * 0.3 + Math.sin(t * 1.1) * 0.05, 0, px * 0.3]
+      legLRot: [-0.1 - py * 0.2 + Math.sin(t * 1.0) * 0.02, 0, px * 0.2],
+      legRRot: [-0.1 - py * 0.2 + Math.sin(t * 1.1) * 0.02, 0, px * 0.2]
     });
 
     dragApi.start({
-      // Forearms counteract the swing with a massive delay
-      forearmLRot: [-0.1 + py * 0.6 + Math.sin(t * 1.2 - 0.5) * 0.15, 0, 0.15 - px * 0.4],
-      forearmRRot: [-0.1 + py * 0.6 + Math.sin(t * 1.3 - 0.5) * 0.15, 0, -0.15 - px * 0.4],
+      // Forearms have stronger natural elbow bend (-0.4 X rot)
+      forearmLRot: [-0.4 + py * 0.4 + Math.sin(t * 1.2 - 0.5) * 0.1, 0, 0.05 - px * 0.2],
+      forearmRRot: [-0.4 + py * 0.4 + Math.sin(t * 1.3 - 0.5) * 0.1, 0, -0.05 - px * 0.2],
       // Calves lag
-      calfLRot: [0.15 + py * 0.2 + Math.cos(t * 1.0) * 0.1, 0, 0],
-      calfRRot: [0.15 + py * 0.2 + Math.cos(t * 1.1) * 0.1, 0, 0]
+      calfLRot: [0.1 + py * 0.1 + Math.cos(t * 1.0) * 0.05, 0, 0],
+      calfRRot: [0.1 + py * 0.1 + Math.cos(t * 1.1) * 0.05, 0, 0]
     });
   });
 
   const bodyMaterial = (
     <meshPhysicalMaterial 
       color="#A5B4FC" 
-      roughness={0.1} 
-      metalness={0.15} 
-      clearcoat={1.0} 
+      roughness={0.15} 
+      metalness={0.1} 
+      clearcoat={0.8} 
     />
   );
   
   const jointMaterial = (
     <meshPhysicalMaterial 
       color="#E0E7FF"
-      roughness={0.1} 
-      metalness={0.25} 
-      clearcoat={1.0} 
+      roughness={0.15} 
+      metalness={0.2} 
+      clearcoat={0.8} 
     />
   );
 
@@ -100,9 +123,9 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
       position={[0, 0, 0]}
       rotation={fastSprings.bodyRot as any}
     >
-      {/* ── Torso ── */}
+      {/* ── Torso (Slightly narrower for wider shoulder illusion) ── */}
       <mesh position={[0, -0.2, 0]}>
-        <capsuleGeometry args={[0.85, 1.0, 64, 64]} />
+        <capsuleGeometry args={[0.8, 1.05, 64, 64]} />
         {bodyMaterial}
       </mesh>
 
@@ -110,15 +133,17 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
       <a.group position={[0, 1.7, 0]} rotation={fastSprings.headRot as any}>
         <mesh>
           <sphereGeometry args={[0.7, 64, 64]} />
-          <meshPhysicalMaterial color="#A5B4FC" roughness={0.1} metalness={0.1} clearcoat={1.0} />
+          <meshPhysicalMaterial color="#A5B4FC" roughness={0.15} metalness={0.1} clearcoat={0.8} />
         </mesh>
 
+        {/* Visor */}
         <mesh position={[0, 0.05, 0.48]} rotation={[Math.PI / 2, 0, Math.PI / 2]}>
           <capsuleGeometry args={[0.3, 0.5, 64, 64]} />
-          <meshPhysicalMaterial color="#0F172A" roughness={0.0} metalness={0.8} clearcoat={1.0} />
+          <meshPhysicalMaterial color="#0F172A" roughness={0.05} metalness={0.9} clearcoat={1.0} />
         </mesh>
         
-        <group position={[0, 0.05, 0.81]}>
+        {/* Eyes & Blinking Group */}
+        <group ref={eyesGroupRef as any} position={[0, 0.05, 0.81]}>
           <mesh position={[-0.18, 0.1, 0]}>
             <sphereGeometry args={[0.06, 32, 32]} />
             <meshStandardMaterial color="#00CEC9" emissive="#00CEC9" emissiveIntensity={2.5} toneMapped={false} />
@@ -127,16 +152,16 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
             <sphereGeometry args={[0.06, 32, 32]} />
             <meshStandardMaterial color="#00CEC9" emissive="#00CEC9" emissiveIntensity={2.5} toneMapped={false} />
           </mesh>
-          <mesh position={[0, -0.1, 0.02]} rotation={[0, 0, Math.PI / 2]}>
+          <mesh ref={mouthRef as any} position={[0, -0.1, 0.02]} rotation={[0, 0, Math.PI / 2]}>
             <capsuleGeometry args={[0.03, 0.15, 32, 32]} />
             <meshStandardMaterial color="#00CEC9" emissive="#00CEC9" emissiveIntensity={2.5} toneMapped={false} />
           </mesh>
         </group>
       </a.group>
 
-      {/* ── Left Arm (Hierarchical Rig) ── */}
+      {/* ── Left Arm (Moved 15 deg forward on Z, raised Y, widened X) ── */}
       <a.group 
-        position={[-1.1, 0.6, 0]}
+        position={[-1.2, 0.75, 0.25]}
         rotation={fastSprings.armLRot as any}
       >
         <mesh><sphereGeometry args={[0.22, 32, 32]} />{jointMaterial}</mesh>
@@ -148,13 +173,14 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
         >
           <mesh><sphereGeometry args={[0.16, 32, 32]} />{jointMaterial}</mesh>
           <mesh position={[0, -0.3, 0]}><capsuleGeometry args={[0.14, 0.4, 32, 32]} />{bodyMaterial}</mesh>
-          <mesh position={[0, -0.65, 0]}><capsuleGeometry args={[0.14, 0.15, 32, 32]} />{bodyMaterial}</mesh>
+          {/* Hands increased by ~10% for presence */}
+          <mesh position={[0, -0.65, 0]}><capsuleGeometry args={[0.17, 0.19, 32, 32]} />{bodyMaterial}</mesh>
         </a.group>
       </a.group>
 
-      {/* ── Right Arm (Hierarchical Rig) ── */}
+      {/* ── Right Arm ── */}
       <a.group 
-        position={[1.1, 0.6, 0]}
+        position={[1.2, 0.75, 0.25]}
         rotation={fastSprings.armRRot as any}
       >
         <mesh><sphereGeometry args={[0.22, 32, 32]} />{jointMaterial}</mesh>
@@ -166,11 +192,12 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
         >
           <mesh><sphereGeometry args={[0.16, 32, 32]} />{jointMaterial}</mesh>
           <mesh position={[0, -0.3, 0]}><capsuleGeometry args={[0.14, 0.4, 32, 32]} />{bodyMaterial}</mesh>
-          <mesh position={[0, -0.65, 0]}><capsuleGeometry args={[0.14, 0.15, 32, 32]} />{bodyMaterial}</mesh>
+          {/* Hands increased by ~10% again */}
+          <mesh position={[0, -0.65, 0]}><capsuleGeometry args={[0.17, 0.19, 32, 32]} />{bodyMaterial}</mesh>
         </a.group>
       </a.group>
 
-      {/* ── Left Leg (Hierarchical Rig) ── */}
+      {/* ── Left Leg ── */}
       <a.group 
         position={[-0.4, -1.0, 0]}
         rotation={fastSprings.legLRot as any}
@@ -188,7 +215,7 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
         </a.group>
       </a.group>
 
-      {/* ── Right Leg (Hierarchical Rig) ── */}
+      {/* ── Right Leg ── */}
       <a.group 
         position={[0.4, -1.0, 0]}
         rotation={fastSprings.legRRot as any}

@@ -62,7 +62,7 @@ export default function ChatMessage({ message }: Props) {
       <div className={`flex flex-col gap-1 max-w-[78%] ${isAgent ? 'items-start' : 'items-end'}`}>
         <div
           className={`
-            px-4 py-3.5 rounded-2xl text-[15px] leading-relaxed font-[400]
+            px-6 py-4 rounded-2xl text-[17px] leading-relaxed font-[500]
             ${isAgent
               ? 'rounded-tl-sm'
               : 'rounded-tr-sm'
@@ -72,12 +72,12 @@ export default function ChatMessage({ message }: Props) {
             background: '#FFFFFF',
             border: '1px solid rgba(0,0,0,0.05)',
             color: 'var(--color-text)',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.02)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
           } : {
-            background: '#EEF2FF', // Soft indigo background
-            border: '1px solid rgba(99,102,241,0.1)',
-            color: 'var(--color-text)', // Dark text
-            boxShadow: '0 4px 12px rgba(99,102,241,0.05)',
+            background: '#EEF2FF',
+            border: '1px solid rgba(99,102,241,0.15)',
+            color: 'var(--color-text)',
+            boxShadow: '0 8px 16px rgba(99,102,241,0.1)',
           }}
         >
           {message.text}

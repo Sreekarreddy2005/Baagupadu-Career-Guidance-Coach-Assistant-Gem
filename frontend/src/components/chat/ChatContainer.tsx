@@ -56,12 +56,13 @@ export default function ChatContainer() {
       </div>
 
       {/* ── Message list ── */}
-      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3 scrollbar-thin">
-        <AnimatePresence initial={false}>
-          {messages.map((msg) => (
-            <ChatMessage key={msg.id} message={msg} />
-          ))}
-        </AnimatePresence>
+      <div className="flex-1 overflow-y-auto px-5 py-8 scrollbar-thin flex flex-col items-center">
+        <div className="w-full max-w-3xl space-y-6 flex-1 flex flex-col justify-end">
+          <AnimatePresence initial={false}>
+            {messages.map((msg) => (
+              <ChatMessage key={msg.id} message={msg} />
+            ))}
+          </AnimatePresence>
 
         <AnimatePresence>
           {isTyping && (
@@ -76,13 +77,14 @@ export default function ChatContainer() {
             </motion.div>
           )}
         </AnimatePresence>
-        <div ref={bottomRef} className="h-2" />
+        <div ref={bottomRef} className="h-6" />
+        </div>
       </div>
 
       {/* ── Input area ── */}
-      <div className="flex-shrink-0 p-4 border-t border-black/5">
+      <div className="flex-shrink-0 p-4 border-t border-black/5 bg-[var(--color-surface)]/30 backdrop-blur-md flex justify-center pb-6">
         <motion.div
-          className="relative flex items-end gap-2.5 rounded-2xl p-2 transition-all duration-300 bg-white border border-black/10 shadow-sm"
+          className="relative w-full max-w-3xl flex items-end gap-3 rounded-2xl p-2 transition-all duration-300 bg-white border border-black/10 shadow-sm"
           animate={isFocused ? {
             borderColor: 'var(--color-secondary)',
             boxShadow: '0 0 0 2px rgba(99,102,241,0.2)',

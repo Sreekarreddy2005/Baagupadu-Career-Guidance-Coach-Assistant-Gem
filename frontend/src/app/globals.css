@@ -71,11 +71,13 @@ html, body {
   background: var(--color-background);
   color: var(--color-text);
   font-family: 'Inter', var(--font-sans);
+  font-size: 17px;
+  font-weight: 500;
   min-height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 /* ── Scrollbars ── */
