@@ -129,6 +129,4 @@ Baagupadu/
 
 <div align="center">
   <i>"The moment a person realizes that the world is shaped by people no smarter than them, everything changes."</i>
-  <br/><br/>
-  <b>Built with ❤️ by Sreekar Reddy</b>
 </div>
