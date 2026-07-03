@@ -333,7 +333,7 @@
 
 ---
 
-## 6. Friend-Like Language Templates (MANDATORY)
+## 6. Question Clarity & Friend-Like Language
 
 ### 6.1 The One Clear Question Rule (CRITICAL)
 
@@ -348,21 +348,18 @@
 
 | Rule | Example |
 |------|---------|
-| **Maximum 15 words per question** | ✅ "What did that feel like?" |
-| **No multi-part questions** | ✅ "What made you feel proud?" (NOT "What made you feel proud and how did it affect you?") |
+| **Maximum 20 words per question** | ✅ "What did that feel like?" |
+| **No multi-part questions** | ✅ "What made you feel proud?" |
 | **One question per response** | ✅ Ask one, wait for answer |
 | **Short setup, clear question** | ✅ "That's beautiful. What about school?" |
 
-### 6.3 Friend-Like Question Templates
+### 6.3 Simplifying Overly Long Questions
 
-**When to Use:**
-
-| Situation | Template | Example |
-|-----------|----------|---------|
-| Opening a new topic | "What about [topic]?" | "What about school?" |
-| Exploring a memory | "What did that feel like?" | "What did that feel like?" |
-| Seeking clarity | "Tell me more about that." | "Tell me more about that." |
-| Moving on | "I'm curious about something different..." | "I'm curious about something different—what were your friends like?" |
+| ❌ Too Long | ✅ Simplified |
+|-------------|--------------|
+| "Imagine a stranger meeting you at age 10—just seeing you in your zone, tinkering away, talking with your mom and sister, or hanging out with your one close friend" | "If a stranger watched you at age 10, what would they notice about you?" |
+| "Think about how rules worked in your house when you were growing up" | "Remember a time you disagreed with a rule at home?" |
+| "Think about the feeling of being out there in nature, that quiet moment right before you click the shutter to capture a story—what is it that you're really looking for in that moment, and do you feel like that same part of you is being ignored or 'unseen' during your regular workday?" | "What do you look for when you capture a moment?" |
 
 ### 6.4 Transition After 2 Exchanges
 
