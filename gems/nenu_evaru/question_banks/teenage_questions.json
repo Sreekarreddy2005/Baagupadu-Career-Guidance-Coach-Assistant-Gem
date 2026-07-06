@@ -1,10 +1,723 @@
-What it is: Questions about ages 13-19.
-
-Categories: Identity formation, social dynamics, academic ambition, challenge/resilience, values
-
-Key Questions:
-
-text
-"Who was the one person who truly saw you during your teenage years?" → Authentic connection
-"What subject felt like play rather than work?" → Natural talent
-Why you need it: Teenage questions need to be especially sensitive. This provides the right questions for this critical phase.
+{
+  "phase": "teenage_exploration",
+  "description": "This phase explores teenage experiences (ages 13-19) to understand identity formation, social dynamics, academic ambition, resilience, values, and decision-making patterns that shape who the user is becoming.",
+  "total_questions": 90,
+  "categories": [
+    {
+      "category": "identity_formation",
+      "name": "Identity Formation",
+      "description": "Understanding self-concept, personal identity, self-esteem, authenticity, and identity development",
+      "source": "SUNY Identity Formation, Handbook of Adolescent Psychology, MDPI Review, IJRAR Study",
+      "questions": [
+        {
+          "id": "teen_identity_001",
+          "direct_question": "Tell me about yourself. What do you think makes you, you?",
+          "purpose": "Understanding self-concept and personal identity",
+          "tone": "narrative",
+          "transformation_rule": "storytelling",
+          "story_hook": "Imagine someone meeting you for the very first time."
+        },
+        {
+          "id": "teen_identity_002",
+          "direct_question": "What is something about yourself that you're genuinely proud of?",
+          "purpose": "Understanding positive self-identity and self-esteem",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a moment when you felt proud of yourself."
+        },
+        {
+          "id": "teen_identity_003",
+          "direct_question": "When do you feel most like your true self?",
+          "purpose": "Understanding authenticity and identity expression",
+          "tone": "reflective",
+          "transformation_rule": "reflection",
+          "reflection_hook": "Think about moments when you feel completely comfortable being yourself."
+        },
+        {
+          "id": "teen_identity_004",
+          "direct_question": "What do you think has changed the most about you over the last few years?",
+          "purpose": "Understanding identity development and growth",
+          "tone": "narrative",
+          "transformation_rule": "storytelling",
+          "story_hook": "Think about who you were a few years ago compared to today."
+        },
+        {
+          "id": "teen_identity_005",
+          "direct_question": "What kind of person do you hope to become?",
+          "purpose": "Understanding future identity and aspirations",
+          "tone": "reflective",
+          "transformation_rule": "imagined_scenario",
+          "scenario_hook": "Imagine yourself five years from now."
+        },
+        {
+          "id": "teen_identity_006",
+          "direct_question": "What values are most important to you today?",
+          "purpose": "Understanding personal values and identity commitment",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_identity_007",
+          "direct_question": "Can you remember a moment that made you see yourself differently?",
+          "purpose": "Understanding significant identity-shaping experiences",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about an experience that changed the way you looked at yourself."
+        },
+        {
+          "id": "teen_identity_008",
+          "direct_question": "What motivates you to keep trying when something feels difficult?",
+          "purpose": "Understanding self-belief and personal purpose",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about a challenge you didn't give up on."
+        },
+        {
+          "id": "teen_identity_009",
+          "direct_question": "What part of your personality do you think has stayed the same since you were younger?",
+          "purpose": "Understanding identity continuity",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what your family used to say about you growing up."
+        },
+        {
+          "id": "teen_identity_010",
+          "direct_question": "Is there something you're still trying to figure out about yourself?",
+          "purpose": "Understanding identity exploration",
+          "tone": "gentle",
+          "transformation_rule": "reflection",
+          "reflection_hook": "It's okay if you're still discovering who you are."
+        },
+        {
+          "id": "teen_identity_011",
+          "direct_question": "What achievement has made you feel the most confident in yourself?",
+          "purpose": "Understanding confidence and self-efficacy",
+          "tone": "affectionate",
+          "transformation_rule": "storytelling",
+          "story_hook": "Tell me about a moment when you felt you could do something important."
+        },
+        {
+          "id": "teen_identity_012",
+          "direct_question": "Have your dreams or goals changed as you've grown older?",
+          "purpose": "Understanding identity exploration and evolution",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall",
+          "memory_hook": "Think about what you wanted when you were younger."
+        },
+        {
+          "id": "teen_identity_013",
+          "direct_question": "If you had to describe yourself using just one word, what would it be?",
+          "purpose": "Understanding core identity",
+          "tone": "simple",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_identity_014",
+          "direct_question": "What personal quality do you value most in yourself?",
+          "purpose": "Understanding self-worth",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_identity_015",
+          "direct_question": "What experience has taught you the most about who you are?",
+          "purpose": "Understanding identity formation through life experiences",
+          "tone": "narrative",
+          "transformation_rule": "storytelling",
+          "story_hook": "Think about an experience you'll probably remember for a long time."
+        }
+      ]
+    },
+    {
+      "category": "social_dynamics",
+      "name": "Social Dynamics & Relationships",
+      "description": "Understanding peer relationships, social integration, belonging, and communication patterns",
+      "source": "Peer Relationships, Social Adjustment, Social Media & Peer Influence",
+      "questions": [
+        {
+          "id": "teen_social_001",
+          "direct_question": "Who do you usually enjoy spending time with, and what makes those relationships special?",
+          "purpose": "Understanding meaningful peer relationships and social preferences",
+          "tone": "narrative",
+          "transformation_rule": "storytelling",
+          "story_hook": "Think about the people you enjoy being around the most."
+        },
+        {
+          "id": "teen_social_002",
+          "direct_question": "Can you tell me about a time when a friend positively influenced you?",
+          "purpose": "Understanding positive peer influence",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_social_003",
+          "direct_question": "Have you ever felt pressured to do something because everyone else was doing it? What happened?",
+          "purpose": "Understanding peer pressure and decision-making",
+          "tone": "gentle",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_social_004",
+          "direct_question": "When you disagree with your friends, how do you usually handle the situation?",
+          "purpose": "Understanding conflict resolution",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_social_005",
+          "direct_question": "Who do you usually talk to when you're having a difficult day?",
+          "purpose": "Understanding support systems and help-seeking behavior",
+          "tone": "warm",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_social_006",
+          "direct_question": "Tell me about a moment when you felt you truly belonged somewhere.",
+          "purpose": "Understanding belongingness and social inclusion",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_social_007",
+          "direct_question": "What qualities do you appreciate most in a good friend?",
+          "purpose": "Understanding expectations in friendships",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_social_008",
+          "direct_question": "Can you remember a time when someone made you feel included?",
+          "purpose": "Understanding positive social experiences",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_social_009",
+          "direct_question": "How comfortable are you expressing your thoughts when you're with other people?",
+          "purpose": "Understanding communication confidence",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_social_010",
+          "direct_question": "Have you ever changed something about yourself to fit in with a group?",
+          "purpose": "Understanding conformity and social acceptance",
+          "tone": "gentle",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_social_011",
+          "direct_question": "What makes you feel respected by other people?",
+          "purpose": "Understanding interpersonal expectations and healthy relationships",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_social_012",
+          "direct_question": "Can you describe a time when helping someone made you feel good?",
+          "purpose": "Understanding empathy and prosocial behavior",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_social_013",
+          "direct_question": "How do you usually respond when someone has a different opinion from yours?",
+          "purpose": "Understanding respect, communication, and social flexibility",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_social_014",
+          "direct_question": "Has social media ever changed the way you interact with your friends?",
+          "purpose": "Understanding digital social dynamics",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_social_015",
+          "direct_question": "If you could improve one thing about the way you connect with other people, what would it be?",
+          "purpose": "Understanding self-awareness in social relationships and future social growth",
+          "tone": "supportive",
+          "transformation_rule": "reflection"
+        }
+      ]
+    },
+    {
+      "category": "academic_ambition",
+      "name": "Academic Ambition & Learning",
+      "description": "Understanding intrinsic motivation, goal-setting, academic resilience, and learning aspirations",
+      "source": "Academic Motivation Scale, Frontiers in Psychology, Academic Resilience Review",
+      "questions": [
+        {
+          "id": "teen_academic_001",
+          "direct_question": "What is something you genuinely enjoy learning about, and what makes it interesting to you?",
+          "purpose": "Understanding intrinsic motivation and curiosity for learning",
+          "tone": "conversational",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_academic_002",
+          "direct_question": "Can you tell me about a goal you're currently working towards in school or your personal learning?",
+          "purpose": "Understanding academic goal setting and aspirations",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_academic_003",
+          "direct_question": "Think about a time when learning something difficult felt worth the effort. What kept you going?",
+          "purpose": "Understanding perseverance and academic resilience",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_academic_004",
+          "direct_question": "What does doing well in school mean to you personally?",
+          "purpose": "Understanding personal meaning attached to academic success",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_academic_005",
+          "direct_question": "When you don't understand something in class, what do you usually do next?",
+          "purpose": "Understanding problem-solving and help-seeking behaviour",
+          "tone": "conversational",
+          "transformation_rule": "scenario_recall"
+        },
+        {
+          "id": "teen_academic_006",
+          "direct_question": "Can you describe a moment when you felt proud of something you achieved through learning?",
+          "purpose": "Understanding achievement motivation and self-confidence",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_academic_007",
+          "direct_question": "How do you stay motivated when a subject feels difficult or uninteresting?",
+          "purpose": "Understanding persistence and self-regulation",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_academic_008",
+          "direct_question": "If you could become really good at one skill before finishing school, what would it be, and why?",
+          "purpose": "Understanding long-term learning aspirations",
+          "tone": "imaginative",
+          "transformation_rule": "future_scenario"
+        },
+        {
+          "id": "teen_academic_009",
+          "direct_question": "What usually inspires you to put extra effort into your studies?",
+          "purpose": "Understanding internal and external sources of motivation",
+          "tone": "conversational",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_academic_010",
+          "direct_question": "Tell me about a time when you didn't perform as well as you expected. What did you learn from that experience?",
+          "purpose": "Understanding resilience after setbacks",
+          "tone": "supportive",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_academic_011",
+          "direct_question": "How do you usually decide which tasks or assignments to complete first?",
+          "purpose": "Understanding planning and time management",
+          "tone": "conversational",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_academic_012",
+          "direct_question": "Who has encouraged or inspired you the most in your learning journey?",
+          "purpose": "Understanding the influence of mentors, teachers, and family on academic ambition",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_academic_013",
+          "direct_question": "If you could change one thing about the way you learn, what would it be?",
+          "purpose": "Understanding self-awareness and continuous improvement",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_academic_014",
+          "direct_question": "What kind of future do you hope your education will help you build?",
+          "purpose": "Understanding educational aspirations and future orientation",
+          "tone": "reflective",
+          "transformation_rule": "future_scenario"
+        },
+        {
+          "id": "teen_academic_015",
+          "direct_question": "Looking back over the past year, what is one lesson—inside or outside the classroom—that has helped you grow the most?",
+          "purpose": "Understanding learning, personal growth, and academic development",
+          "tone": "narrative",
+          "transformation_rule": "reflection"
+        }
+      ]
+    },
+    {
+      "category": "resilience",
+      "name": "Resilience & Coping",
+      "description": "Understanding emotional regulation, coping strategies, perseverance, adaptability, and self-efficacy",
+      "source": "ARES-i25, Emotion Regulation Research, Systematic Review on Resilience",
+      "questions": [
+        {
+          "id": "teen_resilience_001",
+          "direct_question": "Can you tell me about a challenge you faced recently and how you got through it?",
+          "purpose": "Understanding recovery from everyday adversity",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_resilience_002",
+          "direct_question": "When something doesn't go the way you expected, what usually helps you move forward?",
+          "purpose": "Understanding coping strategies and adaptability",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_resilience_003",
+          "direct_question": "Who do you usually turn to when you're having a difficult time, and what makes them someone you trust?",
+          "purpose": "Understanding social and emotional support",
+          "tone": "warm",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_resilience_004",
+          "direct_question": "Can you think of a difficult experience that taught you something valuable about yourself?",
+          "purpose": "Understanding learning from adversity",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_resilience_005",
+          "direct_question": "When you start feeling overwhelmed, what do you usually do to calm yourself?",
+          "purpose": "Understanding emotional regulation",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_resilience_006",
+          "direct_question": "Can you describe a time when you surprised yourself by handling something better than you expected?",
+          "purpose": "Understanding self-efficacy and confidence",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_resilience_007",
+          "direct_question": "What personal strength do you think helps you most when life becomes challenging?",
+          "purpose": "Understanding awareness of personal resilience",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_resilience_008",
+          "direct_question": "Have you ever had to adjust your plans because something unexpected happened? How did you handle it?",
+          "purpose": "Understanding adaptability and flexibility",
+          "tone": "narrative",
+          "transformation_rule": "scenario_recall"
+        },
+        {
+          "id": "teen_resilience_009",
+          "direct_question": "What keeps you going when you feel like giving up?",
+          "purpose": "Understanding perseverance",
+          "tone": "supportive",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_resilience_010",
+          "direct_question": "When you make a mistake or fail at something important, how do you usually respond?",
+          "purpose": "Understanding resilience after setbacks",
+          "tone": "reflective",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_resilience_011",
+          "direct_question": "Can you share a moment when someone encouraged you during a difficult time? How did it affect you?",
+          "purpose": "Understanding the role of encouragement and emotional support",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_resilience_012",
+          "direct_question": "How do you usually remind yourself that things can get better during tough times?",
+          "purpose": "Understanding optimism and positive thinking",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_resilience_013",
+          "direct_question": "If a close friend was going through a difficult situation, how would you support them?",
+          "purpose": "Understanding empathy, social resilience, and interpersonal coping",
+          "tone": "conversational",
+          "transformation_rule": "perspective_taking"
+        },
+        {
+          "id": "teen_resilience_014",
+          "direct_question": "Looking back over the past year, what challenge has helped you grow the most as a person?",
+          "purpose": "Understanding long-term resilience and personal growth",
+          "tone": "narrative",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_resilience_015",
+          "direct_question": "What advice would you give your younger self about dealing with difficult situations?",
+          "purpose": "Understanding resilience, wisdom gained through experience, and self-reflection",
+          "tone": "supportive",
+          "transformation_rule": "future_reflection"
+        }
+      ]
+    },
+    {
+      "category": "values",
+      "name": "Values & Morality",
+      "description": "Understanding personal values, moral reasoning, responsibility, fairness, and integrity",
+      "source": "Life Values and Adolescent Mental Health, Hart & Carlo — Moral Development",
+      "questions": [
+        {
+          "id": "teen_values_001",
+          "direct_question": "What qualities do you admire most in another person, and why?",
+          "purpose": "Understanding admired values and role-model influences",
+          "tone": "reflective",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_values_002",
+          "direct_question": "Can you tell me about a time when doing the right thing wasn't the easiest choice?",
+          "purpose": "Understanding moral reasoning and ethical decision-making",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_values_003",
+          "direct_question": "What does being a good person mean to you?",
+          "purpose": "Understanding core personal values",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_values_004",
+          "direct_question": "Have you ever changed your mind about what was important to you? What influenced that change?",
+          "purpose": "Understanding value development over time",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_values_005",
+          "direct_question": "When two important things matter to you at the same time, how do you usually decide what to do first?",
+          "purpose": "Understanding value prioritization and decision-making",
+          "tone": "reflective",
+          "transformation_rule": "scenario_reflection"
+        },
+        {
+          "id": "teen_values_006",
+          "direct_question": "Who has had the biggest influence on the values you hold today?",
+          "purpose": "Understanding family, peer, and environmental influences",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_values_007",
+          "direct_question": "Can you remember a moment when you stood up for something you believed was right?",
+          "purpose": "Understanding moral courage and integrity",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_values_008",
+          "direct_question": "What does being a responsible person mean to you?",
+          "purpose": "Understanding responsibility and accountability",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_values_009",
+          "direct_question": "How do you decide whether something is fair or unfair?",
+          "purpose": "Understanding fairness and justice reasoning",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_values_010",
+          "direct_question": "Tell me about a time when you admitted making a mistake. What happened afterward?",
+          "purpose": "Understanding honesty, accountability, and ethical responsibility",
+          "tone": "supportive",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_values_011",
+          "direct_question": "If a friend asked you to do something that didn't feel right to you, how would you handle it?",
+          "purpose": "Understanding values under peer influence",
+          "tone": "scenario-based",
+          "transformation_rule": "imagined_situation"
+        },
+        {
+          "id": "teen_values_012",
+          "direct_question": "What kind of person do you hope people remember you as?",
+          "purpose": "Understanding long-term values and moral identity",
+          "tone": "reflective",
+          "transformation_rule": "future_reflection"
+        },
+        {
+          "id": "teen_values_013",
+          "direct_question": "Can you share a time when helping someone else made you feel good about yourself?",
+          "purpose": "Understanding compassion and prosocial values",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_values_014",
+          "direct_question": "What is one value you think young people today should never lose, and why?",
+          "purpose": "Understanding societal values and personal beliefs",
+          "tone": "reflective",
+          "transformation_rule": "opinion_reflection"
+        },
+        {
+          "id": "teen_values_015",
+          "direct_question": "Looking back over the past year, what experience has strengthened your values the most?",
+          "purpose": "Understanding how experiences shape values and character",
+          "tone": "narrative",
+          "transformation_rule": "reflection"
+        }
+      ]
+    },
+    {
+      "category": "decision_making",
+      "name": "Decision Making & Problem Solving",
+      "description": "Understanding decision-making processes, risk assessment, peer influence, and long-term thinking",
+      "source": "Decision Making in Adolescents, Risk and Rationality, General Decision Making Style Questionnaire",
+      "questions": [
+        {
+          "id": "teen_decision_001",
+          "direct_question": "Can you tell me about an important decision you made recently and how you arrived at that choice?",
+          "purpose": "Understanding the adolescent's overall decision-making process",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_decision_002",
+          "direct_question": "When you're faced with several choices, what helps you decide which option is best?",
+          "purpose": "Understanding evaluation of alternatives",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_decision_003",
+          "direct_question": "How much time do you usually spend thinking before making an important decision?",
+          "purpose": "Understanding planning versus impulsivity",
+          "tone": "conversational",
+          "transformation_rule": "self_reflection"
+        },
+        {
+          "id": "teen_decision_004",
+          "direct_question": "Can you describe a time when thinking carefully changed the decision you were about to make?",
+          "purpose": "Understanding thoughtful reasoning and cognitive control",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_decision_005",
+          "direct_question": "How do you usually think about the possible consequences before making an important choice?",
+          "purpose": "Understanding consequence evaluation",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_decision_006",
+          "direct_question": "Has there ever been a situation where your friends influenced a decision you made? What happened?",
+          "purpose": "Understanding peer influence on decision-making",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_decision_007",
+          "direct_question": "When you're unsure about a decision, what usually helps you feel more confident?",
+          "purpose": "Understanding confidence and support-seeking",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_decision_008",
+          "direct_question": "Can you think of a decision that didn't turn out the way you expected? What did you learn from it?",
+          "purpose": "Understanding reflection and learning from experience",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_decision_009",
+          "direct_question": "When you need to make a difficult decision, do you usually rely more on facts, your feelings, or advice from others? Why?",
+          "purpose": "Understanding individual decision-making style",
+          "tone": "reflective",
+          "transformation_rule": "comparison_reflection"
+        },
+        {
+          "id": "teen_decision_010",
+          "direct_question": "How do you decide whether taking a risk is worth it?",
+          "purpose": "Understanding risk perception and reward evaluation",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_decision_011",
+          "direct_question": "Can you tell me about a time when you changed your mind after hearing someone else's perspective?",
+          "purpose": "Understanding flexibility and openness to new information",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "teen_decision_012",
+          "direct_question": "What do you usually do when you don't have enough information to make a decision?",
+          "purpose": "Understanding information-seeking behavior",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "teen_decision_013",
+          "direct_question": "Have you ever had to choose between something that felt good immediately and something that would benefit you later? How did you decide?",
+          "purpose": "Understanding delayed gratification and long-term thinking",
+          "tone": "scenario_recall",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "teen_decision_014",
+          "direct_question": "When you're feeling stressed or emotional, how does it affect the decisions you make?",
+          "purpose": "Understanding emotional influence on decision-making",
+          "tone": "reflective",
+          "transformation_rule": "self_reflection"
+        },
+        {
+          "id": "teen_decision_015",
+          "direct_question": "Looking back over the past year, which decision are you most proud of, and what made it the right choice for you?",
+          "purpose": "Understanding self-reflection, judgment, and personal decision quality",
+          "tone": "narrative",
+          "transformation_rule": "future_reflection"
+        }
+      ]
+    }
+  ],
+  "follow_up_strategies": {
+    "if_emotional": "That sounds really meaningful. What do you think that experience taught you about yourself?",
+    "if_brief": "I'm curious about that—what made that so significant to you?",
+    "if_resistant": "That's okay. We can come back to it later if you'd prefer. Let's try another question.",
+    "if_reflective": "That's a beautiful way to put it. What do you think that says about who you are today?",
+    "if_general": "That's interesting. Can you tell me more about that?",
+    "if_hesitant": "Take your time. Sometimes the best answers come when we let them find us.",
+    "if_surprising": "That's fascinating—I didn't expect that. What do you think made you feel that way?"
+  },
+  "transformation_rules": {
+    "storytelling": "Tell me about {story_hook}... {direct_question}?",
+    "memory_recall": "Remember when {memory_hook}? {direct_question}?",
+    "imagined_scenario": "Imagine {scenario_hook}. {direct_question}?",
+    "sensory_recall": "Think about {sensory_hook}. {direct_question}?",
+    "reflection": "Think about {reflection_hook}. {direct_question}?",
+    "future_scenario": "Imagine {scenario_hook}. {direct_question}?",
+    "scenario_recall": "Think about a time when {scenario_hook}. {direct_question}?",
+    "perspective_taking": "Think about {perspective_hook}. {direct_question}?",
+    "future_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "scenario_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "opinion_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "comparison_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "self_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "imagined_situation": "Imagine {scenario_hook}. {direct_question}?"
+  }
+}
