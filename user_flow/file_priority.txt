@@ -1,0 +1,69 @@
+📋 COMPLETE FILE PRIORITY LIST
+🟢 PRIORITY 0: MVP GEM FILES (Must Have — Core Functionality)
+#	File	Location	Status	Priority
+1	system_prompt.md	gems/nenu_evaru/prompts/	✅ COMPLETED	P0
+2	trust_building_phase.md	gems/nenu_evaru/prompts/	✅ COMPLETED	P0
+3	question_transformation.md	gems/nenu_evaru/prompts/	✅ COMPLETED	P0
+4	childhood_questions.json	gems/nenu_evaru/question_banks/	✅ COMPLETED	P0
+5	childhood_exploration.md	gems/nenu_evaru/prompts/	✅ COMPLETED	P0
+🟡 PRIORITY 1: REMAINING GEM PHASES (Needed for Full 6-Phase Journey)
+#	File	Location	Status	Priority
+6	teenage_questions.json	gems/nenu_evaru/question_banks/	⬜ NOT STARTED	P1
+7	teenage_exploration.md	gems/nenu_evaru/prompts/	⬜ NOT STARTED	P1
+8	adult_questions.json	gems/nenu_evaru/question_banks/	⬜ NOT STARTED	P1
+9	adult_exploration.md	gems/nenu_evaru/prompts/	⬜ NOT STARTED	P1
+🟠 PRIORITY 2: PERSONA & GUIDANCE (Needed for Complete Experience)
+#	File	Location	Status	Priority
+10	trait_framework.json	gems/nenu_evaru/frameworks/	✅ COMPLETED	P2
+11	persona_framework.json	gems/nenu_evaru/frameworks/	⬜ NOT STARTED	P2
+12	career_framework.json	gems/nenu_evaru/frameworks/	⬜ NOT STARTED	P2
+13	trait_inference.md	gems/nenu_evaru/prompts/	⬜ NOT STARTED	P2
+14	persona_building.md	gems/nenu_evaru/prompts/	⬜ NOT STARTED	P2
+15	guidance_delivery.md	gems/nenu_evaru/prompts/	⬜ NOT STARTED	P2
+16	persona_template.md	gems/nenu_evaru/output/	⬜ NOT STARTED	P2
+17	guidance_template.md	gems/nenu_evaru/output/	⬜ NOT STARTED	P2
+🔵 PRIORITY 3: INFERENCE & MEMORY (Needed for Production)
+#	File	Location	Status	Priority
+18	inference_engine.md	gems/nenu_evaru/inference/	⬜ NOT STARTED	P3
+19	pattern_recognition.md	gems/nenu_evaru/inference/	⬜ NOT STARTED	P3
+20	conversation_memory.md	gems/nenu_evaru/memory/	⬜ NOT STARTED	P3
+21	user_profile_schema.json	gems/nenu_evaru/memory/	⬜ NOT STARTED	P3
+🟣 PRIORITY 4: DOCUMENTATION (Nice to Have)
+#	File	Location	Status	Priority
+22	setup.md	docs/	⬜ NOT STARTED	P4
+23	instructions.md	docs/	⬜ NOT STARTED	P4
+24	architecture.md	docs/	⬜ NOT STARTED	P4
+25	glossary.md	docs/	⬜ NOT STARTED	P4
+📊 SUMMARY: WHAT'S DONE VS. WHAT'S LEFT
+Category	Total Files	Completed	In Progress	Not Started
+MVP Gem Files	5	5 (100%)	0	0
+Remaining Gem Phases	4	0 (0%)	0	4
+Persona & Guidance	8	1 (12.5%)	0	7
+Inference & Memory	4	0 (0%)	0	4
+Documentation	4	0 (0%)	0	4
+TOTAL	25	6 (24%)	0	19 (76%)
+🚀 RECOMMENDED NEXT STEPS
+Week 1-2: Complete Gem Phases
+Step	Action	File
+1	Create Teenage Questions	teenage_questions.json
+2	Create Teenage Guide	teenage_exploration.md
+3	Create Adult Questions	adult_questions.json
+4	Create Adult Guide	adult_exploration.md
+Week 3: Persona & Guidance
+Step	Action	File
+5	Create Persona Framework	persona_framework.json
+6	Create Career Framework	career_framework.json
+7	Create Trait Inference	trait_inference.md
+8	Create Persona Building	persona_building.md
+Week 4: Guidance & Output
+Step	Action	File
+9	Create Guidance Delivery	guidance_delivery.md
+10	Create Persona Template	persona_template.md
+11	Create Guidance Template	guidance_template.md
+Week 5-6: Inference, Memory & Documentation
+Step	Action	File
+12	Create Inference Engine	inference_engine.md
+13	Create Pattern Recognition	pattern_recognition.md
+14	Create Conversation Memory	conversation_memory.md
+15	Create User Profile Schema	user_profile_schema.json
+16	Create Documentation	setup.md, instructions.md, architecture.md, glossary.md
