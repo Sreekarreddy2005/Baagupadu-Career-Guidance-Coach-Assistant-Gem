@@ -1,6 +1,6 @@
-# PART 1: SYSTEM ARCHITECTURE
-## 1.1 High-Level Architecture Diagram
-| ` | ext |
+PART 1: SYSTEM ARCHITECTURE
+1.1 High-Level Architecture Diagram
+text
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
 │                              BAAGUPADU — SYSTEM ARCHITECTURE                        │
 ├─────────────────────────────────────────────────────────────────────────────────────┤
@@ -100,24 +100,22 @@
 │  └─────────────────────────────────────────────────────────────────────────────┘    │
 │                                                                                     │
 └─────────────────────────────────────────────────────────────────────────────────────┘
-`
-## 1.2 Component Breakdown
-| Layer | Component | Technology | Purpose |
-| --- | --- | --- | --- |
-| Presentation | Frontend | React + Next.js 14/15 | User interface, chat interactions |
-| Delivery | CDN + Hosting | AWS CloudFront + S3 | Global content delivery |
-| API Gateway | Routing + Auth | AWS API Gateway + WAF | Request routing, auth, rate limiting |
-| Backend | Core API | FastAPI (Python 3.11+) | Business logic, API endpoints |
-| AI Orchestration | Multi-Agent System | LangGraph + CrewAI | 6-phase conversation orchestration |
-| LLM | AI Inference | Gemini 2.5 Flash-Lite | Conversational AI |
-| Database | Primary + Vector | PostgreSQL 15+ + pgvector | User data, embeddings, personas |
-| Cache | Session + Queue | Redis 7+ (ElastiCache) | Caching, pub/sub |
-| Auth | Identity | AWS Cognito | User authentication and management |
-| Infrastructure | IaC | AWS CDK (TypeScript) | Infrastructure as Code |
-| CI/CD | Deployment | GitHub Actions | Automated deployment |
-# PART 2: USER FLOW DIAGRAM
-## 2.1 Complete User Journey
-| ` | ext |
+1.2 Component Breakdown
+Layer	Component	Technology	Purpose
+Presentation	Frontend	React + Next.js 14/15	User interface, chat interactions
+Delivery	CDN + Hosting	AWS CloudFront + S3	Global content delivery
+API Gateway	Routing + Auth	AWS API Gateway + WAF	Request routing, auth, rate limiting
+Backend	Core API	FastAPI (Python 3.11+)	Business logic, API endpoints
+AI Orchestration	Multi-Agent System	LangGraph + CrewAI	6-phase conversation orchestration
+LLM	AI Inference	Gemini 2.5 Flash-Lite	Conversational AI
+Database	Primary + Vector	PostgreSQL 15+ + pgvector	User data, embeddings, personas
+Cache	Session + Queue	Redis 7+ (ElastiCache)	Caching, pub/sub
+Auth	Identity	AWS Cognito	User authentication and management
+Infrastructure	IaC	AWS CDK (TypeScript)	Infrastructure as Code
+CI/CD	Deployment	GitHub Actions	Automated deployment
+📋 PART 2: USER FLOW DIAGRAM
+2.1 Complete User Journey
+text
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
 │                              BAAGUPADU — USER JOURNEY                               │
 ├─────────────────────────────────────────────────────────────────────────────────────┤
@@ -233,9 +231,8 @@
 │  └─────────────────────────────────────────────────────────────────────────────┘    │
 │                                                                                     │
 └─────────────────────────────────────────────────────────────────────────────────────┘
-`
-## 2.2 Data Flow Across Phases
-| ` | ext |
+2.2 Data Flow Across Phases
+text
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
 │                              DATA FLOW ACROSS PHASES                                │
 ├─────────────────────────────────────────────────────────────────────────────────────┤
@@ -286,9 +283,8 @@
 │  └─────────────────────────────────────────────────────────────────────────────────┘│
 │                                                                                     │
 └─────────────────────────────────────────────────────────────────────────────────────┘
-`
-## 2.3 User State Transitions
-| ` | ext |
+2.3 User State Transitions
+text
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
 │                           USER STATE TRANSITIONS                                    │
 ├─────────────────────────────────────────────────────────────────────────────────────┤
@@ -323,9 +319,8 @@
 │  └─────────────────────────────────────────────────────────────────────────────────┘│
 │                                                                                     │
 └─────────────────────────────────────────────────────────────────────────────────────┘
-`
-## 2.4 API Request Flow
-| ` | ext |
+2.4 API Request Flow
+text
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
 │                             API REQUEST FLOW                                        │
 ├─────────────────────────────────────────────────────────────────────────────────────┤
@@ -351,7 +346,197 @@
 │  ┌─────────────────────────────────────────────────────────────────────────────────┐│
 │  │  Step 3: LangGraph orchestrates agent workflow                                  ││
 │  │  ├── Loads prompt from gems/nenu_evaru/prompts/                                ││
-│  │  ├── Selects question from question_banks/
-<truncated 26027 bytes>
-
-NOTE: The output was truncated because it was too long. Use a more targeted query or a smaller range to get the information you need.
+│  │  ├── Selects question from question_banks/                                     ││
+│  │  ├── Calls Gemini API for response                                             ││
+│  │  └── Saves state to PostgreSQL (PostgresSaver)                                ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  Step 4: Response sent back to client                                          ││
+│  │  ├── Endpoint: POST /api/v1/chat/message                                       ││
+│  │  └── Response: { "message": "That's fascinating!", "phase": "childhood" }      ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+📋 PART 3: FILE STRUCTURE TO ARCHITECTURE MAPPING
+3.1 How Your Project Files Map to the Architecture
+text
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                    FILE STRUCTURE → ARCHITECTURE MAP                                │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│  📁 Baagupadu/                                                                      │
+│  │                                                                                  │
+│  ├── 📁 frontend/                         ───────▶  FRONTEND LAYER                  │
+│  │   ├── src/app/                         ───────▶  Next.js Pages                  │
+│  │   │   ├── (landing)/                   ───────▶  Landing Page                   │
+│  │   │   ├── chat/                        ───────▶  Chat Interface                 │
+│  │   │   └── globals.css                  ───────▶  TailwindCSS Styles             │
+│  │   ├── components/                      ───────▶  UI Components                  │
+│  │   │   ├── agent/                       ───────▶  Sahayam Avatar UI              │
+│  │   │   ├── chat/                        ───────▶  Chat UI Components             │
+│  │   │   └── ui/                          ───────▶  Generic UI Elements            │
+│  │   ├── hooks/                           ───────▶  Custom React Hooks             │
+│  │   ├── lib/                             ───────▶  API Clients & Utilities        │
+│  │   └── types/                           ───────▶  TypeScript Types               │
+│  │                                                                                  │
+│  ├── 📁 gems/                             ───────▶  AI SERVICE LAYER               │
+│  │   └── 📁 nenu_evaru/                    ───────▶  Module: "Who Am I?"            │
+│  │       ├── 📁 prompts/                  ───────▶  System Prompts                 │
+│  │       │   ├── system_prompt.md         ───────▶  Sahayam Personality            │
+│  │       │   ├── trust_building_phase.md  ───────▶  Phase 1 Prompts                │
+│  │       │   └── childhood_exploration.md ───────▶  Phase 2 Prompts                │
+│  │       ├── 📁 question_banks/           ───────▶  Question Data                  │
+│  │       │   ├── childhood_questions.json ───────▶  Childhood Questions            │
+│  │       │   ├── teenage_questions.json   ───────▶  Teenage Questions              │
+│  │       │   └── adult_questions.json     ───────▶  Adult Questions                │
+│  │       ├── 📁 frameworks/               ───────▶  Psychological Frameworks       │
+│  │       ├── 📁 inference/                ───────▶  Response Parsing Logic         │
+│  │       └── 📁 memory/                   ───────▶  State Persistence Logic        │
+│  │                                                                                  │
+│  ├── 📁 docs/                             ───────▶  DOCUMENTATION                  │
+│  ├── 📁 user_flow/                        ───────▶  USER JOURNEY SOPs              │
+│  ├── 📁 shared/                           ───────▶  SHARED TYPES & CONSTANTS       │
+│  └── 📄 package.json                      ───────▶  DEPENDENCIES                   │
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+📋 PART 4: DEPLOYMENT ARCHITECTURE
+4.1 CI/CD Pipeline
+text
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                            CI/CD PIPELINE                                           │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  1. DEVELOPER PUSHES CODE                                                       ││
+│  │  ├── git push origin main                                                       ││
+│  │  └── Creates PR → GitHub Actions trigger                                        ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  2. GITHUB ACTIONS (CI/CD Pipeline)                                            ││
+│  │  ├── Lint: TypeScript/Python linting                                           ││
+│  │  ├── Test: Unit tests + Integration tests                                      ││
+│  │  ├── Build: Build frontend (Next.js) + Backend (Docker)                       ││
+│  │  └── Security Scan: Snyk/Trivy for vulnerabilities                             ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  3. DEPLOYMENT                                                                  ││
+│  │  ├── Frontend: Upload to S3 → CloudFront invalidation                          ││
+│  │  ├── Backend: Push Docker to ECR → Deploy to ECS Fargate                      ││
+│  │  └── Database: Run migrations (Alembic)                                         ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  4. MONITORING                                                                  ││
+│  │  ├── CloudWatch: Logs + Metrics                                                 ││
+│  │  ├── X-Ray: Distributed tracing                                                 ││
+│  │  └── Alerts: Slack/Email notifications                                          ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+4.2 Deployment Environments
+text
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                          DEPLOYMENT ENVIRONMENTS                                    │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  DEVELOPMENT (dev.baagupadu.com)                                               ││
+│  │  ├── Purpose: Active development and testing                                   ││
+│  │  ├── Branch: feature/*                                                         ││
+│  │  ├── Database: Dev RDS (Single-AZ)                                             ││
+│  │  └── Cost: $50-100/month                                                       ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  STAGING (staging.baagupadu.com)                                               ││
+│  │  ├── Purpose: Pre-production validation                                        ││
+│  │  ├── Branch: develop                                                           ││
+│  │  ├── Database: Staging RDS (Multi-AZ)                                          ││
+│  │  └── Cost: $100-200/month                                                      ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  PRODUCTION (baagupadu.com)                                                    ││
+│  │  ├── Purpose: Live users                                                        ││
+│  │  ├── Branch: main                                                               ││
+│  │  ├── Database: Production RDS (Multi-AZ + Read Replicas)                       ││
+│  │  └── Cost: $200-500/month                                                       ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+📋 PART 5: SECURITY ARCHITECTURE
+5.1 Security Layers
+text
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                           SECURITY ARCHITECTURE                                     │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  NETWORK LAYER                                                                  ││
+│  │  ├── VPC with public/private subnets                                           ││
+│  │  ├── Security Groups (least privilege)                                         ││
+│  │  └── NACL for extra protection                                                 ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  APPLICATION LAYER                                                              ││
+│  │  ├── AWS WAF (Web Application Firewall)                                        ││
+│  │  ├── Rate Limiting (100 RPS per user)                                          ││
+│  │  ├── Input Validation (FastAPI Pydantic)                                       ││
+│  │  └── JWT Authentication (AWS Cognito)                                          ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  DATA LAYER                                                                     ││
+│  │  ├── KMS Encryption (Data at rest)                                             ││
+│  │  ├── TLS 1.3 (Data in transit)                                                ││
+│  │  ├── AWS Secrets Manager (Credentials)                                         ││
+│  │  └── RDS Encryption + Multi-AZ                                                 ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  MONITORING LAYER                                                               ││
+│  │  ├── AWS CloudTrail (Audit Logging)                                            ││
+│  │  ├── AWS CloudWatch (Metrics + Alerts)                                         ││
+│  │  └── AWS X-Ray (Distributed Tracing)                                           ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+📋 PART 6: PERFORMANCE & SCALING
+6.1 Performance Targets
+Metric	Target	How                                                                                                                                                                                                                              It's Achieved
+API Response Time	<200ms	FastAPI async, caching
+LLM Response Time	<3s	Gemini 2.5 Flash-Lite
+Page Load Time	<2s	CloudFront CDN, optimized assets
+Concurrent Users	100	ECS Fargate auto-scaling
+Database Query Time	<50ms	RDS + pgvector optimization
+6.2 Scaling Strategy
+text
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                           SCALING STRATEGY                                          │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  HORIZONTAL SCALING                                                             ││
+│  │  ├── ECS Fargate: Auto-scaling based on CPU/Memory usage                       ││
+│  │  ├── RDS: Read replicas for read-heavy workloads                               ││
+│  │  └── CloudFront: Global CDN for static assets                                  ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  VERTICAL SCALING                                                               ││
+│  │  ├── RDS: Upgrade instance size when needed                                    ││
+│  │  └── ECS: Increase memory/CPU per container                                    ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────────────┐│
+│  │  CACHING STRATEGY                                                               ││
+│  │  ├── Redis: Session caching + rate limiting                                    ││
+│  │  ├── CloudFront: Edge caching for static assets                                ││
+│  │  └── FastAPI: Response caching for common requests                             ││
+│  └─────────────────────────────────────────────────────────────────────────────────┘│
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
