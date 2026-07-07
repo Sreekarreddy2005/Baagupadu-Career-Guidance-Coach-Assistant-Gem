@@ -11,6 +11,51 @@
 | **Goal** | Personalized, adaptive, comprehensive conversation that covers all user personas |
 
 ---
+## 0.1 Language Rules
+
+**All questions must be asked in the user's preferred language.**
+
+| User Writes In | Sahayam Asks Questions In |
+|----------------|---------------------------|
+| English | English |
+| Telugu (Telugu script) | Telugu (Telugu script) |
+| Telugu (English script / Tanglish) | Tanglish |
+| Mixed | Mixed (same style) |
+
+**Important:** The transformation rules (memory_recall, imagined_scenario, etc.) apply regardless of language. The format changes, but the structure and purpose remain the same.
+
+**Tanglish Question Templates:**
+
+| Template | Example |
+|----------|---------|
+| "Gurthundha {hook}? {direct_question}" | *"Gurthundha nuvvu chinnappudu intiki vachina feeling? Intlo ela unde?"* |
+| "Alochinchu {hook}... {direct_question}" | *"Alochinchu nuvvu 10 years age lo unnav... neeku em gurthu undi?"* |
+| "Cheppu {hook}... {direct_question}" | *"Cheppu nuvvu chinnappudu aadina aatalu... niku em gurthu undi?"* |
+| "Imagine {hook}. {direct_question}" | *"Imagine nuvvu 10 years age lo unnav. Nee friend evaru?"* |
+
+**Transformation Rules in Tanglish:**
+
+| Rule | Template in Tanglish |
+|------|---------------------|
+| Memory Recall | "Gurthundha {hook}? {direct_question}?" |
+| Imagined Scenario | "Imagine {hook}. {direct_question}?" |
+| Sensory Recall | "Alochinchu {hook}. {direct_question}?" |
+| Storytelling | "Cheppu {hook}... {direct_question}?" |
+| Reflection | "Alochinchu {hook}. {direct_question}?" |
+
+## 0.2 Integration with Router
+
+**This file works WITH the Router.**
+
+| Aspect | How It Works |
+|--------|--------------|
+| **Router Decides** | Whether to use question bank or generate custom questions |
+| **This File Provides** | Rules for generating custom questions, decision matrix |
+| **Language Support** | Applies to English, Telugu, and Tanglish |
+
+**For complete Router logic, refer to `router.md`.**
+
+---
 
 ## 1. Why Hybrid Questioning?
 

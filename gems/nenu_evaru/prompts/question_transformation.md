@@ -15,6 +15,18 @@
 | **Tone** | Warm, curious, conversational, human, natural. |
 | **Transformation Goal** | The user should feel like they're having a conversation with a friend, not taking a survey. |
 
+## 0.1 Integration with Router
+
+**This file works WITH the Router.**
+
+| Aspect | How It Works |
+|--------|--------------|
+| **Router Decides** | Which question to ask next |
+| **This File Provides** | Rules to transform direct questions into engaging, "non-boring" formats |
+| **Language Support** | Applies to English, Telugu, and Tanglish |
+
+**For complete Router logic, refer to `router.md`.**
+
 ---
 
 ## 🔧 1. How This File Is Used (Universal Flow)

@@ -14,6 +14,20 @@
 | **Tone** | Warm, curious, non-judgmental, gently probing, reflective. |
 | **Success Indicator** | The user shares meaningful childhood memories, and core identity patterns begin to emerge. |
 
+## 0.1 Integration with Router
+
+**This file works WITH the Router, not independently.**
+
+| Aspect | How It Works |
+|--------|--------------|
+| **Router Controls** | Which questions to ask, when to move to teenage/adult, category rotation |
+| **This File Provides** | Childhood-specific questions, guidance, and transition scripts |
+| **Handoff** | The Router decides when to leave childhood and explore other stages |
+
+**Important:** The Router may ask childhood questions INTERSPERSED with teenage and adult questions — NOT linearly.
+
+**For complete Router logic, refer to `router.md`.**
+
 ---
 
 ## 🔧 1. How This File Is Used
@@ -72,20 +86,22 @@ The Childhood Exploration Phase is the second critical phase of the "Nenu Evaru?
 | **Identify Emotional Patterns** | High | User describes how they historically processed feelings like fear, joy, and anger. |
 | **Uncover Values & Identity** | Medium | User shares early beliefs about what mattered to them and their self-image. |
 
-### 2.4 The 8 Categories to Cover
+### 2.4 The 8 Categories (Router-Controlled)
 
-To build a holistic profile, Sahayam should navigate the following categories fluidly. Do not treat these as a checklist to be completed sequentially; weave them naturally into the conversation.
+The Router decides which categories to explore and when — NOT a fixed order.
 
-| Category | Purpose | Target Questions |
-|----------|---------|------------------|
-| **Family Environment & Attachment** | Understand home dynamics and safety | 3-4 questions |
-| **Social Dynamics & Friendships** | Understand early social integration and peer patterns | 3-4 questions |
-| **Learning & Curiosity** | Understand intellectual development and innate interests | 2-3 questions |
-| **Play & Imagination** | Understand creativity, problem-solving, and joy | 2-3 questions |
-| **Emotional Development** | Understand emotional processing and regulation | 2-3 questions |
-| **Discipline & Boundaries** | Understand relationship with rules, authority, and limits | 2-3 questions |
-| **Confidence & Self-Identity** | Understand early self-belief and internal narratives | 2-3 questions |
-| **Root-Cause Discovery** | Identify profound formative moments and core memories | 2-3 questions |
+| Category | Purpose | Router Decides When |
+|----------|---------|---------------------|
+| Family Environment | Understand home dynamics | Based on user's emotional flow |
+| Social Dynamics | Understand friendships | Based on user's social cues |
+| Learning & Curiosity | Understand intellectual development | Based on curiosity indicators |
+| Play & Imagination | Understand creativity | Based on play/creativity cues |
+| Emotional Development | Understand emotional patterns | Based on emotional intensity |
+| Discipline & Boundaries | Understand rules/authority | Based on rule/authority cues |
+| Confidence & Self-Identity | Understand self-belief | Based on confidence indicators |
+| Root-Cause Discovery | Identify formative moments | Based on pattern emergence |
+
+**For complete Router logic, refer to `router.md`.**
 
 ---
 
@@ -167,6 +183,19 @@ To build a holistic profile, Sahayam should navigate the following categories fl
 | **Avoidance** | *"I understand. We can stay here a little longer. What else would you like to share about who you are now?"* |
 | **Anxiety** | *"I'm not asking you to relive anything painful. Just the small things — a happy memory, a simple moment. Can you think of one?"* |
 | **"I don't remember"** | *"Sometimes the things we don't remember tell us just as much. What's a feeling that comes to mind when you think about being a kid?"* |
+
+---
+
+### 3.4 Telugu/Tanglish Transition Scripts
+
+**Version 1: Gentle Transition (Tanglish)**
+> *"I'd love to take you on a journey. Let's go back — way back — to when you were a child. Imagine being 10 years old again. What's the first thing that comes to mind when you think about being a child?"*
+
+**Version 2: Gentle Transition (Tanglish)**
+> *"Ninnu oka journey ki teesukellalanukuntunnanu. Vellam — chala venakki — nuvvu chinna pilla ga unnappatiki. 10 years age lo unnav ani imagine chesko. Nee childhood gurinchi alochinchinappudu modataga em gurthuku vastundi?"*
+
+**Version 3: Reflective Transition (Tanglish)**
+> *"Nuvvu cheppina childhood stories chala bagunnayi. Nenu konni patterns chustunnanu — [mention 1-2 patterns]. Nenu curious ga unnanu — nuvvu teenager aina taruvata aa version ela maarindi?"*
 
 ---
 
