@@ -1,20 +1,1292 @@
-What it is: A structured system for identifying traits.
-
-What it contains:
-
-Trait Categories: Social, Learning, Emotional, Career, Identity
-
-For each trait: Indicators (what to look for), levels, patterns
-
-Inference Rules: How much evidence is needed, how to weight evidence
-
-Example:
-
-text
-"Leadership Orientation" indicators:
-- Naturally took charge in childhood groups
-- Sought responsibility in teen years
-- Organized activities or teams
-If you see 3+ indicators → "Strong leadership orientation"
-
-Why you need it: This makes trait identification systematic, not random.
+{
+  "name": "Trait Framework — Baagupadu",
+  "version": "2.0",
+  "description": "Defines all traits, indicators, and confidence scoring rules for identifying user patterns across life stages. Includes 3-Tiered Inference Model (Surface Behaviors → Core Traits → Identity Drivers), Shadow Traits with validation prompts, cultural modifiers, and composite career mapping.",
+  "trait_categories": {
+    "social_traits": {
+      "name": "Social Traits",
+      "description": "How the user interacts with others",
+      "cultural_modifiers": {
+        "note": "In Telugu/Indian context, behaviors like silence, family orientation, and deference to elders may indicate respect and collectivism, not weakness or low communication.",
+        "apply_to": [
+          "communication",
+          "leadership",
+          "teamwork"
+        ]
+      },
+      "traits": {
+        "leadership": {
+          "name": "Leadership",
+          "description": "Takes initiative, guides others, inspires action",
+          "tier": 2,
+          "indicators": [
+            "Naturally took charge in childhood groups",
+            "Sought responsibility in teen years",
+            "Organized activities or teams",
+            "Mentored others without being asked",
+            "Challenged authority constructively",
+            "People naturally looked to them for direction",
+            "Led projects or initiatives at work"
+          ],
+          "cultural_note": "In collectivist cultures, leadership may be expressed through service and family responsibility, not just individual authority.",
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Management",
+            "Entrepreneurship",
+            "Project Management",
+            "Leadership"
+          ],
+          "validation_prompts": [
+            "I notice you naturally take charge in groups. Where do you think that comes from?",
+            "When people look to you for direction, how does that feel?"
+          ]
+        },
+        "communication": {
+          "name": "Communication",
+          "description": "Expresses thoughts clearly, persuades, listens actively",
+          "tier": 2,
+          "indicators": [
+            "Was good at explaining things",
+            "People came to them for advice",
+            "Comfortable speaking in groups",
+            "Listened more than they spoke",
+            "Could adapt communication to the audience",
+            "Resolved conflicts through discussion"
+          ],
+          "cultural_note": "In Indian contexts, silence or indirect communication may indicate respect, not lack of communication skill.",
+          "styles": [
+            "Assertive",
+            "Collaborative",
+            "Empathetic",
+            "Direct",
+            "Persuasive"
+          ],
+          "career_affinities": [
+            "Teaching",
+            "Sales",
+            "HR",
+            "Coaching",
+            "Public Relations"
+          ],
+          "validation_prompts": [
+            "How do you feel when you need to speak up in a group?",
+            "Do you prefer direct or indirect communication?"
+          ]
+        },
+        "empathy": {
+          "name": "Empathy",
+          "description": "Understands others' feelings, shows compassion",
+          "tier": 2,
+          "indicators": [
+            "Noticed when others were upset",
+            "Helped friends who were struggling",
+            "Considered others' feelings before acting",
+            "Cared about how others felt",
+            "Stood up for others",
+            "Showed kindness to those who were left out"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Counseling",
+            "Healthcare",
+            "Teaching",
+            "Social Work",
+            "HR"
+          ],
+          "validation_prompts": [
+            "When someone is struggling, how do you usually respond?",
+            "Do you find yourself absorbing others' emotions?"
+          ]
+        },
+        "teamwork": {
+          "name": "Teamwork",
+          "description": "Collaborates effectively, values group harmony",
+          "tier": 2,
+          "indicators": [
+            "Enjoyed working in groups",
+            "Was the one who kept the team together",
+            "Shared credit with others",
+            "Helped others succeed",
+            "Could work with different personality types",
+            "Put group goals above personal goals"
+          ],
+          "cultural_note": "In Indian contexts, strong family and group orientation may indicate healthy collectivism, not lack of independence.",
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Operations",
+            "Project Management",
+            "Sports Management",
+            "Event Planning"
+          ],
+          "validation_prompts": [
+            "When working in a team, what role do you naturally take?",
+            "How do you handle disagreements within a group?"
+          ]
+        }
+      }
+    },
+    "cognitive_traits": {
+      "name": "Cognitive Traits",
+      "description": "How the user thinks, processes information, and approaches problems",
+      "traits": {
+        "analytical_thinking": {
+          "name": "Analytical Thinking",
+          "description": "Breaks down complex problems, seeks logic and patterns",
+          "tier": 2,
+          "indicators": [
+            "Loved figuring out how things work",
+            "Needed to understand the details",
+            "Thought carefully before acting",
+            "Noticed small patterns others missed",
+            "Enjoyed solving puzzles or logic problems",
+            "Made decisions based on data and reasoning"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Engineering",
+            "Data Science",
+            "Research",
+            "Finance",
+            "Law"
+          ],
+          "validation_prompts": [
+            "How do you approach a complex problem?",
+            "Do you trust your instincts or data more?"
+          ]
+        },
+        "intuitive_thinking": {
+          "name": "Intuitive Thinking",
+          "description": "Relies on gut feelings, sees patterns and connections",
+          "tier": 2,
+          "indicators": [
+            "Trusted their instincts",
+            "Saw the big picture easily",
+            "Connected ideas across different domains",
+            "Made decisions based on feelings",
+            "Could sense when something was off",
+            "Had strong hunches that were often right"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Design",
+            "Psychology",
+            "Leadership",
+            "Entrepreneurship",
+            "Art"
+          ],
+          "validation_prompts": [
+            "Do you trust your gut feelings?",
+            "When you have a hunch, is it usually right?"
+          ]
+        },
+        "big_picture_orientation": {
+          "name": "Big-Picture Orientation",
+          "description": "Focuses on the broader vision and long-term goals",
+          "tier": 2,
+          "indicators": [
+            "Wanted to see the whole picture",
+            "Planned for the future",
+            "Connected dots across different areas",
+            "Was less concerned with minor details",
+            "Could articulate a compelling vision",
+            "Thought about the 'why' before the 'how'"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Strategy",
+            "Leadership",
+            "Entrepreneurship",
+            "Consulting"
+          ],
+          "validation_prompts": [
+            "Do you prefer seeing the big picture or focusing on details?",
+            "What drives your long-term vision?"
+          ]
+        },
+        "detail_oriented": {
+          "name": "Detail-Oriented",
+          "description": "Focuses on specifics, precision, and accuracy",
+          "tier": 2,
+          "indicators": [
+            "Cared about the details",
+            "Noticed small things others missed",
+            "Ensured accuracy in their work",
+            "Was organized and methodical",
+            "Liked to get things exactly right",
+            "Focused on execution"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Quality Assurance",
+            "Finance",
+            "Law",
+            "Auditing",
+            "Engineering"
+          ],
+          "validation_prompts": [
+            "How important are details to you?",
+            "Do you ever struggle with perfectionism?"
+          ]
+        },
+        "abstract_thinking": {
+          "name": "Abstract Thinking",
+          "description": "Enjoys concepts, ideas, and theoretical exploration",
+          "tier": 2,
+          "indicators": [
+            "Loved thinking about complex ideas",
+            "Enjoyed philosophy or theory",
+            "Asked 'why' and 'what if' questions",
+            "Explored concepts beyond practical use",
+            "Connected abstract ideas to reality",
+            "Was curious about meaning and purpose"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Academia",
+            "Research",
+            "Philosophy",
+            "Strategy",
+            "Design"
+          ],
+          "validation_prompts": [
+            "Do you enjoy thinking about abstract ideas?",
+            "What kind of questions fascinate you?"
+          ]
+        },
+        "pragmatic_thinking": {
+          "name": "Pragmatic Thinking",
+          "description": "Focuses on practical application and real-world results",
+          "tier": 2,
+          "indicators": [
+            "Cared about what works",
+            "Wanted to see results",
+            "Focused on practical solutions",
+            "Preferred action over theory",
+            "Learned by doing",
+            "Applied knowledge to real situations"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Operations",
+            "Engineering",
+            "Construction",
+            "Management"
+          ],
+          "validation_prompts": [
+            "Do you prefer practical solutions or theoretical ideas?",
+            "How do you approach learning something new?"
+          ]
+        }
+      }
+    },
+    "relational_traits": {
+      "name": "Relational & Attachment Traits",
+      "description": "How the user bonds with others and forms relationships",
+      "traits": {
+        "connector_style": {
+          "name": "Connector Style",
+          "description": "How the user forms and maintains relationships",
+          "tier": 2,
+          "indicators": [
+            "Preferred deep 1-on-1 connections",
+            "Was energized by groups",
+            "Had a few close friends",
+            "Had many acquaintances",
+            "Valued depth over breadth in relationships",
+            "Was a natural networker"
+          ],
+          "styles": [
+            "Deep 1-on-1",
+            "Group Energizer",
+            "Balanced",
+            "Social Connector",
+            "Selective"
+          ],
+          "career_affinities": [
+            "Counseling",
+            "Sales",
+            "HR",
+            "Teaching",
+            "Leadership"
+          ],
+          "validation_prompts": [
+            "Do you prefer deep connections with a few people or a wide network?",
+            "How do you feel after spending time in a large group?"
+          ]
+        },
+        "trust_patterns": {
+          "name": "Trust Patterns",
+          "description": "How the user trusts others",
+          "tier": 2,
+          "indicators": [
+            "Trusted easily",
+            "Was guarded with trust",
+            "Trusted slowly over time",
+            "Was often betrayed",
+            "Learned to trust again after being hurt",
+            "Was selective about trust"
+          ],
+          "styles": [
+            "Open",
+            "Guarded",
+            "Selective",
+            "Cautious",
+            "Rebuilding"
+          ],
+          "career_affinities": [
+            "Leadership",
+            "Security",
+            "HR",
+            "Counseling",
+            "Management"
+          ],
+          "validation_prompts": [
+            "How do you decide whom to trust?",
+            "Has your trust in people changed over time?"
+          ]
+        },
+        "attachment_style": {
+          "name": "Attachment Style",
+          "description": "Patterns of bonding and connection in relationships",
+          "tier": 2,
+          "indicators": [
+            "Felt secure in relationships",
+            "Worried about being abandoned",
+            "Avoided deep intimacy",
+            "Wanted closeness but feared it",
+            "Felt safe with others",
+            "Struggled with vulnerability"
+          ],
+          "styles": [
+            "Secure",
+            "Anxious",
+            "Avoidant",
+            "Fearful-Avoidant",
+            "Evolving"
+          ],
+          "career_affinities": [
+            "Therapy",
+            "HR",
+            "Leadership",
+            "Coaching",
+            "Social Work"
+          ],
+          "validation_prompts": [
+            "How do you feel about getting close to others?",
+            "Do you find it easy or difficult to be vulnerable?"
+          ]
+        },
+        "relationship_orientation": {
+          "name": "Relationship Orientation",
+          "description": "What the user values most in relationships",
+          "tier": 2,
+          "indicators": [
+            "Valued loyalty above all",
+            "Needed freedom in relationships",
+            "Prioritized depth and meaning",
+            "Valued harmony and peace",
+            "Wanted intellectual connection",
+            "Sought emotional intimacy"
+          ],
+          "styles": [
+            "Loyalty",
+            "Freedom",
+            "Depth",
+            "Harmony",
+            "Intellectual",
+            "Emotional"
+          ],
+          "career_affinities": [
+            "HR",
+            "Leadership",
+            "Coaching",
+            "Counseling"
+          ],
+          "validation_prompts": [
+            "What do you value most in a relationship?",
+            "What makes a relationship meaningful to you?"
+          ]
+        }
+      }
+    },
+    "learning_traits": {
+      "name": "Learning Traits",
+      "description": "How the user acquires knowledge and approaches learning",
+      "traits": {
+        "curiosity": {
+          "name": "Curiosity",
+          "description": "Seeks knowledge, asks questions, explores deeply",
+          "tier": 2,
+          "indicators": [
+            "Always asked 'why' and 'how'",
+            "Got lost in research or exploration",
+            "Loved learning about new things",
+            "Connected ideas across different domains",
+            "Explored topics beyond what was required",
+            "Had a wide range of interests"
+          ],
+          "types": [
+            "Exploratory",
+            "Deep-dive",
+            "Application-focused",
+            "Connector"
+          ],
+          "career_affinities": [
+            "Research",
+            "Data Science",
+            "Journalism",
+            "Science",
+            "Technology"
+          ],
+          "validation_prompts": [
+            "What topics fascinate you the most?",
+            "How do you feel when you discover something new?"
+          ]
+        },
+        "creativity": {
+          "name": "Creativity",
+          "description": "Thinks differently, imagines, innovates",
+          "tier": 2,
+          "indicators": [
+            "Loved drawing, building, or creating",
+            "Always had new ideas",
+            "Could see multiple solutions to a problem",
+            "Imagined possibilities others didn't see",
+            "Liked to experiment and try new approaches",
+            "Used creativity to solve problems"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Design",
+            "Marketing",
+            "Arts",
+            "Innovation",
+            "Entrepreneurship"
+          ],
+          "validation_prompts": [
+            "Where do you find your best ideas?",
+            "How do you approach creative challenges?"
+          ]
+        },
+        "discipline": {
+          "name": "Discipline",
+          "description": "Follows through, consistent, self-controlled",
+          "tier": 2,
+          "indicators": [
+            "Always finished what they started",
+            "Was organized and planned ahead",
+            "Could delay gratification",
+            "Stuck to routines",
+            "Managed distractions effectively",
+            "Kept commitments even when difficult"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Operations",
+            "Finance",
+            "Law",
+            "Accounting",
+            "Project Management"
+          ],
+          "validation_prompts": [
+            "How do you stay focused on your goals?",
+            "What happens when you lose motivation?"
+          ]
+        },
+        "focus": {
+          "name": "Focus",
+          "description": "Concentrates deeply, avoids distraction",
+          "tier": 2,
+          "indicators": [
+            "Could get lost in something for hours",
+            "Was rarely distracted",
+            "Enjoyed activities requiring concentration",
+            "Could work in noisy environments",
+            "Stayed on task until completion",
+            "Found deep focus in areas of interest"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Research",
+            "Software Engineering",
+            "Writing",
+            "Analytics",
+            "Auditing"
+          ],
+          "validation_prompts": [
+            "What helps you get into a flow state?",
+            "How do you handle distractions?"
+          ]
+        }
+      }
+    },
+    "emotional_traits": {
+      "name": "Emotional Traits",
+      "description": "How the user processes feelings and manages emotions",
+      "traits": {
+        "confidence": {
+          "name": "Confidence",
+          "description": "Believes in own abilities, self-assured",
+          "tier": 2,
+          "indicators": [
+            "Felt capable in most situations",
+            "Believed in themselves",
+            "Was comfortable speaking up",
+            "Faced challenges without excessive doubt",
+            "Recovered quickly from criticism",
+            "Projected self-assurance"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Leadership",
+            "Sales",
+            "Public Speaking",
+            "Entrepreneurship"
+          ],
+          "validation_prompts": [
+            "What makes you feel capable?",
+            "How do you handle situations where you feel unsure?"
+          ]
+        },
+        "resilience": {
+          "name": "Resilience",
+          "description": "Recovers from setbacks, persists through difficulty",
+          "tier": 2,
+          "indicators": [
+            "Kept going even when things were hard",
+            "Bounced back from failures",
+            "Learned from mistakes",
+            "Maintained hope in difficult times",
+            "Took responsibility for their reactions",
+            "Used setbacks as motivation"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Crisis Management",
+            "Entrepreneurship",
+            "Healthcare",
+            "Social Work"
+          ],
+          "validation_prompts": [
+            "How do you pick yourself up after a setback?",
+            "What keeps you going when things get tough?"
+          ]
+        },
+        "self_awareness": {
+          "name": "Self-Awareness",
+          "description": "Understands own emotions, reflects on behavior",
+          "tier": 2,
+          "indicators": [
+            "Knew how they felt",
+            "Often reflected on their actions",
+            "Acknowledged own limitations",
+            "Recognized emotional patterns",
+            "Accepted feedback without becoming defensive",
+            "Could explain their own motivations"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Coaching",
+            "Therapy",
+            "Leadership",
+            "Education"
+          ],
+          "validation_prompts": [
+            "How do you understand your own emotions?",
+            "What helps you reflect on your actions?"
+          ]
+        },
+        "emotional_regulation": {
+          "name": "Emotional Regulation",
+          "description": "Controls impulses, manages emotions effectively",
+          "tier": 2,
+          "indicators": [
+            "Stayed calm under pressure",
+            "Thought before acting",
+            "Didn't react impulsively",
+            "Could manage anger or frustration",
+            "Remained composed in difficult situations",
+            "Used healthy coping mechanisms"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Law",
+            "Emergency Services",
+            "Leadership",
+            "Negotiation"
+          ],
+          "validation_prompts": [
+            "How do you stay calm under pressure?",
+            "What helps you manage strong emotions?"
+          ]
+        }
+      }
+    },
+    "career_traits": {
+      "name": "Career Traits",
+      "description": "How the user approaches work and professional challenges",
+      "traits": {
+        "problem_solving": {
+          "name": "Problem-Solving",
+          "description": "Analyzes, thinks critically, finds solutions",
+          "tier": 2,
+          "indicators": [
+            "Loved figuring things out",
+            "Was good at solving problems",
+            "Broke down complex problems",
+            "Thought creatively about solutions",
+            "Learned from mistakes",
+            "Tackled challenging problems eagerly"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Engineering",
+            "Data Science",
+            "Consulting",
+            "Technology",
+            "Science"
+          ],
+          "validation_prompts": [
+            "How do you approach a difficult problem?",
+            "What kind of problems excite you?"
+          ]
+        },
+        "risk_taking": {
+          "name": "Risk-Taking",
+          "description": "Takes calculated risks, embraces uncertainty",
+          "tier": 2,
+          "indicators": [
+            "Was willing to try new things",
+            "Took chances",
+            "Comfortable with uncertainty",
+            "Adapted when plans changed",
+            "Learned from risk outcomes",
+            "Pushed boundaries"
+          ],
+          "levels": [
+            "Low",
+            "Moderate",
+            "High",
+            "Extreme"
+          ],
+          "career_affinities": [
+            "Entrepreneurship",
+            "Startups",
+            "Trading",
+            "Adventure",
+            "Innovation"
+          ],
+          "validation_prompts": [
+            "How do you decide whether a risk is worth taking?",
+            "What was your biggest risk, and what happened?"
+          ]
+        },
+        "execution": {
+          "name": "Execution",
+          "description": "Gets things done, takes action",
+          "tier": 2,
+          "indicators": [
+            "Always followed through",
+            "Was reliable",
+            "Turned ideas into reality",
+            "Met deadlines consistently",
+            "Was action-oriented",
+            "Took initiative without being asked"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Operations",
+            "Project Management",
+            "Production",
+            "Construction"
+          ],
+          "validation_prompts": [
+            "How do you ensure you follow through on your commitments?",
+            "What motivates you to take action?"
+          ]
+        },
+        "ownership": {
+          "name": "Ownership",
+          "description": "Takes responsibility, accountable",
+          "tier": 2,
+          "indicators": [
+            "Owned their mistakes",
+            "Took charge of things",
+            "Didn't blame others",
+            "Felt responsible for outcomes",
+            "Proactively solved problems",
+            "Took pride in their work"
+          ],
+          "levels": [
+            "Emerging",
+            "Developing",
+            "Strong",
+            "Exceptional"
+          ],
+          "career_affinities": [
+            "Management",
+            "Leadership",
+            "Entrepreneurship",
+            "Quality Assurance"
+          ],
+          "validation_prompts": [
+            "How do you handle mistakes or failures?",
+            "What does taking ownership mean to you?"
+          ]
+        }
+      }
+    },
+    "identity_traits": {
+      "name": "Identity Traits (Tier 3 — Identity Drivers)",
+      "description": "The deep motivations, fears, values, and purpose that drive the user's behavior. These are Tier 3 traits.",
+      "traits": {
+        "values": {
+          "name": "Core Values",
+          "description": "What the user considers most important",
+          "tier": 3,
+          "indicators": [
+            "Expressed what mattered to them",
+            "Made decisions based on values",
+            "Stood up for what they believed in",
+            "Had clear moral boundaries",
+            "Valued specific things consistently",
+            "Could articulate their core beliefs"
+          ],
+          "types": [
+            "Integrity",
+            "Compassion",
+            "Freedom",
+            "Excellence",
+            "Connection",
+            "Creativity"
+          ],
+          "validation_prompts": [
+            "What principles do you refuse to compromise on?",
+            "When have you stood up for something you believed in?"
+          ]
+        },
+        "motivations": {
+          "name": "Core Motivations",
+          "description": "What drives the user to take action",
+          "tier": 3,
+          "indicators": [
+            "Was motivated by specific things",
+            "Worked hard for reasons they could explain",
+            "Felt driven to achieve certain goals",
+            "Persisted because of specific motivations",
+            "Had clear sources of inspiration"
+          ],
+          "types": [
+            "Achievement",
+            "Helping Others",
+            "Recognition",
+            "Autonomy",
+            "Mastery",
+            "Purpose"
+          ],
+          "validation_prompts": [
+            "What makes you wake up in the morning?",
+            "What drives you to achieve your goals?"
+          ]
+        },
+        "purpose": {
+          "name": "Sense of Purpose",
+          "description": "What gives the user meaning and fulfillment",
+          "tier": 3,
+          "indicators": [
+            "Felt fulfilled when doing certain things",
+            "Had a sense of purpose",
+            "Found meaning in specific activities",
+            "Felt their work mattered",
+            "Lived with intention"
+          ],
+          "types": [
+            "Impact",
+            "Connection",
+            "Growth",
+            "Creation",
+            "Service"
+          ],
+          "validation_prompts": [
+            "What gives your life meaning?",
+            "When do you feel most fulfilled?"
+          ]
+        },
+        "ambition": {
+          "name": "Ambition",
+          "description": "What the user strives to achieve",
+          "tier": 3,
+          "indicators": [
+            "Wanted to achieve big things",
+            "Had clear goals for the future",
+            "Was driven to succeed",
+            "Dreamed of specific achievements",
+            "Worked toward long-term aspirations",
+            "Was not satisfied with mediocrity"
+          ],
+          "levels": [
+            "Low",
+            "Moderate",
+            "High",
+            "Exceptional"
+          ],
+          "validation_prompts": [
+            "What do you hope to achieve in your life?",
+            "What drives your ambition?"
+          ]
+        },
+        "fears": {
+          "name": "Core Fears",
+          "description": "What the user is afraid of — often the shadow side of ambition",
+          "tier": 3,
+          "indicators": [
+            "Mentioned fears in multiple contexts",
+            "Avoided certain situations",
+            "Expressed anxiety about specific outcomes",
+            "Had recurring worries",
+            "Showed patterns of avoidance or overcompensation"
+          ],
+          "types": [
+            "Fear of Failure",
+            "Fear of Being Seen",
+            "Fear of Abandonment",
+            "Fear of Insignificance",
+            "Fear of Disappointing Others"
+          ],
+          "validation_prompts": [
+            "What kind of fears come up for you when you think about the future?",
+            "Is there something you've been avoiding?"
+          ]
+        }
+      }
+    },
+    "shadow_traits": {
+      "name": "Shadow Traits",
+      "description": "Hidden patterns that may cause internal conflict or growth opportunities. These should be validated with care and compassion.",
+      "traits": {
+        "people_pleasing": {
+          "name": "People-Pleasing",
+          "description": "Sacrificing own needs for others' approval",
+          "tier": 3,
+          "indicators": [
+            "Always wanted to make everyone happy",
+            "Had difficulty saying no",
+            "Felt guilty when others were unhappy",
+            "Put others' needs first consistently",
+            "Sought validation from others"
+          ],
+          "validation_prompts": [
+            "I notice you often put others first. How do you feel when you do that?",
+            "When was the last time you said no to someone, and how did it feel?"
+          ]
+        },
+        "hyper_independence": {
+          "name": "Hyper-Independence",
+          "description": "Refusing help, doing everything alone",
+          "tier": 3,
+          "indicators": [
+            "Preferred doing things alone",
+            "Didn't want to burden others",
+            "Struggled to ask for help",
+            "Felt uncomfortable relying on others",
+            "Built walls around themselves"
+          ],
+          "validation_prompts": [
+            "It sounds like you've always been very self-reliant. Where do you think that came from?",
+            "How do you feel when someone offers you help?"
+          ]
+        },
+        "perfectionism": {
+          "name": "Perfectionism",
+          "description": "Setting unrealistically high standards",
+          "tier": 3,
+          "indicators": [
+            "Had to get everything right",
+            "Was never satisfied with their work",
+            "Struggled with self-criticism",
+            "Feared making mistakes",
+            "Procrastinated due to fear of imperfection"
+          ],
+          "validation_prompts": [
+            "Excellence seems really important to you. Is that something you expected of yourself, or did you feel it from others?",
+            "What happens when you make a mistake?"
+          ]
+        },
+        "avoidance": {
+          "name": "Avoidance",
+          "description": "Avoiding conflict, difficult emotions, or challenges",
+          "tier": 3,
+          "indicators": [
+            "Avoided difficult conversations",
+            "Put off challenging tasks",
+            "Felt overwhelmed by conflict",
+            "Used distraction to avoid feelings",
+            "Kept things surface-level"
+          ],
+          "validation_prompts": [
+            "I notice you avoided some things. What did that avoidance protect you from?",
+            "How do you handle situations that feel overwhelming?"
+          ]
+        },
+        "overthinking": {
+          "name": "Overthinking",
+          "description": "Getting stuck in analysis paralysis",
+          "tier": 3,
+          "indicators": [
+            "Couldn't stop thinking about things",
+            "Worried excessively",
+            "Replayed situations repeatedly",
+            "Struggled to make decisions",
+            "Imagined worst-case scenarios"
+          ],
+          "validation_prompts": [
+            "Your mind seems really active. Is that something you've always experienced?",
+            "How do you quiet your thoughts when they get overwhelming?"
+          ]
+        }
+      }
+    }
+  },
+  "inference_rules": {
+    "pattern_matching": {
+      "minimum_indicators_for_confidence": {
+        "high": 3,
+        "moderate": 2,
+        "low": 1
+      },
+      "life_stage_weighting": {
+        "childhood": 0.2,
+        "teenage": 0.3,
+        "adult": 0.5
+      },
+      "recency_weighting": {
+        "description": "Recent patterns (Adult) weigh more heavily than past patterns (Childhood)",
+        "formula": "Confidence = (Childhood_indicators × 0.2) + (Teenage_indicators × 0.3) + (Adult_indicators × 0.5)"
+      },
+      "fallback_rules": {
+        "description": "If the user hasn't completed a life stage, confidence levels adjust accordingly.",
+        "rules": [
+          "If only Childhood is complete: Max confidence = Medium",
+          "If Childhood + Teenage are complete: Max confidence = High (for consistent patterns)",
+          "If Adult is not complete: Use weighted score with higher emphasis on Teenage + Childhood"
+        ]
+      }
+    },
+    "confidence_levels": {
+      "high": {
+        "criteria": "Pattern appears in 2+ life stages with 3+ indicators each",
+        "presentation": "You consistently show [trait]"
+      },
+      "moderate": {
+        "criteria": "Pattern appears in 2+ life stages with limited evidence OR 1 life stage with strong evidence",
+        "presentation": "I notice a pattern of [trait]"
+      },
+      "low": {
+        "criteria": "Pattern appears in 1 life stage with limited evidence",
+        "presentation": "I wonder if you might be [trait]"
+      }
+    }
+  },
+  "career_mapping": {
+    "single_trait": {
+      "high_curiosity": [
+        "Research",
+        "Data Science",
+        "Journalism",
+        "Science",
+        "Technology"
+      ],
+      "high_empathy": [
+        "Counseling",
+        "Healthcare",
+        "Teaching",
+        "Social Work",
+        "HR"
+      ],
+      "high_creativity": [
+        "Design",
+        "Marketing",
+        "Arts",
+        "Innovation",
+        "Entrepreneurship"
+      ],
+      "high_leadership": [
+        "Management",
+        "Entrepreneurship",
+        "Project Management",
+        "Leadership"
+      ],
+      "high_discipline": [
+        "Operations",
+        "Finance",
+        "Law",
+        "Accounting",
+        "Project Management"
+      ],
+      "high_communication": [
+        "Teaching",
+        "Sales",
+        "HR",
+        "Coaching",
+        "Public Relations"
+      ],
+      "high_problem_solving": [
+        "Engineering",
+        "Data Science",
+        "Consulting",
+        "Technology",
+        "Science"
+      ],
+      "high_risk_taking": [
+        "Entrepreneurship",
+        "Startups",
+        "Trading",
+        "Innovation"
+      ]
+    },
+    "trait_intersections": {
+      "description": "Career paths based on combinations of 2-3 traits — more nuanced and accurate.",
+      "rules": [
+        {
+          "combination": [
+            "high_empathy",
+            "high_execution"
+          ],
+          "careers": [
+            "Healthcare Administration",
+            "Project Management",
+            "Social Work Management",
+            "Non-Profit Leadership"
+          ]
+        },
+        {
+          "combination": [
+            "high_empathy",
+            "high_creativity"
+          ],
+          "careers": [
+            "Art Therapy",
+            "UX Design",
+            "Creative Direction",
+            "Writing",
+            "Theater"
+          ]
+        },
+        {
+          "combination": [
+            "high_leadership",
+            "high_problem_solving"
+          ],
+          "careers": [
+            "Tech Founder",
+            "Management Consulting",
+            "Product Management",
+            "Strategy",
+            "Executive Leadership"
+          ]
+        },
+        {
+          "combination": [
+            "high_curiosity",
+            "high_analytical_thinking"
+          ],
+          "careers": [
+            "Research",
+            "Data Science",
+            "Engineering",
+            "Academia",
+            "Forensics"
+          ]
+        },
+        {
+          "combination": [
+            "high_creativity",
+            "high_independence"
+          ],
+          "careers": [
+            "Entrepreneurship",
+            "Freelance Design",
+            "Art",
+            "Writing",
+            "Innovation"
+          ]
+        },
+        {
+          "combination": [
+            "high_communication",
+            "high_empathy"
+          ],
+          "careers": [
+            "Counseling",
+            "HR",
+            "Teaching",
+            "Sales",
+            "Coaching"
+          ]
+        },
+        {
+          "combination": [
+            "high_discipline",
+            "high_execution"
+          ],
+          "careers": [
+            "Operations",
+            "Project Management",
+            "Finance",
+            "Law",
+            "Quality Assurance"
+          ]
+        },
+        {
+          "combination": [
+            "high_analytical_thinking",
+            "high_big_picture"
+          ],
+          "careers": [
+            "Strategy",
+            "Consulting",
+            "Policy",
+            "Leadership",
+            "Research"
+          ]
+        },
+        {
+          "combination": [
+            "high_risk_taking",
+            "high_leadership"
+          ],
+          "careers": [
+            "Entrepreneurship",
+            "Startup Leadership",
+            "Venture Capital",
+            "Executive Management"
+          ]
+        },
+        {
+          "combination": [
+            "high_empathy",
+            "high_communication",
+            "high_leadership"
+          ],
+          "careers": [
+            "People Operations",
+            "HR Leadership",
+            "Organizational Psychology",
+            "Executive Coaching"
+          ]
+        },
+        {
+          "combination": [
+            "high_curiosity",
+            "high_creativity",
+            "high_independence"
+          ],
+          "careers": [
+            "Innovation",
+            "Product Design",
+            "Arts",
+            "Research",
+            "Technology Innovation"
+          ]
+        }
+      ]
+    }
+  },
+  "validation_summary": {
+    "total_traits": 37,
+    "tier_2_traits": 28,
+    "tier_3_traits": 9,
+    "shadow_traits": 5,
+    "career_intersections": 11
+  }
+}
