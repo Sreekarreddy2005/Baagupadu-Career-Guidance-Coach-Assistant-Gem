@@ -1,10 +1,530 @@
-What it is: Questions about ages 20-30.
-
-Categories: Career/purpose, learning/growth, relationships, challenges, vision
-
-Key Questions:
-
-text
-"When did you last lose track of time working on something?" → Flow state, passion
-"What would you do if you knew you couldn't fail?" → True ambition
-Why you need it: These questions connect past patterns to present reality and future direction.
+{
+  "phase": "adult_exploration",
+  "description": "This phase explores adult experiences (ages 20-30) to understand career development, life purpose, and personal growth — connecting past patterns to present identity and future vision.",
+  "total_questions": 65,
+  "categories": [
+    {
+      "category": "career",
+      "name": "Career Development & Professional Identity",
+      "description": "Understanding career motivation, professional growth, work values, and career decision-making",
+      "source": "Career Development and Counseling, Career Growth Systematic Review, Career Transitions Across the Lifespan",
+      "questions": [
+        {
+          "id": "adult_career_001",
+          "direct_question": "What inspired you to pursue your current career or profession?",
+          "purpose": "Understanding career motivation and initial career choice",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "adult_career_002",
+          "direct_question": "How has your definition of career success changed since you first started working?",
+          "purpose": "Understanding career identity and evolving career goals",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "adult_career_003",
+          "direct_question": "What motivates you to continue growing professionally?",
+          "purpose": "Understanding intrinsic and extrinsic motivation",
+          "tone": "reflective",
+          "transformation_rule": "self_reflection"
+        },
+        {
+          "id": "adult_career_004",
+          "direct_question": "Can you describe a skill you've intentionally developed to improve your career?",
+          "purpose": "Understanding lifelong learning and professional development",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "adult_career_005",
+          "direct_question": "What aspects of your work give you the greatest sense of satisfaction?",
+          "purpose": "Understanding job satisfaction and fulfillment",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "adult_career_006",
+          "direct_question": "How do you usually prepare yourself for future career opportunities?",
+          "purpose": "Understanding career planning and proactivity",
+          "tone": "reflective",
+          "transformation_rule": "future_planning"
+        },
+        {
+          "id": "adult_career_007",
+          "direct_question": "Can you tell me about a career challenge that helped you grow professionally?",
+          "purpose": "Understanding resilience and professional growth",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "adult_career_008",
+          "direct_question": "What role has continuous learning played in your career journey?",
+          "purpose": "Understanding learning orientation",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "adult_career_009",
+          "direct_question": "How do you decide which professional opportunities are worth pursuing?",
+          "purpose": "Understanding career decision-making",
+          "tone": "reflective",
+          "transformation_rule": "self_reflection"
+        },
+        {
+          "id": "adult_career_010",
+          "direct_question": "Can you describe a time when you stepped outside your comfort zone to advance your career?",
+          "purpose": "Understanding career initiative and adaptability",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "adult_career_011",
+          "direct_question": "Who has influenced your professional development the most, and how?",
+          "purpose": "Understanding mentorship and workplace support",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "adult_career_012",
+          "direct_question": "What personal qualities have helped you succeed in your career?",
+          "purpose": "Understanding strengths and professional identity",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "adult_career_013",
+          "direct_question": "How do you stay motivated when your career doesn't progress as quickly as you expected?",
+          "purpose": "Understanding persistence and career resilience",
+          "tone": "reflective",
+          "transformation_rule": "self_reflection"
+        },
+        {
+          "id": "adult_career_014",
+          "direct_question": "Can you tell me about a career decision that significantly changed your professional path?",
+          "purpose": "Understanding career transitions and pivots",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "adult_career_015",
+          "direct_question": "What work values are most important to you when choosing or staying in a job?",
+          "purpose": "Understanding work values and alignment",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "adult_career_016",
+          "direct_question": "How do you balance achieving professional goals with maintaining your personal well-being?",
+          "purpose": "Understanding work-life balance",
+          "tone": "reflective",
+          "transformation_rule": "self_reflection"
+        },
+        {
+          "id": "adult_career_017",
+          "direct_question": "Can you share an experience where feedback helped improve your professional performance?",
+          "purpose": "Understanding learning through feedback",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "adult_career_018",
+          "direct_question": "How has your career shaped the way you see yourself as a professional?",
+          "purpose": "Understanding professional identity",
+          "tone": "reflective",
+          "transformation_rule": "identity_reflection"
+        },
+        {
+          "id": "adult_career_019",
+          "direct_question": "Looking ahead, what kind of professional impact would you like to make through your work?",
+          "purpose": "Understanding long-term career aspirations and purpose",
+          "tone": "reflective",
+          "transformation_rule": "future_reflection"
+        },
+        {
+          "id": "adult_career_020",
+          "direct_question": "Looking back on your career so far, what accomplishment makes you feel most proud, and why?",
+          "purpose": "Understanding achievement, fulfillment, and career meaning",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "adult_career_021",
+          "direct_question": "Have you ever considered changing careers entirely? What would that look like?",
+          "purpose": "Understanding career exploration and openness to change",
+          "tone": "reflective",
+          "transformation_rule": "imagined_scenario",
+          "scenario_hook": "Imagine exploring a completely different path—what would it look like?"
+        },
+        {
+          "id": "adult_career_022",
+          "direct_question": "Do you feel your career aligns with your deeper purpose, or is it separate?",
+          "purpose": "Understanding career-purpose alignment",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        }
+      ]
+    },
+    {
+      "category": "purpose",
+      "name": "Purpose & Meaning",
+      "description": "Understanding life purpose, meaning, values, and what drives the user's sense of fulfillment",
+      "source": "Meaning in Life Questionnaire (MLQ), Purpose in Life Theory, SAGE Purpose Study, Adult Development, Psychology of Purpose",
+      "questions": [
+        {
+          "id": "adult_purpose_001",
+          "direct_question": "What currently gives your life the greatest sense of purpose?",
+          "purpose": "Understanding primary source of purpose",
+          "tone": "reflective",
+          "transformation_rule": "self_reflection"
+        },
+        {
+          "id": "adult_purpose_002",
+          "direct_question": "How has your understanding of your life's purpose changed over the years?",
+          "purpose": "Understanding purpose development across adulthood",
+          "tone": "reflective",
+          "transformation_rule": "life_reflection"
+        },
+        {
+          "id": "adult_purpose_003",
+          "direct_question": "Can you describe an experience that helped you discover what truly matters to you?",
+          "purpose": "Understanding experiences influencing life meaning",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "adult_purpose_004",
+          "direct_question": "What motivates you to keep moving forward during difficult periods in your life?",
+          "purpose": "Understanding resilience supported by purpose",
+          "tone": "reflective",
+          "transformation_rule": "self_reflection"
+        },
+        {
+          "id": "adult_purpose_005",
+          "direct_question": "Which personal values guide most of your important life decisions?",
+          "purpose": "Understanding value-driven purpose",
+          "tone": "reflective",
+          "transformation_rule": "values_reflection"
+        },
+        {
+          "id": "adult_purpose_006",
+          "direct_question": "How do your daily activities contribute to the kind of life you want to build?",
+          "purpose": "Understanding alignment between daily actions and long-term purpose",
+          "tone": "reflective",
+          "transformation_rule": "goal_reflection"
+        },
+        {
+          "id": "adult_purpose_007",
+          "direct_question": "Can you share a goal that has remained meaningful to you for many years?",
+          "purpose": "Understanding long-term purpose and commitment",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "adult_purpose_008",
+          "direct_question": "What kinds of experiences make your life feel meaningful?",
+          "purpose": "Understanding perceived meaning in life",
+          "tone": "reflective",
+          "transformation_rule": "self_reflection"
+        },
+        {
+          "id": "adult_purpose_009",
+          "direct_question": "How do you define a fulfilling life?",
+          "purpose": "Understanding personal definitions of fulfillment",
+          "tone": "reflective",
+          "transformation_rule": "perspective_reflection"
+        },
+        {
+          "id": "adult_purpose_010",
+          "direct_question": "Can you describe a time when helping someone else gave your life greater meaning?",
+          "purpose": "Understanding purpose through contribution",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "adult_purpose_011",
+          "direct_question": "How have your relationships influenced your sense of purpose?",
+          "purpose": "Understanding interpersonal influences on purpose",
+          "tone": "reflective",
+          "transformation_rule": "relationship_reflection"
+        },
+        {
+          "id": "adult_purpose_012",
+          "direct_question": "What role does personal growth play in living a meaningful life?",
+          "purpose": "Understanding continuous self-development",
+          "tone": "reflective",
+          "transformation_rule": "growth_reflection"
+        },
+        {
+          "id": "adult_purpose_013",
+          "direct_question": "When you face uncertainty, what helps you stay focused on your long-term direction?",
+          "purpose": "Understanding purpose during life transitions",
+          "tone": "reflective",
+          "transformation_rule": "problem_reflection"
+        },
+        {
+          "id": "adult_purpose_014",
+          "direct_question": "Can you describe a challenge that changed your outlook on life?",
+          "purpose": "Understanding transformation through adversity",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "adult_purpose_015",
+          "direct_question": "What achievements have brought you the greatest sense of personal fulfillment?",
+          "purpose": "Understanding meaningful accomplishments",
+          "tone": "reflective",
+          "transformation_rule": "achievement_reflection"
+        },
+        {
+          "id": "adult_purpose_016",
+          "direct_question": "How do you know when your life is moving in the direction you want?",
+          "purpose": "Understanding indicators of purposeful living",
+          "tone": "reflective",
+          "transformation_rule": "self_assessment"
+        },
+        {
+          "id": "adult_purpose_017",
+          "direct_question": "What legacy or positive impact would you like to leave through your life?",
+          "purpose": "Understanding contribution beyond oneself",
+          "tone": "reflective",
+          "transformation_rule": "future_reflection"
+        },
+        {
+          "id": "adult_purpose_018",
+          "direct_question": "How do your career, relationships, and personal interests work together to create a meaningful life?",
+          "purpose": "Understanding integration of multiple life roles",
+          "tone": "reflective",
+          "transformation_rule": "holistic_reflection"
+        },
+        {
+          "id": "adult_purpose_019",
+          "direct_question": "What is one belief or principle that consistently shapes the choices you make?",
+          "purpose": "Understanding enduring guiding principles",
+          "tone": "reflective",
+          "transformation_rule": "values_reflection"
+        },
+        {
+          "id": "adult_purpose_020",
+          "direct_question": "Looking ahead, what kind of person do you hope to become, and why is that important to you?",
+          "purpose": "Understanding future identity and life purpose",
+          "tone": "reflective",
+          "transformation_rule": "future_identity_reflection"
+        },
+        {
+          "id": "adult_purpose_021",
+          "direct_question": "Does your work contribute to your sense of purpose, or do you find purpose outside work?",
+          "purpose": "Understanding purpose in the workplace",
+          "tone": "reflective",
+          "transformation_rule": "reflection"
+        },
+        {
+          "id": "adult_purpose_022",
+          "direct_question": "Have you ever felt torn between different purposes or values?",
+          "purpose": "Understanding purpose conflict and prioritization",
+          "tone": "gentle",
+          "transformation_rule": "reflection"
+        }
+      ]
+    },
+    {
+      "category": "growth_and_vision",
+      "name": "Growth & Vision",
+      "description": "Understanding personal growth, future vision, adaptability, and intentional life direction",
+      "source": "Growth Mindset Scale, Personal Growth Guide, Neuroplasticity Strategy, Future Orientation, Goal Setting Theory, Journal of Happiness Studies",
+      "questions": [
+        {
+          "id": "adult_growth_001",
+          "direct_question": "How have you changed as a person over the past few years?",
+          "purpose": "Understanding perceived personal growth",
+          "tone": "reflective",
+          "transformation_rule": "life_reflection"
+        },
+        {
+          "id": "adult_growth_002",
+          "direct_question": "What experiences have contributed the most to your personal growth?",
+          "purpose": "Identifying influential growth experiences",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "adult_growth_003",
+          "direct_question": "What new skills or abilities are you actively trying to develop?",
+          "purpose": "Understanding commitment to continuous learning",
+          "tone": "reflective",
+          "transformation_rule": "current_growth_reflection"
+        },
+        {
+          "id": "adult_growth_004",
+          "direct_question": "How do you usually respond when faced with a challenge you've never encountered before?",
+          "purpose": "Understanding adaptability and learning orientation",
+          "tone": "reflective",
+          "transformation_rule": "problem_reflection"
+        },
+        {
+          "id": "adult_growth_005",
+          "direct_question": "Can you describe a setback that ultimately helped you grow?",
+          "purpose": "Understanding growth through adversity",
+          "tone": "narrative",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "adult_growth_006",
+          "direct_question": "What habits have played the biggest role in your personal development?",
+          "purpose": "Understanding behaviors that support growth",
+          "tone": "reflective",
+          "transformation_rule": "habit_reflection"
+        },
+        {
+          "id": "adult_growth_007",
+          "direct_question": "How do you challenge yourself to continue learning and improving?",
+          "purpose": "Assessing lifelong learning orientation",
+          "tone": "reflective",
+          "transformation_rule": "growth_reflection"
+        },
+        {
+          "id": "adult_growth_008",
+          "direct_question": "How do you know that you are becoming a better version of yourself?",
+          "purpose": "Understanding self-evaluation of growth",
+          "tone": "reflective",
+          "transformation_rule": "self_assessment"
+        },
+        {
+          "id": "adult_growth_009",
+          "direct_question": "What personal quality are you currently working to improve?",
+          "purpose": "Understanding intentional self-development",
+          "tone": "reflective",
+          "transformation_rule": "self_reflection"
+        },
+        {
+          "id": "adult_growth_010",
+          "direct_question": "How have your values influenced the person you are becoming?",
+          "purpose": "Understanding growth guided by personal values",
+          "tone": "reflective",
+          "transformation_rule": "values_reflection"
+        },
+        {
+          "id": "adult_growth_011",
+          "direct_question": "What kind of future do you want to create for yourself?",
+          "purpose": "Understanding long-term vision",
+          "tone": "reflective",
+          "transformation_rule": "future_reflection"
+        },
+        {
+          "id": "adult_growth_012",
+          "direct_question": "Where do you see yourself five to ten years from now?",
+          "purpose": "Understanding future aspirations",
+          "tone": "reflective",
+          "transformation_rule": "future_planning"
+        },
+        {
+          "id": "adult_growth_013",
+          "direct_question": "What motivates you to keep working toward your long-term goals?",
+          "purpose": "Understanding sustained motivation",
+          "tone": "reflective",
+          "transformation_rule": "goal_reflection"
+        },
+        {
+          "id": "adult_growth_014",
+          "direct_question": "How do you ensure your daily actions support the future you want?",
+          "purpose": "Understanding alignment between present behavior and future vision",
+          "tone": "reflective",
+          "transformation_rule": "action_reflection"
+        },
+        {
+          "id": "adult_growth_015",
+          "direct_question": "Can you describe a goal that has remained important to you over time?",
+          "purpose": "Understanding long-term commitment",
+          "tone": "narrative",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "adult_growth_016",
+          "direct_question": "How do you adapt your plans when unexpected situations arise?",
+          "purpose": "Understanding flexibility in pursuing future goals",
+          "tone": "reflective",
+          "transformation_rule": "adaptability_reflection"
+        },
+        {
+          "id": "adult_growth_017",
+          "direct_question": "What opportunities do you hope to create for yourself in the future?",
+          "purpose": "Understanding proactive future thinking",
+          "tone": "reflective",
+          "transformation_rule": "future_planning"
+        },
+        {
+          "id": "adult_growth_018",
+          "direct_question": "When you imagine your future, what excites you the most?",
+          "purpose": "Understanding positive future expectations",
+          "tone": "reflective",
+          "transformation_rule": "vision_reflection"
+        },
+        {
+          "id": "adult_growth_019",
+          "direct_question": "How do you balance personal growth with achieving your long-term goals?",
+          "purpose": "Understanding the relationship between growth and vision",
+          "tone": "reflective",
+          "transformation_rule": "holistic_reflection"
+        },
+        {
+          "id": "adult_growth_020",
+          "direct_question": "Looking ahead, what kind of person do you hope to become, and what steps are you taking to get there?",
+          "purpose": "Understanding future identity and intentional growth",
+          "tone": "reflective",
+          "transformation_rule": "future_identity_reflection"
+        },
+        {
+          "id": "adult_growth_021",
+          "direct_question": "What obstacles have stood in the way of your personal growth, and how have you overcome them?",
+          "purpose": "Understanding barriers to growth and resilience",
+          "tone": "reflective",
+          "transformation_rule": "self_reflection"
+        },
+        {
+          "id": "adult_growth_022",
+          "direct_question": "How have your relationships influenced your personal growth?",
+          "purpose": "Understanding relational influences on growth",
+          "tone": "reflective",
+          "transformation_rule": "relationship_reflection"
+        }
+      ]
+    }
+  ],
+  "follow_up_strategies": {
+    "if_emotional": "That sounds really meaningful. What do you think that experience taught you about yourself?",
+    "if_brief": "I'm curious about that—what made that so significant to you?",
+    "if_resistant": "That's okay. We can come back to it later if you'd prefer. Let's try another question.",
+    "if_reflective": "That's a beautiful way to put it. What do you think that says about who you are today?",
+    "if_general": "That's interesting. Can you tell me more about that?",
+    "if_hesitant": "Take your time. Sometimes the best answers come when we let them find us.",
+    "if_surprising": "That's fascinating—I didn't expect that. What do you think made you feel that way?"
+  },
+  "transformation_rules": {
+    "storytelling": "Tell me about {story_hook}... {direct_question}?",
+    "memory_recall": "Remember when {memory_hook}? {direct_question}?",
+    "imagined_scenario": "Imagine {scenario_hook}. {direct_question}?",
+    "sensory_recall": "Think about {sensory_hook}. {direct_question}?",
+    "reflection": "Think about {reflection_hook}. {direct_question}?",
+    "future_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "self_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "life_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "values_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "goal_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "growth_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "future_planning": "Think about {reflection_hook}. {direct_question}?",
+    "identity_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "relationship_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "achievement_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "holistic_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "future_identity_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "perspective_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "habit_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "current_growth_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "problem_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "action_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "adaptability_reflection": "Think about {reflection_hook}. {direct_question}?",
+    "self_assessment": "Think about {reflection_hook}. {direct_question}?",
+    "vision_reflection": "Think about {reflection_hook}. {direct_question}?"
+  }
+}
