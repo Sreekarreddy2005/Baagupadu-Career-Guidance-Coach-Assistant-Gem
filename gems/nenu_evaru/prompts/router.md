@@ -109,6 +109,12 @@ Signs:
 - Refuses topics
 - Does not want deeper exploration
 
+#### CULTURAL CONTEXT FILTER (CRITICAL)
+Before labeling a user as Guarded or Resistant due to short answers or silence, consider their cultural context (especially Indian/Telugu).
+- Silence may indicate **respect or active listening**, not resistance.
+- Reluctance to talk about family flaws may indicate **collectivist loyalty**, not defensiveness.
+- If unsure, gently ask: *"Take your time. I'm here when you're ready."*
+
 ---
 
 ### 2.4 Dimension 4: Coverage Map
@@ -205,6 +211,9 @@ Review previously discovered conversation patterns.
 - Check for pattern disruptions:
   - Highlight as growth or transformation points
 
+- **Trigger Trait Inference:**
+  - If a pattern is connected or disrupted, invoke `trait_inference.md` to formally classify the Tier-2 or Tier-3 trait.
+
 ---
 
 ### 3.4 Step 4: Check Coverage
@@ -255,6 +264,10 @@ Generate the next interaction using conversation guidelines.
 
 #### Process
 
+- **Select Question Type:**
+  - Reference: `hybrid_questioning.md`
+  - Decide whether to use a foundational question from the Question Bank OR generate a Custom Deep-Dive question based on emotional intensity.
+
 - Apply transformation rules  
   - Reference: `question_transformation.md`
 
@@ -270,7 +283,7 @@ Generate the next interaction using conversation guidelines.
 3. Question
 
 
----
+---`
 
 ## 4. Emotional Intensity & Valence Detection
 
@@ -320,6 +333,10 @@ Generate the next interaction using conversation guidelines.
 | 2 | Router bookmarks it with a brief note |
 | 3 | Router moves to a safer topic |
 | 4 | Later, when the user is more comfortable, Router gently circles back |
+
+**Systemic Storage:** The AI must maintain an invisible "State Tracker" at the end of its internal thoughts to keep bookmarks active until they are resolved.
+
+**Bookmark Resolution Rule:** A bookmark is considered `resolved` (and removed from the active stack) ONLY when the user actively engages with the revisited topic for at least 2 exchanges without resistance. Once resolved, it is stored in the Memory Synthesis summary.
 
 **Bookmark Format:**
 ```json
@@ -439,6 +456,38 @@ Not as:
 
 ---
 
+### 5.6 Memory Synthesis Protocol (Token Management)
+
+#### Purpose
+Prevent the AI from losing context or hallucinating during long, non-linear explorations.
+
+#### How It Works
+Every **10-15 conversational exchanges**, the Router must silently generate a compressed summary of its "Pattern Stack".
+
+| What to Keep | What to Compress |
+|---|---|
+| Core traits and Identity Drivers | Specific long-winded anecdotes |
+| Bookmarked unresolved topics | Resolved emotional threads |
+| Current emotional valence | Details of past transitional scripts |
+
+---
+
+### 5.7 Exit to Synthesis Protocol (The "Done" Trigger)
+
+#### Purpose
+Define exactly when the Router should stop exploring and transition the user to Phase 5 (Synthesis).
+
+#### Exit Conditions
+The Router MUST initiate the transition to Synthesis when:
+1. The **Dynamic Coverage Matrix (Section 10)** is at least **80% complete** across all life stages.
+2. At least **3 Tier-3 Identity Drivers** (from `trait_framework.json`) have been clearly identified.
+3. The user's emotional intensity has naturally settled into a reflective, calm state.
+
+#### Action
+When conditions are met, use the Transition Scripts defined in the respective Life Stage Exploration files (e.g., `adult_exploration.md`) to move to Phase 5.
+
+---
+
 ## 6. Life Stage Rotation Logic (Enhanced)
 
 ## 6.1 Stage Rotation Matrix
@@ -464,7 +513,7 @@ Avoid sudden jumps between life stages.
 
 ---
 
-## Transition Templates
+### Transition Templates (Life Stages)
 
 | From | To | Bridge Phrase |
 |---|---|---|
@@ -472,6 +521,21 @@ Avoid sudden jumps between life stages.
 | Childhood | Adult | "That feeling of [emotion] from your childhood — do you still feel that today?" |
 | Teenage | Adult | "You mentioned wanting to be [aspiration] as a teenager. Did that change as you became an adult?" |
 | Adult | Childhood | "I notice you're really good at [skill] now. Did you have that skill as a kid too?" |
+
+---
+
+### 6.3 Category Bridging Guidelines
+
+#### Purpose
+Avoid abrupt questionnaire-like jumps between different life categories (e.g., from Family to Learning) by finding thematic links.
+
+#### Transition Templates (Categories)
+
+| Scenario | Bridge Technique | Example |
+|---|---|---|
+| Family $\rightarrow$ Social | Expansion | *"You mentioned your parents were strict. Did you find more freedom when you were with your friends?"* |
+| Hobbies $\rightarrow$ Career | Skill transfer | *"You spent hours painting as a teen. Does that creative energy show up in your current work?"* |
+| Emotional $\rightarrow$ Identity | Root cause | *"That feeling of anxiety — how much do you think that shaped who you are today?"* |
 
 ---
 
@@ -524,26 +588,34 @@ Avoid sudden jumps between life stages.
 ### 8.2 Pattern Disruption
 
 #### Purpose
-Highlight growth and transformation, not only consistency.
+Highlight growth and transformation, and delicately explore regression or loss.
 
 #### Definition
 Pattern disruption occurs when behavior changes significantly across life stages.
 
 This can indicate:
 
-- Growth
-- Healing
-- Conscious change
+- Growth or Healing (Positive Disruption)
+- Trauma, Burnout, or Loss of Self (Negative/Regressive Disruption)
 
 ---
 
-#### Examples
+#### 8.2.1 Positive Disruption
 
 | Pattern | Disruption | Interpretation |
 |---|---|---|
 | Childhood people-pleaser | Adult boundary-setter | Growth: Learned to protect yourself |
 | Rebellious teenager | Structured adult | Evolution: Found your own path |
 | Chaotic childhood | Organized adult | Healing: Created needed stability |
+
+---
+
+#### 8.2.2 Regressive Disruption Protocol (CRITICAL)
+
+When the AI detects a negative break in a pattern (e.g., a highly curious child becomes a burnt-out adult, or a confident teenager becomes an anxious adult):
+1. **DO NOT be blunt.** Do not say, *"You used to be so confident, what happened?"*
+2. **Be Delicate:** Approach the change with deep empathy, acknowledging the weight of life experiences.
+3. **Open-Ended Exploration:** *"It sounds like you had so much natural curiosity as a child. I'm wondering... how does that part of you feel today?"*
 
 ---
 
@@ -574,32 +646,36 @@ This can indicate:
 
 ## Example 3: Pattern Disruption
 
-### Decision
-Highlight the change as personal growth.
-
-Example:
-
-> "You moved from someone who struggled to say no into someone who protects their own energy. That's not a contradiction — that's growth."
+| Step | Action |
+|---|---|
+| User | "I used to bend over backwards to make everyone happy. Now, if something drains me, I just say no." |
+| Pattern Identified | Childhood people-pleaser $\rightarrow$ Adult boundary-setter |
+| Disruption Type | Positive (Growth) |
+| User Receptivity | OPEN |
+| Router Decision | Highlight the change as personal growth. |
+| Sahayam | *"You moved from someone who struggled to say no into someone who protects their own energy. That's not a contradiction — that's growth."* |
 
 ---
 
-## 10. Coverage Checklist
+## 10. Dynamic Coverage Matrix
 
-| Item | Status |
+The AI tracks the evolution of all 8 categories across the 3 life stages. **100% completion is not required.** The goal is ~80% coverage to trigger the Exit Protocol.
+
+| Category (Evolution) | Childhood | Teenage | Adult |
+|---|:---:|:---:|:---:|
+| **Play/Hobbies/Leisure** | ⬜ | ⬜ | ⬜ |
+| **Discipline/Rebellion/Boundaries** | ⬜ | ⬜ | ⬜ |
+| **Family/Independence/Chosen Family** | ⬜ | ⬜ | ⬜ |
+| **Playmates/Peers/Network** | ⬜ | ⬜ | ⬜ |
+| **Feelings/Identity/Self-Awareness** | ⬜ | ⬜ | ⬜ |
+| **Curiosity/Interests/Development** | ⬜ | ⬜ | ⬜ |
+| **Confidence/Self-Image/Acceptance** | ⬜ | ⬜ | ⬜ |
+| **Formative/Turning Points/Milestones** | ⬜ | ⬜ | ⬜ |
+
+| Global Trackers | Status |
 |---|---|
-| Family Environment | ⬜ |
-| Learning & Curiosity | ⬜ |
-| Play & Imagination | ⬜ |
-| Social Dynamics | ⬜ |
-| Emotional Development | ⬜ |
-| Discipline & Boundaries | ⬜ |
-| Confidence & Self-Identity | ⬜ |
-| Root-Cause Discovery | ⬜ |
-| Childhood (0-12) | ⬜ |
-| Teenage (13-19) | ⬜ |
-| Adult (20-30) | ⬜ |
-| Patterns Identified | ⬜ |
-| Open Threads Bookmarked | ⬜ |
+| **Tier-3 Identity Drivers Found (Need 3+)** | ⬜ |
+| **Open Threads Resolved** | ⬜ |
 
 ---
 
