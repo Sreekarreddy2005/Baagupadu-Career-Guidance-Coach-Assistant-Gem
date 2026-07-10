@@ -1,13 +1,1829 @@
-What it is: Structure for career guidance based on persona.
-
-What it contains:
-
-Career Categories: Technology, Creative, Social, Analytical, etc.
-
-Mapping: Which traits align with which career paths
-
-Skill Recommendations: What skills to develop based on persona
-
-Environment Fit: What work environments suit the persona
-
-Why you need it: This connects self-understanding to practical career direction.
+{
+  "name": "Career Framework \u2014 Baagupadu",
+  "version": "2.0",
+  "description": "Maps persona archetypes to career paths, industries, role types, skill gaps, and actionable recommendations. Provides structured career guidance based on the user's synthesized persona.",
+  "career_clusters": {
+    "technology": {
+      "id": "cluster_001",
+      "name": "Technology & Digital",
+      "description": "Careers involving software, systems, data, and digital innovation",
+      "industries": [
+        "Software Development",
+        "Data Science",
+        "Cybersecurity",
+        "Cloud Computing",
+        "Artificial Intelligence",
+        "Product Management"
+      ],
+      "key_skills": [
+        "Programming",
+        "System Design",
+        "Data Analysis",
+        "Problem Solving",
+        "Agile Methodologies"
+      ],
+      "growth_tier": "Moderate"
+    },
+    "healthcare": {
+      "id": "cluster_002",
+      "name": "Healthcare & Wellness",
+      "description": "Careers involving physical, mental, and emotional health",
+      "industries": [
+        "Medicine",
+        "Nursing",
+        "Psychology",
+        "Public Health",
+        "Wellness",
+        "Healthcare Administration"
+      ],
+      "key_skills": [
+        "Empathy",
+        "Medical Knowledge",
+        "Patient Care",
+        "Communication",
+        "Critical Thinking"
+      ],
+      "growth_tier": "Moderate"
+    },
+    "creative": {
+      "id": "cluster_003",
+      "name": "Creative & Design",
+      "description": "Careers involving artistic expression, design, and creative problem-solving",
+      "industries": [
+        "Graphic Design",
+        "UX/UI Design",
+        "Content Creation",
+        "Advertising",
+        "Architecture",
+        "Film & Media"
+      ],
+      "key_skills": [
+        "Creativity",
+        "Visual Communication",
+        "Design Thinking",
+        "Storytelling",
+        "Tool Proficiency"
+      ],
+      "growth_tier": "Moderate"
+    },
+    "business": {
+      "id": "cluster_004",
+      "name": "Business & Management",
+      "description": "Careers involving strategy, operations, leadership, and entrepreneurship",
+      "industries": [
+        "Management Consulting",
+        "Finance",
+        "Marketing",
+        "Operations",
+        "Human Resources",
+        "Entrepreneurship"
+      ],
+      "key_skills": [
+        "Leadership",
+        "Strategic Thinking",
+        "Financial Literacy",
+        "Communication",
+        "Project Management"
+      ],
+      "growth_tier": "Moderate"
+    },
+    "education": {
+      "id": "cluster_005",
+      "name": "Education & Social Impact",
+      "description": "Careers involving teaching, mentoring, social work, and community development",
+      "industries": [
+        "Teaching",
+        "Higher Education",
+        "Non-Profit",
+        "Social Work",
+        "Public Policy",
+        "Community Development"
+      ],
+      "key_skills": [
+        "Empathy",
+        "Communication",
+        "Teaching",
+        "Active Listening",
+        "Community Building"
+      ],
+      "growth_tier": "High"
+    },
+    "science": {
+      "id": "cluster_006",
+      "name": "Science & Research",
+      "description": "Careers involving scientific discovery, research, and innovation",
+      "industries": [
+        "Biotechnology",
+        "Pharmaceuticals",
+        "Environmental Science",
+        "Research & Development",
+        "Academia"
+      ],
+      "key_skills": [
+        "Analytical Thinking",
+        "Research Methods",
+        "Data Analysis",
+        "Scientific Writing",
+        "Critical Thinking"
+      ],
+      "growth_tier": "Moderate"
+    }
+  },
+  "role_types": {
+    "individual_contributor": {
+      "id": "role_001",
+      "name": "Individual Contributor",
+      "description": "Focused on hands-on work, expertise, and execution",
+      "characteristics": [
+        "Deep expertise",
+        "Execution-oriented",
+        "Hands-on",
+        "Technical depth"
+      ],
+      "typical_titles": [
+        "Engineer",
+        "Analyst",
+        "Designer",
+        "Researcher",
+        "Developer"
+      ],
+      "career_path": "Specialist \u2192 Senior \u2192 Lead \u2192 Principal"
+    },
+    "manager": {
+      "id": "role_002",
+      "name": "Manager / People Leader",
+      "description": "Focused on leading teams, developing people, and achieving outcomes through others",
+      "characteristics": [
+        "People development",
+        "Delegation",
+        "Coaching",
+        "Team building"
+      ],
+      "typical_titles": [
+        "Team Lead",
+        "Manager",
+        "Director",
+        "VP",
+        "Head of"
+      ],
+      "career_path": "Team Lead \u2192 Manager \u2192 Senior Manager \u2192 Director \u2192 VP"
+    },
+    "strategist": {
+      "id": "role_003",
+      "name": "Strategist / Visionary",
+      "description": "Focused on vision, strategy, and long-term direction",
+      "characteristics": [
+        "Big picture thinking",
+        "Strategic planning",
+        "Vision setting",
+        "Long-term thinking"
+      ],
+      "typical_titles": [
+        "Strategy Lead",
+        "Director of Strategy",
+        "Chief Strategy Officer",
+        "Product Strategist"
+      ],
+      "career_path": "Analyst \u2192 Strategist \u2192 Director \u2192 VP \u2192 C-Suite"
+    },
+    "creator": {
+      "id": "role_004",
+      "name": "Creator / Innovator",
+      "description": "Focused on innovation, creation, and bringing new ideas to life",
+      "characteristics": [
+        "Innovation",
+        "Creative thinking",
+        "Building new things",
+        "Entrepreneurship"
+      ],
+      "typical_titles": [
+        "Product Designer",
+        "Innovation Lead",
+        "Entrepreneur",
+        "Creative Director"
+      ],
+      "career_path": "Creator \u2192 Senior Creator \u2192 Lead \u2192 Principal \u2192 Director"
+    }
+  },
+  "archetype_to_career_mapping": {
+    "the_curious_explorer": {
+      "primary_role_type": "Individual Contributor",
+      "secondary_role_type": "Strategist",
+      "career_paths": [
+        {
+          "cluster": "technology",
+          "role_type": "Individual Contributor",
+          "specific_roles": [
+            {
+              "title": "Data Scientist",
+              "industries": [
+                "Technology",
+                "Finance",
+                "Healthcare",
+                "Research"
+              ],
+              "reason": "Your natural curiosity and pattern recognition make you excel at finding insights in data.",
+              "required_skills": [
+                "Python",
+                "Statistics",
+                "Machine Learning",
+                "Data Visualization",
+                "SQL"
+              ],
+              "compensation_tier": "Tier 2: Strong Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Python Programming",
+                  "Data Analysis with Python",
+                  "Machine Learning",
+                  "Data Visualization"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Python"
+                ]
+              }
+            },
+            {
+              "title": "Research Scientist",
+              "industries": [
+                "Biotechnology",
+                "Pharmaceuticals",
+                "Academia",
+                "Technology"
+              ],
+              "reason": "Your love of exploration and discovery makes research a natural fit.",
+              "required_skills": [
+                "Research Methods",
+                "Data Analysis",
+                "Scientific Writing",
+                "Domain Expertise",
+                "Critical Thinking"
+              ],
+              "compensation_tier": "Tier 3: Moderate Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Research Methods",
+                  "Data Analysis",
+                  "Scientific Writing",
+                  "Domain-specific knowledge"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Research Methods"
+                ]
+              }
+            },
+            {
+              "title": "UX Researcher",
+              "industries": [
+                "Technology",
+                "Product Design",
+                "Consulting"
+              ],
+              "reason": "Your curiosity about how people think and behave makes you a natural UX researcher.",
+              "required_skills": [
+                "User Research",
+                "Usability Testing",
+                "Data Analysis",
+                "Empathy",
+                "Communication"
+              ],
+              "compensation_tier": "Tier 3: Moderate Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "User Research Methods",
+                  "Usability Testing",
+                  "Data Analysis",
+                  "Design Thinking"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating User Research"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "cluster": "science",
+          "role_type": "Individual Contributor",
+          "specific_roles": [
+            {
+              "title": "Research Scientist (Academic or Industry)",
+              "industries": [
+                "Academic Research",
+                "Biotechnology",
+                "Environmental Science"
+              ],
+              "reason": "Your love of exploration and discovery aligns with the scientific method.",
+              "required_skills": [
+                "Research Design",
+                "Data Analysis",
+                "Academic Writing",
+                "Domain Expertise"
+              ],
+              "compensation_tier": "Tier 2: Strong Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Graduate Degree",
+                  "Research Methods",
+                  "Data Analysis",
+                  "Academic Writing"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Research Design"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "cluster": "creative",
+          "role_type": "Creator",
+          "specific_roles": [
+            {
+              "title": "Creative Director",
+              "industries": [
+                "Advertising",
+                "Media",
+                "Technology",
+                "Design"
+              ],
+              "reason": "Your curiosity and creativity combine to help you see possibilities others miss.",
+              "required_skills": [
+                "Creative Leadership",
+                "Design",
+                "Strategy",
+                "Communication",
+                "Team Management"
+              ],
+              "compensation_tier": "Tier 1: High Earning Potential",
+              "growth_tier": "Stable Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Design",
+                  "Leadership",
+                  "Strategy",
+                  "Communication"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Creative Leadership"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "fallback_careers": [
+        "Product Manager",
+        "Innovation Strategist",
+        "Technology Consultant"
+      ]
+    },
+    "the_compassionate_builder": {
+      "primary_role_type": "Manager",
+      "secondary_role_type": "Individual Contributor",
+      "career_paths": [
+        {
+          "cluster": "healthcare",
+          "role_type": "Individual Contributor",
+          "specific_roles": [
+            {
+              "title": "Healthcare Provider (Doctor, Nurse, Therapist)",
+              "industries": [
+                "Hospitals",
+                "Clinics",
+                "Private Practice"
+              ],
+              "reason": "Your empathy and desire to help others make you a natural in healthcare.",
+              "required_skills": [
+                "Medical Knowledge",
+                "Patient Care",
+                "Communication",
+                "Empathy",
+                "Critical Thinking"
+              ],
+              "compensation_tier": "Tier 1: High Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Medical School",
+                  "Nursing School",
+                  "Graduate Degree in Healthcare"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Medical Knowledge"
+                ]
+              }
+            },
+            {
+              "title": "Public Health Specialist",
+              "industries": [
+                "Government",
+                "Non-Profit",
+                "Healthcare Organizations"
+              ],
+              "reason": "Your desire for large-scale impact fits well with public health.",
+              "required_skills": [
+                "Public Health Knowledge",
+                "Data Analysis",
+                "Policy Understanding",
+                "Community Engagement"
+              ],
+              "compensation_tier": "Tier 3: Moderate Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Master of Public Health",
+                  "Data Analysis",
+                  "Policy Studies"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Public Health Knowledge"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "cluster": "education",
+          "role_type": "Manager",
+          "specific_roles": [
+            {
+              "title": "Educational Administrator",
+              "industries": [
+                "Schools",
+                "Colleges",
+                "Educational Organizations"
+              ],
+              "reason": "Your leadership and desire to make a difference align with educational leadership.",
+              "required_skills": [
+                "Leadership",
+                "Educational Policy",
+                "Budget Management",
+                "Community Engagement"
+              ],
+              "compensation_tier": "Tier 3: Moderate Earning Potential",
+              "growth_tier": "Stable Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Educational Leadership",
+                  "Policy Studies",
+                  "Business Administration"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Leadership"
+                ]
+              }
+            },
+            {
+              "title": "Social Services Director",
+              "industries": [
+                "Non-Profit",
+                "Government",
+                "Community Organizations"
+              ],
+              "reason": "Your empathy and desire to help others align with social services leadership.",
+              "required_skills": [
+                "Leadership",
+                "Social Work Knowledge",
+                "Community Engagement",
+                "Budget Management"
+              ],
+              "compensation_tier": "Tier 3: Moderate Earning Potential",
+              "growth_tier": "Stable Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Social Work",
+                  "Non-Profit Management",
+                  "Public Administration"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Leadership"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "cluster": "business",
+          "role_type": "Manager",
+          "specific_roles": [
+            {
+              "title": "HR Director",
+              "industries": [
+                "Any Industry"
+              ],
+              "reason": "Your empathy and people skills make you a natural in human resources.",
+              "required_skills": [
+                "Human Resources",
+                "Employee Relations",
+                "Talent Management",
+                "Leadership"
+              ],
+              "compensation_tier": "Tier 3: Moderate Earning Potential",
+              "growth_tier": "Stable Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Human Resources",
+                  "Leadership",
+                  "Talent Management"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Human Resources"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "fallback_careers": [
+        "Social Worker",
+        "Community Organizer",
+        "People Operations"
+      ]
+    },
+    "the_independent_thinker": {
+      "primary_role_type": "Individual Contributor",
+      "secondary_role_type": "Creator",
+      "career_paths": [
+        {
+          "cluster": "technology",
+          "role_type": "Individual Contributor",
+          "specific_roles": [
+            {
+              "title": "Software Engineer",
+              "industries": [
+                "Technology",
+                "Finance",
+                "Healthcare",
+                "Any"
+              ],
+              "reason": "Your analytical thinking and independence make you a natural engineer.",
+              "required_skills": [
+                "Programming",
+                "System Design",
+                "Data Structures",
+                "Algorithms",
+                "Version Control"
+              ],
+              "compensation_tier": "Tier 1: High Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Programming Languages",
+                  "Data Structures",
+                  "Algorithms",
+                  "System Design"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Programming"
+                ]
+              }
+            },
+            {
+              "title": "Cybersecurity Analyst",
+              "industries": [
+                "Technology",
+                "Finance",
+                "Government"
+              ],
+              "reason": "Your analytical mind and independence fit well with cybersecurity.",
+              "required_skills": [
+                "Network Security",
+                "Risk Management",
+                "Compliance",
+                "Analytical Thinking"
+              ],
+              "compensation_tier": "Tier 2: Strong Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Cybersecurity",
+                  "Network Security",
+                  "Risk Management"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Network Security"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "cluster": "business",
+          "role_type": "Strategist",
+          "specific_roles": [
+            {
+              "title": "Management Consultant",
+              "industries": [
+                "Consulting",
+                "Strategy"
+              ],
+              "reason": "Your analytical thinking and independence make you a natural consultant.",
+              "required_skills": [
+                "Strategic Thinking",
+                "Data Analysis",
+                "Communication",
+                "Problem Solving"
+              ],
+              "compensation_tier": "Tier 1: High Earning Potential",
+              "growth_tier": "Stable Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "MBA",
+                  "Data Analysis",
+                  "Strategic Thinking",
+                  "Communication"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Strategic Thinking"
+                ]
+              }
+            },
+            {
+              "title": "Strategy Director",
+              "industries": [
+                "Any Industry"
+              ],
+              "reason": "Your strategic thinking and independence make you a natural strategist.",
+              "required_skills": [
+                "Strategic Thinking",
+                "Data Analysis",
+                "Leadership",
+                "Communication"
+              ],
+              "compensation_tier": "Tier 3: Moderate Earning Potential",
+              "growth_tier": "Stable Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "MBA",
+                  "Data Analysis",
+                  "Strategic Thinking",
+                  "Leadership"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Strategic Thinking"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "cluster": "creative",
+          "role_type": "Creator",
+          "specific_roles": [
+            {
+              "title": "Solo Entrepreneur / Founder",
+              "industries": [
+                "Any Industry"
+              ],
+              "reason": "Your independence and drive make you a natural entrepreneur.",
+              "required_skills": [
+                "Business Acumen",
+                "Leadership",
+                "Financial Management",
+                "Strategic Thinking"
+              ],
+              "compensation_tier": "Tier 1: High Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Business Fundamentals",
+                  "Leadership",
+                  "Financial Management",
+                  "Strategic Thinking"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Business Acumen"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "fallback_careers": [
+        "Data Analyst",
+        "Researcher",
+        "Independent Consultant"
+      ]
+    },
+    "the_creative_connector": {
+      "primary_role_type": "Creator",
+      "secondary_role_type": "Manager",
+      "career_paths": [
+        {
+          "cluster": "creative",
+          "role_type": "Creator",
+          "specific_roles": [
+            {
+              "title": "UX/UI Designer",
+              "industries": [
+                "Technology",
+                "Design Studios",
+                "Product Companies"
+              ],
+              "reason": "Your creativity and empathy combine to help you design experiences that people love.",
+              "required_skills": [
+                "Visual Design",
+                "Interaction Design",
+                "User Research",
+                "Prototyping",
+                "Problem Solving"
+              ],
+              "compensation_tier": "Tier 2: Strong Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Visual Design",
+                  "Interaction Design",
+                  "User Research",
+                  "Prototyping"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Visual Design"
+                ]
+              }
+            },
+            {
+              "title": "Product Marketing Manager",
+              "industries": [
+                "Technology",
+                "Consumer Products"
+              ],
+              "reason": "Your creativity and communication skills make you a natural in marketing.",
+              "required_skills": [
+                "Marketing Strategy",
+                "Copywriting",
+                "Data Analysis",
+                "Brand Management",
+                "Communication"
+              ],
+              "compensation_tier": "Tier 3: Moderate Earning Potential",
+              "growth_tier": "Stable Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Marketing Fundamentals",
+                  "Copywriting",
+                  "Data Analysis",
+                  "Brand Management"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Marketing Strategy"
+                ]
+              }
+            },
+            {
+              "title": "Creative Director",
+              "industries": [
+                "Advertising",
+                "Media",
+                "Technology"
+              ],
+              "reason": "Your creativity and leadership make you a natural creative director.",
+              "required_skills": [
+                "Creative Leadership",
+                "Design",
+                "Strategy",
+                "Communication",
+                "Team Management"
+              ],
+              "compensation_tier": "Tier 1: High Earning Potential",
+              "growth_tier": "Stable Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Design",
+                  "Leadership",
+                  "Strategy",
+                  "Communication"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Creative Leadership"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "cluster": "business",
+          "role_type": "Manager",
+          "specific_roles": [
+            {
+              "title": "Product Manager",
+              "industries": [
+                "Technology",
+                "Consumer Products",
+                "Any"
+              ],
+              "reason": "Your ability to connect ideas, people, and market needs makes you a natural product manager.",
+              "required_skills": [
+                "Strategic Thinking",
+                "Data Analysis",
+                "Communication",
+                "Leadership",
+                "Problem Solving"
+              ],
+              "compensation_tier": "Tier 1: High Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Product Management",
+                  "Data Analysis",
+                  "Strategic Thinking",
+                  "Leadership"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Strategic Thinking"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "fallback_careers": [
+        "Content Creator",
+        "Brand Strategist",
+        "Communication Specialist"
+      ]
+    },
+    "the_driven_achiever": {
+      "primary_role_type": "Strategist",
+      "secondary_role_type": "Manager",
+      "career_paths": [
+        {
+          "cluster": "business",
+          "role_type": "Strategist",
+          "specific_roles": [
+            {
+              "title": "CEO / Founder",
+              "industries": [
+                "Any Industry"
+              ],
+              "reason": "Your ambition and execution make you a natural leader.",
+              "required_skills": [
+                "Strategic Thinking",
+                "Leadership",
+                "Financial Management",
+                "Communication",
+                "Decision Making"
+              ],
+              "compensation_tier": "Tier 2: Strong Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "MBA",
+                  "Leadership",
+                  "Financial Management",
+                  "Strategic Thinking"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Strategic Thinking"
+                ]
+              }
+            },
+            {
+              "title": "Management Consultant",
+              "industries": [
+                "Consulting",
+                "Strategy"
+              ],
+              "reason": "Your strategic thinking and ambition make you a natural consultant.",
+              "required_skills": [
+                "Strategic Thinking",
+                "Data Analysis",
+                "Communication",
+                "Problem Solving"
+              ],
+              "compensation_tier": "Tier 1: High Earning Potential",
+              "growth_tier": "Stable Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "MBA",
+                  "Data Analysis",
+                  "Strategic Thinking",
+                  "Communication"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Strategic Thinking"
+                ]
+              }
+            },
+            {
+              "title": "VP of Operations",
+              "industries": [
+                "Any Industry"
+              ],
+              "reason": "Your execution and discipline make you a natural operations leader.",
+              "required_skills": [
+                "Operations Management",
+                "Leadership",
+                "Strategic Planning",
+                "Data Analysis"
+              ],
+              "compensation_tier": "Tier 1: High Earning Potential",
+              "growth_tier": "Stable Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "MBA",
+                  "Operations Management",
+                  "Leadership",
+                  "Data Analysis"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Operations Management"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "cluster": "technology",
+          "role_type": "Manager",
+          "specific_roles": [
+            {
+              "title": "Engineering Manager",
+              "industries": [
+                "Technology"
+              ],
+              "reason": "Your discipline and leadership make you a natural engineering manager.",
+              "required_skills": [
+                "Engineering Knowledge",
+                "Leadership",
+                "Project Management",
+                "Communication"
+              ],
+              "compensation_tier": "Tier 2: Strong Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Engineering",
+                  "Leadership",
+                  "Project Management"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Engineering Knowledge"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "fallback_careers": [
+        "Investment Banker",
+        "Management Consultant",
+        "Entrepreneur"
+      ]
+    },
+    "the_wise_guide": {
+      "primary_role_type": "Manager",
+      "secondary_role_type": "Individual Contributor",
+      "career_paths": [
+        {
+          "cluster": "education",
+          "role_type": "Manager",
+          "specific_roles": [
+            {
+              "title": "Principal / Head of School",
+              "industries": [
+                "Education"
+              ],
+              "reason": "Your wisdom and leadership make you a natural school leader.",
+              "required_skills": [
+                "Educational Leadership",
+                "Communication",
+                "Budget Management",
+                "Community Engagement"
+              ],
+              "compensation_tier": "Tier 2: Strong Earning Potential",
+              "growth_tier": "Stable Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Educational Leadership",
+                  "Policy Studies",
+                  "Business Administration"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Educational Leadership"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "cluster": "healthcare",
+          "role_type": "Individual Contributor",
+          "specific_roles": [
+            {
+              "title": "Psychologist / Therapist",
+              "industries": [
+                "Healthcare",
+                "Private Practice"
+              ],
+              "reason": "Your empathy and wisdom make you a natural guide for others.",
+              "required_skills": [
+                "Psychology",
+                "Counseling",
+                "Empathy",
+                "Active Listening",
+                "Ethics"
+              ],
+              "compensation_tier": "Tier 3: Moderate Earning Potential",
+              "growth_tier": "Rapid Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Graduate Degree in Psychology",
+                  "Licensing",
+                  "Specialized Training"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Psychology"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "cluster": "business",
+          "role_type": "Manager",
+          "specific_roles": [
+            {
+              "title": "Chief People Officer",
+              "industries": [
+                "Any Industry"
+              ],
+              "reason": "Your wisdom about people makes you a natural HR leader.",
+              "required_skills": [
+                "Human Resources",
+                "Leadership",
+                "Organizational Development",
+                "Communication"
+              ],
+              "compensation_tier": "Tier 3: Moderate Earning Potential",
+              "growth_tier": "Stable Growth",
+              "learning_roadmap": {
+                "formal_education_and_certifications": [
+                  "Human Resources",
+                  "Organizational Development",
+                  "Leadership",
+                  "Communication"
+                ],
+                "self_directed_projects": [
+                  "Build a portfolio project demonstrating Human Resources"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "fallback_careers": [
+        "Professor",
+        "Executive Coach",
+        "Organizational Development Consultant"
+      ]
+    }
+  },
+  "trait_to_career_mapping": {
+    "high_curiosity": {
+      "primary_clusters": [
+        "technology",
+        "science"
+      ],
+      "recommended_roles": [
+        "Data Scientist",
+        "Research Scientist",
+        "UX Researcher",
+        "Software Engineer"
+      ],
+      "why": "Curiosity drives the desire to explore, understand, and innovate \u2014 all key in technology and science."
+    },
+    "high_creativity": {
+      "primary_clusters": [
+        "creative",
+        "technology"
+      ],
+      "recommended_roles": [
+        "UX/UI Designer",
+        "Product Designer",
+        "Creative Director",
+        "Product Manager"
+      ],
+      "why": "Creativity is the engine of innovation and design \u2014 essential in creative and product roles."
+    },
+    "high_empathy": {
+      "primary_clusters": [
+        "healthcare",
+        "education",
+        "business"
+      ],
+      "recommended_roles": [
+        "Healthcare Provider",
+        "Teacher",
+        "HR Leader",
+        "Therapist",
+        "Social Worker"
+      ],
+      "why": "Empathy is essential for roles that involve helping, teaching, or leading people."
+    },
+    "high_leadership": {
+      "primary_clusters": [
+        "business",
+        "education"
+      ],
+      "recommended_roles": [
+        "CEO",
+        "VP of Operations",
+        "Principal",
+        "Management Consultant",
+        "People Leader"
+      ],
+      "why": "Leadership is the ability to inspire, guide, and achieve results through others."
+    },
+    "high_analytical_thinking": {
+      "primary_clusters": [
+        "technology",
+        "science",
+        "business"
+      ],
+      "recommended_roles": [
+        "Data Scientist",
+        "Software Engineer",
+        "Management Consultant",
+        "Researcher"
+      ],
+      "why": "Analytical thinking is key for roles that require breaking down complex problems and finding solutions."
+    },
+    "high_communication": {
+      "primary_clusters": [
+        "creative",
+        "business",
+        "education"
+      ],
+      "recommended_roles": [
+        "Product Marketing Manager",
+        "Teacher",
+        "Management Consultant",
+        "People Leader"
+      ],
+      "why": "Communication is essential for roles that require conveying ideas, teaching, or leading."
+    },
+    "high_ambition": {
+      "primary_clusters": [
+        "business",
+        "technology"
+      ],
+      "recommended_roles": [
+        "CEO",
+        "Entrepreneur",
+        "Management Consultant",
+        "VP of Operations"
+      ],
+      "why": "Ambition drives the desire to achieve, lead, and make a significant impact."
+    },
+    "high_discipline": {
+      "primary_clusters": [
+        "business",
+        "technology"
+      ],
+      "recommended_roles": [
+        "Operations Manager",
+        "Software Engineer",
+        "Project Manager",
+        "Finance Professional"
+      ],
+      "why": "Discipline is essential for roles that require consistency, structure, and execution."
+    },
+    "high_resilience": {
+      "primary_clusters": [
+        "healthcare",
+        "business",
+        "education"
+      ],
+      "recommended_roles": [
+        "Healthcare Provider",
+        "CEO",
+        "Teacher",
+        "Social Worker"
+      ],
+      "why": "Resilience is essential for roles that involve high stress, challenges, and helping others through difficulties."
+    },
+    "high_independence": {
+      "primary_clusters": [
+        "technology",
+        "business"
+      ],
+      "recommended_roles": [
+        "Solo Entrepreneur",
+        "Software Engineer",
+        "Management Consultant",
+        "Researcher"
+      ],
+      "why": "Independence is key for roles that require self-direction, autonomy, and self-reliance."
+    },
+    "high_adaptability": {
+      "primary_clusters": [
+        "technology",
+        "business",
+        "creative"
+      ],
+      "recommended_roles": [
+        "Product Manager",
+        "UX Designer",
+        "Management Consultant",
+        "Entrepreneur"
+      ],
+      "why": "Adaptability is essential for roles that require flexibility, learning, and navigating change."
+    },
+    "high_problem_solving": {
+      "primary_clusters": [
+        "technology",
+        "science",
+        "business"
+      ],
+      "recommended_roles": [
+        "Software Engineer",
+        "Data Scientist",
+        "Management Consultant",
+        "Product Manager"
+      ],
+      "why": "Problem-solving is the ability to identify, analyze, and solve complex challenges."
+    },
+    "high_execution": {
+      "primary_clusters": [
+        "business",
+        "technology"
+      ],
+      "recommended_roles": [
+        "VP of Operations",
+        "Project Manager",
+        "Software Engineer",
+        "CEO"
+      ],
+      "why": "Execution is the ability to turn plans into action and deliver results."
+    },
+    "high_wisdom": {
+      "primary_clusters": [
+        "education",
+        "healthcare",
+        "business"
+      ],
+      "recommended_roles": [
+        "Executive Coach",
+        "Psychologist",
+        "Professor",
+        "Chief People Officer"
+      ],
+      "why": "Wisdom is the ability to understand people, situations, and life deeply and guide others."
+    }
+  },
+  "career_to_trait_reverse_index": {
+    "Data Scientist": {
+      "required_traits": [
+        "high_curiosity",
+        "high_analytical_thinking",
+        "high_problem_solving"
+      ],
+      "primary_clusters": [
+        "technology",
+        "science",
+        "business"
+      ]
+    },
+    "Research Scientist": {
+      "required_traits": [
+        "high_curiosity"
+      ],
+      "primary_clusters": [
+        "technology",
+        "science"
+      ]
+    },
+    "UX Researcher": {
+      "required_traits": [
+        "high_curiosity"
+      ],
+      "primary_clusters": [
+        "technology",
+        "science"
+      ]
+    },
+    "Software Engineer": {
+      "required_traits": [
+        "high_curiosity",
+        "high_analytical_thinking",
+        "high_discipline",
+        "high_independence",
+        "high_problem_solving",
+        "high_execution"
+      ],
+      "primary_clusters": [
+        "technology",
+        "science",
+        "business"
+      ]
+    },
+    "UX/UI Designer": {
+      "required_traits": [
+        "high_creativity"
+      ],
+      "primary_clusters": [
+        "creative",
+        "technology"
+      ]
+    },
+    "Product Designer": {
+      "required_traits": [
+        "high_creativity"
+      ],
+      "primary_clusters": [
+        "creative",
+        "technology"
+      ]
+    },
+    "Creative Director": {
+      "required_traits": [
+        "high_creativity"
+      ],
+      "primary_clusters": [
+        "creative",
+        "technology"
+      ]
+    },
+    "Product Manager": {
+      "required_traits": [
+        "high_creativity",
+        "high_adaptability",
+        "high_problem_solving"
+      ],
+      "primary_clusters": [
+        "creative",
+        "technology",
+        "science",
+        "business"
+      ]
+    },
+    "Healthcare Provider": {
+      "required_traits": [
+        "high_empathy",
+        "high_resilience"
+      ],
+      "primary_clusters": [
+        "education",
+        "healthcare",
+        "business"
+      ]
+    },
+    "Teacher": {
+      "required_traits": [
+        "high_empathy",
+        "high_communication",
+        "high_resilience"
+      ],
+      "primary_clusters": [
+        "education",
+        "creative",
+        "healthcare",
+        "business"
+      ]
+    },
+    "HR Leader": {
+      "required_traits": [
+        "high_empathy"
+      ],
+      "primary_clusters": [
+        "education",
+        "healthcare",
+        "business"
+      ]
+    },
+    "Therapist": {
+      "required_traits": [
+        "high_empathy"
+      ],
+      "primary_clusters": [
+        "education",
+        "healthcare",
+        "business"
+      ]
+    },
+    "Social Worker": {
+      "required_traits": [
+        "high_empathy",
+        "high_resilience"
+      ],
+      "primary_clusters": [
+        "education",
+        "healthcare",
+        "business"
+      ]
+    },
+    "CEO": {
+      "required_traits": [
+        "high_leadership",
+        "high_ambition",
+        "high_resilience",
+        "high_execution"
+      ],
+      "primary_clusters": [
+        "education",
+        "technology",
+        "healthcare",
+        "business"
+      ]
+    },
+    "VP of Operations": {
+      "required_traits": [
+        "high_leadership",
+        "high_ambition",
+        "high_execution"
+      ],
+      "primary_clusters": [
+        "education",
+        "technology",
+        "business"
+      ]
+    },
+    "Principal": {
+      "required_traits": [
+        "high_leadership"
+      ],
+      "primary_clusters": [
+        "education",
+        "business"
+      ]
+    },
+    "Management Consultant": {
+      "required_traits": [
+        "high_leadership",
+        "high_analytical_thinking",
+        "high_communication",
+        "high_ambition",
+        "high_independence",
+        "high_adaptability",
+        "high_problem_solving"
+      ],
+      "primary_clusters": [
+        "technology",
+        "creative",
+        "education",
+        "business",
+        "science"
+      ]
+    },
+    "People Leader": {
+      "required_traits": [
+        "high_leadership",
+        "high_communication"
+      ],
+      "primary_clusters": [
+        "education",
+        "creative",
+        "business"
+      ]
+    },
+    "Researcher": {
+      "required_traits": [
+        "high_analytical_thinking",
+        "high_independence"
+      ],
+      "primary_clusters": [
+        "technology",
+        "science",
+        "business"
+      ]
+    },
+    "Product Marketing Manager": {
+      "required_traits": [
+        "high_communication"
+      ],
+      "primary_clusters": [
+        "creative",
+        "education",
+        "business"
+      ]
+    },
+    "Entrepreneur": {
+      "required_traits": [
+        "high_ambition",
+        "high_adaptability"
+      ],
+      "primary_clusters": [
+        "technology",
+        "creative",
+        "business"
+      ]
+    },
+    "Operations Manager": {
+      "required_traits": [
+        "high_discipline"
+      ],
+      "primary_clusters": [
+        "technology",
+        "business"
+      ]
+    },
+    "Project Manager": {
+      "required_traits": [
+        "high_discipline",
+        "high_execution"
+      ],
+      "primary_clusters": [
+        "technology",
+        "business"
+      ]
+    },
+    "Finance Professional": {
+      "required_traits": [
+        "high_discipline"
+      ],
+      "primary_clusters": [
+        "technology",
+        "business"
+      ]
+    },
+    "Solo Entrepreneur": {
+      "required_traits": [
+        "high_independence"
+      ],
+      "primary_clusters": [
+        "technology",
+        "business"
+      ]
+    },
+    "UX Designer": {
+      "required_traits": [
+        "high_adaptability"
+      ],
+      "primary_clusters": [
+        "technology",
+        "creative",
+        "business"
+      ]
+    },
+    "Executive Coach": {
+      "required_traits": [
+        "high_wisdom"
+      ],
+      "primary_clusters": [
+        "education",
+        "healthcare",
+        "business"
+      ]
+    },
+    "Psychologist": {
+      "required_traits": [
+        "high_wisdom"
+      ],
+      "primary_clusters": [
+        "education",
+        "healthcare",
+        "business"
+      ]
+    },
+    "Professor": {
+      "required_traits": [
+        "high_wisdom"
+      ],
+      "primary_clusters": [
+        "education",
+        "healthcare",
+        "business"
+      ]
+    },
+    "Chief People Officer": {
+      "required_traits": [
+        "high_wisdom"
+      ],
+      "primary_clusters": [
+        "education",
+        "healthcare",
+        "business"
+      ]
+    }
+  },
+  "skill_gap_analysis": {
+    "description": "Identifies structured skill gaps based on user's current skills and career aspirations.",
+    "methodology": {
+      "critical_gaps": "Mandatory technical or core skills the user has no experience in. Requires formal learning.",
+      "bridgeable_gaps": "Skills where the user has adjacent experience (e.g., knows Java, needs Python).",
+      "soft_skill_gaps": "Behavioral or leadership traits requiring development through coaching or experience."
+    }
+  },
+  "career_transition_paths": {
+    "description": "Dynamic rules for transitioning between archetypes and career paths.",
+    "transition_heuristics": {
+      "step_1": "Identify the primary Role Type (IC, Manager, Strategist, Creator) of the target archetype.",
+      "step_2": "Identify the missing Tier 1 and Tier 2 traits required for the target career path by checking the career_to_trait_reverse_index.",
+      "step_3": "Recommend a 3-phase bridging project: 1. Knowledge acquisition (Skill Gaps), 2. Small-scale application (Bridgeable Gaps), 3. Portfolio/Experience building."
+    }
+  },
+  "work_environment_preferences": {
+    "the_curious_explorer": {
+      "ideal_environments": [
+        "Flexible, autonomous work settings",
+        "Environments that value intellectual curiosity",
+        "Opportunities for continuous learning",
+        "Collaborative, idea-rich teams"
+      ],
+      "avoid_environments": [
+        "Highly rigid, bureaucratic settings",
+        "Repetitive, unchanging tasks",
+        "Environments that discourage questioning"
+      ]
+    },
+    "the_compassionate_builder": {
+      "ideal_environments": [
+        "Purpose-driven organizations",
+        "Supportive, collaborative cultures",
+        "Environments that value empathy",
+        "Opportunities to make a visible impact"
+      ],
+      "avoid_environments": [
+        "Highly competitive, individualistic settings",
+        "Environments that prioritize profit over people",
+        "Roles with limited human interaction"
+      ]
+    },
+    "the_independent_thinker": {
+      "ideal_environments": [
+        "Autonomous, independent work settings",
+        "Minimal bureaucracy",
+        "Opportunities for self-direction",
+        "Environments that respect expertise"
+      ],
+      "avoid_environments": [
+        "Highly hierarchical settings",
+        "Environments with excessive oversight",
+        "Roles with limited autonomy"
+      ]
+    },
+    "the_creative_connector": {
+      "ideal_environments": [
+        "Creative, collaborative cultures",
+        "Fast-paced, dynamic environments",
+        "Opportunities for creative expression",
+        "Environments that value fresh ideas"
+      ],
+      "avoid_environments": [
+        "Highly structured, rigid settings",
+        "Environments that stifle creativity",
+        "Roles with limited collaboration"
+      ]
+    },
+    "the_driven_achiever": {
+      "ideal_environments": [
+        "High-performance cultures",
+        "Fast-paced, ambitious settings",
+        "Opportunities for leadership",
+        "Environments that reward excellence"
+      ],
+      "avoid_environments": [
+        "Slow-moving, bureaucratic settings",
+        "Environments that don't value ambition",
+        "Roles with limited growth potential"
+      ]
+    },
+    "the_wise_guide": {
+      "ideal_environments": [
+        "Supportive, nurturing cultures",
+        "Opportunities to mentor others",
+        "Environments that value people development",
+        "Purpose-driven organizations"
+      ],
+      "avoid_environments": [
+        "Highly competitive settings",
+        "Environments that don't value people",
+        "Roles with limited interaction"
+      ]
+    }
+  },
+  "industry_trends": {
+    "technology": {
+      "growth_projection": "22%+ over next 5 years",
+      "emerging_fields": [
+        "AI/ML",
+        "Cybersecurity",
+        "Quantum Computing",
+        "Edge Computing"
+      ],
+      "declining_fields": [
+        "Legacy IT",
+        "On-premise Infrastructure"
+      ]
+    },
+    "healthcare": {
+      "growth_projection": "15%+ over next 5 years",
+      "emerging_fields": [
+        "Telehealth",
+        "Precision Medicine",
+        "Health Tech",
+        "Genomics"
+      ],
+      "declining_fields": [
+        "Traditional Hospital Administration"
+      ]
+    },
+    "creative": {
+      "growth_projection": "8%+ over next 5 years",
+      "emerging_fields": [
+        "XR/VR Design",
+        "Generative AI Art",
+        "Immersive Experiences"
+      ],
+      "declining_fields": [
+        "Traditional Print Media"
+      ]
+    },
+    "business": {
+      "growth_projection": "7%+ over next 5 years",
+      "emerging_fields": [
+        "Sustainability Management",
+        "AI Strategy",
+        "Data-Driven Decision Making"
+      ],
+      "declining_fields": [
+        "Traditional Management Consulting"
+      ]
+    },
+    "education": {
+      "growth_projection": "10%+ over next 5 years",
+      "emerging_fields": [
+        "EdTech",
+        "Online Learning",
+        "Executive Education",
+        "Lifelong Learning"
+      ],
+      "declining_fields": [
+        "Traditional Classroom Education"
+      ]
+    },
+    "science": {
+      "growth_projection": "12%+ over next 5 years",
+      "emerging_fields": [
+        "Biotechnology",
+        "Climate Science",
+        "Neuroscience",
+        "Space Exploration"
+      ],
+      "declining_fields": [
+        "Traditional Laboratory Science"
+      ]
+    }
+  },
+  "validation_rules": {
+    "user_confirmation": {
+      "description": "How to validate career recommendations with the user",
+      "rules": [
+        "Ask: 'Do any of these career paths resonate with you?'",
+        "If user agrees: 'Which one feels most aligned?'",
+        "If user disagrees: 'What would you add or change?'",
+        "If user is unsure: 'What appeals to you about each option?'"
+      ]
+    },
+    "skill_gap_confirmation": {
+      "description": "How to validate skill gaps with the user",
+      "rules": [
+        "Ask: 'Do these skill gaps feel accurate?'",
+        "If user agrees: 'Which skill would you like to develop first?'",
+        "If user disagrees: 'What skills do you feel are missing?'"
+      ]
+    }
+  },
+  "career_output_schema": {
+    "persona_alignment": {
+      "primary_archetype": "string",
+      "core_traits_utilized": [
+        "string"
+      ]
+    },
+    "recommended_paths": [
+      {
+        "role_title": "string",
+        "industry": "string",
+        "alignment_reason": "string",
+        "compensation_tier": "string (e.g., 'High', 'Moderate')",
+        "growth_tier": "string (e.g., 'Rapid Growth', 'Stable')"
+      }
+    ],
+    "skill_gap_analysis": {
+      "critical_gaps": [
+        "string"
+      ],
+      "bridgeable_gaps": [
+        "string"
+      ],
+      "soft_skill_gaps": [
+        "string"
+      ]
+    },
+    "learning_roadmap": {
+      "formal_education_and_certifications": [
+        "string"
+      ],
+      "self_directed_projects": [
+        "string"
+      ]
+    }
+  }
+}
