@@ -1,11 +1,1396 @@
-What it is: Structure for building a persona from traits.
-
-What it contains:
-
-Persona Components: Core identity, operating style, strengths, tensions, career affinities
-
-Archetype Library: Common persona types (The Explorer, The Builder, The Connector, etc.)
-
-Mapping Rules: How traits map to persona
-
-Why you need it: This ensures consistency in how personas are built across different users.
+{
+  "name": "Persona Framework — Baagupadu",
+  "version": "2.0",
+  "description": "Defines persona archetypes, trait mappings, synthesis rules, and career affinities for building comprehensive user personas from life-stage data. Includes trait dictionary, input schema, conflict resolution, learning styles, and ethical guardrails.",
+  "trait_dictionary": {
+    "description": "Central source of truth for all traits used in the framework. Defines core meaning and levels.",
+    "traits": {
+      "curiosity": {
+        "core_meaning": "Desire to explore, learn, and understand the world",
+        "levels": {
+          "low": "Prefers familiar routines, avoids new information",
+          "medium": "Interested in learning when it's relevant",
+          "high": "Actively seeks new knowledge, asks questions, explores deeply"
+        }
+      },
+      "creativity": {
+        "core_meaning": "Ability to generate novel ideas and solutions",
+        "levels": {
+          "low": "Prefers established methods, follows rules",
+          "medium": "Occasionally generates new ideas",
+          "high": "Consistently innovates, sees connections others miss"
+        }
+      },
+      "empathy": {
+        "core_meaning": "Ability to understand and share others' feelings",
+        "levels": {
+          "low": "Struggles to understand others' emotions",
+          "medium": "Generally aware of others' feelings",
+          "high": "Deeply attuned to others' emotional states"
+        }
+      },
+      "leadership": {
+        "core_meaning": "Ability to guide, inspire, and influence others",
+        "levels": {
+          "low": "Prefers to follow, avoids taking charge",
+          "medium": "Steps up when needed",
+          "high": "Naturally takes initiative, inspires others"
+        }
+      },
+      "resilience": {
+        "core_meaning": "Ability to recover from setbacks and persist",
+        "levels": {
+          "low": "Gives up easily, discouraged by failure",
+          "medium": "Recovers with effort",
+          "high": "Bounces back quickly, learns from setbacks"
+        }
+      },
+      "adaptability": {
+        "core_meaning": "Ability to adjust to changing circumstances",
+        "levels": {
+          "low": "Struggles with change, prefers stability",
+          "medium": "Manages change with some effort",
+          "high": "Thrives on change, flexible and resilient"
+        }
+      },
+      "problem_solving": {
+        "core_meaning": "Ability to analyze and solve complex problems",
+        "levels": {
+          "low": "Avoids complex problems",
+          "medium": "Solves problems with effort",
+          "high": "Naturally breaks down complex problems, finds solutions"
+        }
+      },
+      "communication": {
+        "core_meaning": "Ability to convey and exchange ideas clearly",
+        "levels": {
+          "low": "Struggles to articulate thoughts",
+          "medium": "Communicates adequately",
+          "high": "Articulate, persuasive, listens deeply"
+        }
+      },
+      "collaboration": {
+        "core_meaning": "Ability to work effectively with others",
+        "levels": {
+          "low": "Prefers working alone",
+          "medium": "Works well with others when necessary",
+          "high": "Thrives in teams, supports others"
+        }
+      },
+      "analytical_thinking": {
+        "core_meaning": "Ability to break down complex information into parts",
+        "levels": {
+          "low": "Struggles with complex analysis",
+          "medium": "Analyzes when needed",
+          "high": "Naturally analytical, sees patterns"
+        }
+      },
+      "execution": {
+        "core_meaning": "Ability to turn plans into action and results",
+        "levels": {
+          "low": "Struggles to follow through",
+          "medium": "Completes tasks with effort",
+          "high": "Reliable, action-oriented, gets things done"
+        }
+      },
+      "independence": {
+        "core_meaning": "Ability to work autonomously and self-direct",
+        "levels": {
+          "low": "Requires direction and support",
+          "medium": "Works independently with minimal oversight",
+          "high": "Thrives on autonomy, self-directed"
+        }
+      },
+      "ambition": {
+        "core_meaning": "Desire to achieve, excel, and make an impact",
+        "levels": {
+          "low": "Satisfied with current state",
+          "medium": "Occasionally seeks growth",
+          "high": "Driven to achieve significant goals"
+        }
+      },
+      "discipline": {
+        "core_meaning": "Ability to maintain focus and consistency",
+        "levels": {
+          "low": "Struggles with consistency",
+          "medium": "Consistent with effort",
+          "high": "Naturally disciplined, reliable"
+        }
+      },
+      "wisdom": {
+        "core_meaning": "Deep understanding of life and human nature",
+        "levels": {
+          "low": "Limited perspective",
+          "medium": "Thoughtful and reflective",
+          "high": "Deep insight, sees beyond the surface"
+        }
+      },
+      "intellectual_humility": {
+        "core_meaning": "Openness to new ideas and willingness to admit limitations",
+        "levels": {
+          "low": "Defensive about knowledge, resistant to new ideas",
+          "medium": "Open to new ideas with effort",
+          "high": "Naturally curious, embraces learning"
+        }
+      }
+    }
+  },
+  "input_schema_definition": {
+    "description": "Defines the expected input data for persona synthesis",
+    "schema": {
+      "childhood_data": {
+        "type": "object",
+        "properties": {
+          "stories": {
+            "type": "array",
+            "description": "User's childhood stories and experiences"
+          },
+          "traits_identified": {
+            "type": "array",
+            "description": "Traits identified from childhood"
+          },
+          "key_memories": {
+            "type": "array",
+            "description": "Significant childhood memories"
+          }
+        }
+      },
+      "teenage_data": {
+        "type": "object",
+        "properties": {
+          "stories": {
+            "type": "array",
+            "description": "User's teenage stories and experiences"
+          },
+          "traits_identified": {
+            "type": "array",
+            "description": "Traits identified from teenage years"
+          },
+          "identity_patterns": {
+            "type": "array",
+            "description": "Identity patterns that emerged"
+          }
+        }
+      },
+      "adulthood_data": {
+        "type": "object",
+        "properties": {
+          "stories": {
+            "type": "array",
+            "description": "User's adult stories and experiences"
+          },
+          "traits_identified": {
+            "type": "array",
+            "description": "Traits identified from adulthood"
+          },
+          "career_data": {
+            "type": "object",
+            "description": "Career-related information"
+          },
+          "purpose_data": {
+            "type": "object",
+            "description": "Purpose-related information"
+          }
+        }
+      },
+      "traits_summary": {
+        "type": "object",
+        "description": "Aggregated trait list with confidence scores",
+        "properties": {
+          "traits": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "patterns_identified": {
+        "type": "array",
+        "description": "Patterns identified across life stages"
+      }
+    }
+  },
+  "persona_archetypes": {
+    "the_curious_explorer": {
+      "id": "archetype_001",
+      "name": "The Curious Explorer",
+      "tagline": "Always learning, always questioning, always seeking.",
+      "description": "You are driven by an insatiable curiosity about the world. You love exploring ideas, understanding how things work, and connecting dots across different domains. Your mind is never at rest — and that's your greatest strength.",
+      "key_traits": [
+        "curiosity",
+        "creativity",
+        "adaptability",
+        "intellectual_humility"
+      ],
+      "trait_combinations": {
+        "operator": "OR",
+        "combinations": [
+          [
+            "high_curiosity",
+            "high_creativity"
+          ],
+          [
+            "high_curiosity",
+            "high_adaptability"
+          ],
+          [
+            "high_adaptability",
+            "high_problem_solving"
+          ]
+        ]
+      },
+      "strengths": [
+        "Natural pattern recognition",
+        "Intellectual versatility",
+        "Lifelong learning orientation",
+        "Openness to new experiences"
+      ],
+      "growth_areas": [
+        "Depth over breadth — sometimes need to go deeper",
+        "Follow-through on ideas",
+        "Decision-making with limited information"
+      ],
+      "shadow_traits": [
+        "analysis_paralysis",
+        "overthinking",
+        "restlessness"
+      ],
+      "shadow_validation_prompts": {
+        "analysis_paralysis": "I notice you sometimes get stuck in overthinking. Does that feel familiar?",
+        "overthinking": "It seems like your mind is always active. How do you quiet it when needed?",
+        "restlessness": "Do you ever feel the need to always be exploring something new?"
+      },
+      "learning_style": {
+        "preferred_methods": [
+          "Self-directed learning",
+          "Exploration",
+          "Discussion",
+          "Research"
+        ],
+        "environment": "Quiet, flexible, intellectually stimulating",
+        "motivation": "Intrinsic curiosity, desire to understand"
+      },
+      "core_motivations": {
+        "primary": "Discovery and understanding",
+        "secondary": "Sharing knowledge",
+        "tertiary": "Intellectual challenge"
+      },
+      "career_affinities": {
+        "primary": [
+          {
+            "role_type": "Researcher",
+            "industries": [
+              "Research & Development",
+              "Science",
+              "Academia"
+            ]
+          },
+          {
+            "role_type": "Analyst",
+            "industries": [
+              "Data Science",
+              "Technology",
+              "Analytics"
+            ]
+          },
+          {
+            "role_type": "Creator",
+            "industries": [
+              "Content Creation",
+              "Journalism",
+              "Media"
+            ]
+          }
+        ],
+        "secondary": [
+          {
+            "role_type": "Educator",
+            "industries": [
+              "Education",
+              "Consulting"
+            ]
+          },
+          {
+            "role_type": "Innovator",
+            "industries": [
+              "Entrepreneurship",
+              "Innovation"
+            ]
+          }
+        ],
+        "work_environment": [
+          "Autonomous, flexible work settings",
+          "Environments that value intellectual curiosity",
+          "Opportunities for continuous learning",
+          "Collaborative, idea-rich teams"
+        ],
+        "work_style": [
+          "Thrives with intellectual freedom",
+          "Enjoys deep dives into topics",
+          "Prefers variety over routine",
+          "Values learning over hierarchy"
+        ]
+      },
+      "description_for_user": "You're someone who sees the world as a place to explore, not just to exist in. You have a gift for making connections others miss and finding joy in understanding. In your career, you need work that feeds your mind and gives you room to discover."
+    },
+    "the_compassionate_builder": {
+      "id": "archetype_002",
+      "name": "The Compassionate Builder",
+      "tagline": "Building a better world, one connection at a time.",
+      "description": "You are driven by a deep desire to help others and create meaningful impact. You see the potential in people and systems, and you work tirelessly to build things that make lives better.",
+      "key_traits": [
+        "empathy",
+        "leadership",
+        "collaboration",
+        "resilience"
+      ],
+      "trait_combinations": {
+        "operator": "OR",
+        "combinations": [
+          [
+            "high_empathy",
+            "high_leadership"
+          ],
+          [
+            "high_empathy",
+            "high_collaboration"
+          ],
+          [
+            "high_leadership",
+            "high_resilience"
+          ]
+        ]
+      },
+      "strengths": [
+        "Deep emotional intelligence",
+        "Natural ability to unite people",
+        "Resilience in the face of challenges",
+        "Commitment to meaningful work"
+      ],
+      "growth_areas": [
+        "Setting boundaries — giving without depleting",
+        "Delegating effectively",
+        "Balancing empathy with pragmatism"
+      ],
+      "shadow_traits": [
+        "people_pleasing",
+        "hyper_independence",
+        "burnout_prone"
+      ],
+      "shadow_validation_prompts": {
+        "people_pleasing": "I notice you often prioritize others' needs. How do you feel when you do that?",
+        "hyper_independence": "It sounds like you've always been very self-reliant. Where do you think that came from?",
+        "burnout_prone": "I notice you give a lot of yourself. Do you sometimes feel depleted after helping others?"
+      },
+      "learning_style": {
+        "preferred_methods": [
+          "Collaborative learning",
+          "Mentorship",
+          "Real-world projects",
+          "Group discussions"
+        ],
+        "environment": "Supportive, nurturing, and collaborative",
+        "motivation": "Purpose, impact, helping others"
+      },
+      "core_motivations": {
+        "primary": "Helping others and making an impact",
+        "secondary": "Building communities",
+        "tertiary": "Creating lasting change"
+      },
+      "career_affinities": {
+        "primary": [
+          {
+            "role_type": "Caregiver",
+            "industries": [
+              "Healthcare",
+              "Medicine",
+              "Therapy"
+            ]
+          },
+          {
+            "role_type": "Educator",
+            "industries": [
+              "Education",
+              "Teaching",
+              "Training"
+            ]
+          },
+          {
+            "role_type": "Community Leader",
+            "industries": [
+              "Social Work",
+              "Non-Profit",
+              "Community Building"
+            ]
+          }
+        ],
+        "secondary": [
+          {
+            "role_type": "People Leader",
+            "industries": [
+              "HR",
+              "People Operations",
+              "Organizational Development"
+            ]
+          },
+          {
+            "role_type": "Advocate",
+            "industries": [
+              "Public Policy",
+              "Advocacy",
+              "CSR"
+            ]
+          }
+        ],
+        "work_environment": [
+          "Purpose-driven organizations",
+          "Supportive, collaborative cultures",
+          "Environments that value empathy",
+          "Opportunities to make a visible impact"
+        ],
+        "work_style": [
+          "Collaborative and team-oriented",
+          "Finds meaning in helping others succeed",
+          "Values purpose over prestige",
+          "Thrives in supportive, growth-oriented environments"
+        ]
+      },
+      "description_for_user": "You're someone who genuinely cares about others and wants to make a difference. You have a gift for understanding people and bringing them together. In your career, you need work that feels meaningful and allows you to contribute to something bigger than yourself."
+    },
+    "the_independent_thinker": {
+      "id": "archetype_003",
+      "name": "The Independent Thinker",
+      "tagline": "Self-reliant, analytical, and fiercely independent.",
+      "description": "You value your autonomy above all. You think for yourself, question authority, and trust your own judgment. Your independence is not rebellion — it's a deep need for self-determination.",
+      "key_traits": [
+        "independence",
+        "analytical_thinking",
+        "resilience",
+        "problem_solving"
+      ],
+      "trait_combinations": {
+        "operator": "OR",
+        "combinations": [
+          [
+            "high_independence",
+            "high_analytical_thinking"
+          ],
+          [
+            "high_independence",
+            "high_problem_solving"
+          ],
+          [
+            "high_resilience",
+            "high_independence"
+          ]
+        ]
+      },
+      "strengths": [
+        "Self-reliance and autonomy",
+        "Sharp analytical mind",
+        "Resilience under pressure",
+        "Ability to think outside the box"
+      ],
+      "growth_areas": [
+        "Collaboration — learning to trust others",
+        "Vulnerability — asking for help when needed",
+        "Balancing independence with connection"
+      ],
+      "shadow_traits": [
+        "hyper_independence",
+        "isolation",
+        "defensiveness"
+      ],
+      "shadow_validation_prompts": {
+        "hyper_independence": "I notice you often handle things alone. How does it feel to ask for help?",
+        "isolation": "Do you sometimes feel like you're carrying everything on your own?",
+        "defensiveness": "How do you respond when someone challenges your ideas?"
+      },
+      "learning_style": {
+        "preferred_methods": [
+          "Independent study",
+          "Self-paced courses",
+          "Analytical problem-solving",
+          "Research"
+        ],
+        "environment": "Quiet, focused, with minimal distractions",
+        "motivation": "Mastery, autonomy, intellectual challenge"
+      },
+      "core_motivations": {
+        "primary": "Autonomy and self-direction",
+        "secondary": "Mastery of skills and knowledge",
+        "tertiary": "Intellectual independence"
+      },
+      "career_affinities": {
+        "primary": [
+          {
+            "role_type": "Engineer",
+            "industries": [
+              "Engineering",
+              "Software Development",
+              "Technology"
+            ]
+          },
+          {
+            "role_type": "Researcher",
+            "industries": [
+              "Research",
+              "Science",
+              "Academia"
+            ]
+          },
+          {
+            "role_type": "Strategist",
+            "industries": [
+              "Strategy",
+              "Consulting",
+              "Analysis"
+            ]
+          }
+        ],
+        "secondary": [
+          {
+            "role_type": "Creator",
+            "industries": [
+              "Design",
+              "Writing",
+              "Innovation"
+            ]
+          },
+          {
+            "role_type": "Entrepreneur",
+            "industries": [
+              "Entrepreneurship",
+              "Startups"
+            ]
+          }
+        ],
+        "work_environment": [
+          "Autonomous, independent work settings",
+          "Minimal bureaucracy",
+          "Opportunities for self-direction",
+          "Environments that respect expertise"
+        ],
+        "work_style": [
+          "Prefers working independently",
+          "Values intellectual freedom",
+          "Thrives with minimal oversight",
+          "Sees the big picture and works backward"
+        ]
+      },
+      "description_for_user": "You're someone who needs the freedom to think and act independently. You trust your own judgment and often find your own way. In your career, you need autonomy and the space to work on your own terms."
+    },
+    "the_creative_connector": {
+      "id": "archetype_004",
+      "name": "The Creative Connector",
+      "tagline": "Bridging ideas, people, and possibilities.",
+      "description": "You see the connections that others miss. You're creative and expressive, but also deeply social. You bring people together, bridge different perspectives, and create something new from what already exists.",
+      "key_traits": [
+        "creativity",
+        "empathy",
+        "communication",
+        "adaptability"
+      ],
+      "trait_combinations": {
+        "operator": "OR",
+        "combinations": [
+          [
+            "high_creativity",
+            "high_empathy"
+          ],
+          [
+            "high_creativity",
+            "high_communication"
+          ],
+          [
+            "high_empathy",
+            "high_communication"
+          ]
+        ]
+      },
+      "strengths": [
+        "Creative problem-solving",
+        "Strong interpersonal skills",
+        "Ability to bridge different worlds",
+        "Expressive and engaging communication"
+      ],
+      "growth_areas": [
+        "Focus — bringing ideas to completion",
+        "Structure — balancing creativity with discipline",
+        "Self-promotion — sharing your work confidently"
+      ],
+      "shadow_traits": [
+        "people_pleasing",
+        "overcommitment",
+        "self_doubt"
+      ],
+      "shadow_validation_prompts": {
+        "people_pleasing": "I notice you often prioritize others' needs. How do you feel when you do that?",
+        "overcommitment": "It seems like you say 'yes' to many things. What happens when you take on too much?",
+        "self_doubt": "Do you sometimes second-guess your creative ideas?"
+      },
+      "learning_style": {
+        "preferred_methods": [
+          "Brainstorming",
+          "Group discussions",
+          "Creative projects",
+          "Collaborative learning"
+        ],
+        "environment": "Dynamic, collaborative, and expressive",
+        "motivation": "Creative expression, connection with others"
+      },
+      "core_motivations": {
+        "primary": "Creative expression and connection",
+        "secondary": "Building bridges and communities",
+        "tertiary": "Making ideas tangible"
+      },
+      "career_affinities": {
+        "primary": [
+          {
+            "role_type": "Designer",
+            "industries": [
+              "Design",
+              "Creative Direction",
+              "UI/UX"
+            ]
+          },
+          {
+            "role_type": "Communicator",
+            "industries": [
+              "Marketing",
+              "PR",
+              "Communications"
+            ]
+          },
+          {
+            "role_type": "Product Leader",
+            "industries": [
+              "Product Management",
+              "Innovation"
+            ]
+          }
+        ],
+        "secondary": [
+          {
+            "role_type": "Educator",
+            "industries": [
+              "Teaching",
+              "Education"
+            ]
+          },
+          {
+            "role_type": "Creative",
+            "industries": [
+              "Theater",
+              "Media",
+              "Arts"
+            ]
+          }
+        ],
+        "work_environment": [
+          "Creative, collaborative cultures",
+          "Fast-paced, dynamic environments",
+          "Opportunities for creative expression",
+          "Environments that value fresh ideas"
+        ],
+        "work_style": [
+          "Thrives in collaborative settings",
+          "Loves brainstorming and ideation",
+          "Values creative freedom",
+          "Sees patterns and connections others miss"
+        ]
+      },
+      "description_for_user": "You're someone who sees the world in connections — between ideas, between people, between possibilities. You have a gift for creativity and bringing people together. In your career, you need work that lets you express yourself and build bridges."
+    },
+    "the_driven_achiever": {
+      "id": "archetype_005",
+      "name": "The Driven Achiever",
+      "tagline": "Ambitious, disciplined, and determined to succeed.",
+      "description": "You have big dreams and the discipline to make them real. You're driven to achieve, to excel, and to leave your mark. Your ambition is not about ego — it's about proving what's possible.",
+      "key_traits": [
+        "ambition",
+        "discipline",
+        "execution",
+        "leadership"
+      ],
+      "trait_combinations": {
+        "operator": "OR",
+        "combinations": [
+          [
+            "high_ambition",
+            "high_discipline"
+          ],
+          [
+            "high_ambition",
+            "high_execution"
+          ],
+          [
+            "high_discipline",
+            "high_leadership"
+          ]
+        ]
+      },
+      "strengths": [
+        "Unwavering determination",
+        "Strong work ethic and discipline",
+        "Ability to execute complex plans",
+        "Natural leadership and vision"
+      ],
+      "growth_areas": [
+        "Work-life balance — avoiding burnout",
+        "Delegation — trusting others",
+        "Patience — accepting that success takes time"
+      ],
+      "shadow_traits": [
+        "perfectionism",
+        "burnout_prone",
+        "impatience"
+      ],
+      "shadow_validation_prompts": {
+        "perfectionism": "Excellence seems really important to you. What happens when things aren't perfect?",
+        "burnout_prone": "I notice you push yourself hard. Do you sometimes feel depleted?",
+        "impatience": "Do you sometimes struggle with waiting for results?"
+      },
+      "learning_style": {
+        "preferred_methods": [
+          "Goal-oriented projects",
+          "Challenges and competitions",
+          "Structured learning",
+          "Mentorship"
+        ],
+        "environment": "High-performance, ambitious, fast-paced",
+        "motivation": "Achievement, recognition, impact"
+      },
+      "core_motivations": {
+        "primary": "Achievement and impact",
+        "secondary": "Recognition and excellence",
+        "tertiary": "Mastery and leadership"
+      },
+      "career_affinities": {
+        "primary": [
+          {
+            "role_type": "Executive",
+            "industries": [
+              "Executive Leadership",
+              "Management"
+            ]
+          },
+          {
+            "role_type": "Entrepreneur",
+            "industries": [
+              "Entrepreneurship",
+              "Startups"
+            ]
+          },
+          {
+            "role_type": "Strategist",
+            "industries": [
+              "Management Consulting",
+              "Strategy"
+            ]
+          }
+        ],
+        "secondary": [
+          {
+            "role_type": "Operator",
+            "industries": [
+              "Operations",
+              "Finance"
+            ]
+          },
+          {
+            "role_type": "Leader",
+            "industries": [
+              "Law",
+              "Politics"
+            ]
+          }
+        ],
+        "work_environment": [
+          "High-performance cultures",
+          "Fast-paced, ambitious settings",
+          "Opportunities for leadership",
+          "Environments that reward excellence"
+        ],
+        "work_style": [
+          "Goal-oriented and results-driven",
+          "Thrives on challenge and competition",
+          "Values recognition and achievement",
+          "Seeks leadership and impact"
+        ]
+      },
+      "description_for_user": "You're someone who dreams big and is willing to do the work to make those dreams real. You have the discipline and determination to achieve what others consider impossible. In your career, you need work that challenges you and allows you to lead."
+    },
+    "the_wise_guide": {
+      "id": "archetype_006",
+      "name": "The Wise Guide",
+      "tagline": "Mentoring others, sharing wisdom, and building lasting impact.",
+      "description": "You are a natural mentor and guide. You have a deep understanding of people and life, and you find fulfillment in helping others grow. Your wisdom comes from experience, reflection, and a genuine care for others.",
+      "key_traits": [
+        "wisdom",
+        "empathy",
+        "communication",
+        "leadership"
+      ],
+      "trait_combinations": {
+        "operator": "OR",
+        "combinations": [
+          [
+            "high_wisdom",
+            "high_empathy"
+          ],
+          [
+            "high_wisdom",
+            "high_communication"
+          ],
+          [
+            "high_empathy",
+            "high_leadership"
+          ]
+        ]
+      },
+      "strengths": [
+        "Deep wisdom and perspective",
+        "Exceptional listening skills",
+        "Ability to guide and mentor",
+        "Emotional intelligence and patience"
+      ],
+      "growth_areas": [
+        "Assertiveness — being a guide, not just a listener",
+        "Taking credit — owning your contributions",
+        "Balancing giving with receiving"
+      ],
+      "shadow_traits": [
+        "people_pleasing",
+        "over_giving",
+        "avoidance"
+      ],
+      "shadow_validation_prompts": {
+        "people_pleasing": "I notice you often prioritize others' needs. How do you feel when you do that?",
+        "over_giving": "I notice you give a lot of yourself. Do you sometimes feel depleted?",
+        "avoidance": "Do you sometimes avoid taking credit for your contributions?"
+      },
+      "learning_style": {
+        "preferred_methods": [
+          "Mentoring",
+          "Reflection",
+          "Deep listening",
+          "Sharing wisdom"
+        ],
+        "environment": "Calm, nurturing, and purposeful",
+        "motivation": "Helping others grow, sharing wisdom"
+      },
+      "core_motivations": {
+        "primary": "Guiding and mentoring others",
+        "secondary": "Sharing wisdom and perspective",
+        "tertiary": "Building lasting impact"
+      },
+      "career_affinities": {
+        "primary": [
+          {
+            "role_type": "Mentor",
+            "industries": [
+              "Teaching",
+              "Education",
+              "Coaching"
+            ]
+          },
+          {
+            "role_type": "Guide",
+            "industries": [
+              "Counseling",
+              "Therapy",
+              "Social Work"
+            ]
+          },
+          {
+            "role_type": "People Leader",
+            "industries": [
+              "Leadership",
+              "HR",
+              "Management"
+            ]
+          }
+        ],
+        "secondary": [
+          {
+            "role_type": "Community Leader",
+            "industries": [
+              "Community Building",
+              "Non-Profit"
+            ]
+          },
+          {
+            "role_type": "Developer",
+            "industries": [
+              "Organizational Development"
+            ]
+          }
+        ],
+        "work_environment": [
+          "Supportive, nurturing cultures",
+          "Opportunities to mentor others",
+          "Environments that value people development",
+          "Purpose-driven organizations"
+        ],
+        "work_style": [
+          "Collaborative and relationship-focused",
+          "Finds meaning in helping others grow",
+          "Values wisdom and perspective",
+          "Thrives in supportive, nurturing environments"
+        ]
+      },
+      "description_for_user": "You're someone who finds purpose in helping others grow. You have deep wisdom and a gift for guiding people. In your career, you need work that allows you to mentor, teach, and make a lasting impact on others."
+    }
+  },
+  "persona_components": {
+    "core_identity": {
+      "description": "The central archetype that best describes the user",
+      "format": "The [Archetype Name]"
+    },
+    "tagline": {
+      "description": "A memorable one-line summary of the persona",
+      "format": "[Tagline from archetype]"
+    },
+    "description": {
+      "description": "2-3 sentences explaining the persona to the user",
+      "format": "[Description from archetype]"
+    },
+    "description_for_user": {
+      "description": "1-2 sentences in first person, directly addressing the user",
+      "format": "You're someone who..."
+    },
+    "key_strengths": {
+      "description": "Top 3-5 strengths with brief evidence",
+      "format": [
+        "Strength 1: [Evidence from user's story]",
+        "Strength 2: [Evidence from user's story]"
+      ]
+    },
+    "growth_areas": {
+      "description": "2-3 areas for development with compassion",
+      "format": [
+        "Area 1: [Compassionate framing]",
+        "Area 2: [Compassionate framing]"
+      ]
+    },
+    "shadow_traits": {
+      "description": "Hidden patterns with compassionate acknowledgment",
+      "format": [
+        "Shadow 1: [Acknowledgment without judgment]",
+        "Shadow 2: [Acknowledgment without judgment]"
+      ]
+    },
+    "learning_style": {
+      "description": "How the user prefers to learn",
+      "format": [
+        "Preferred methods: [list]",
+        "Environment: [description]",
+        "Motivation: [description]"
+      ]
+    },
+    "core_motivations": {
+      "description": "What drives the user",
+      "format": [
+        "Primary: [motivation]",
+        "Secondary: [motivation]",
+        "Tertiary: [motivation]"
+      ]
+    },
+    "career_affinities": {
+      "description": "Aligned career directions with reasoning",
+      "format": [
+        "Career 1: [Why it fits the persona]",
+        "Career 2: [Why it fits the persona]"
+      ]
+    },
+    "work_environment": {
+      "description": "Environments where the user will thrive",
+      "format": [
+        "Environment 1",
+        "Environment 2"
+      ]
+    },
+    "work_style": {
+      "description": "How the user prefers to work",
+      "format": [
+        "Style 1",
+        "Style 2"
+      ]
+    },
+    "traits_synthesized": {
+      "description": "List of traits that contributed to this persona",
+      "format": [
+        "trait_1",
+        "trait_2",
+        "trait_3"
+      ]
+    }
+  },
+  "synthesis_rules": {
+    "primary_archetype_selection": {
+      "description": "How to select the primary archetype",
+      "rules": [
+        "If 3+ traits match a single archetype → select that archetype",
+        "If traits match multiple archetypes → select the one with the most HIGH confidence traits",
+        "If no clear match → select the archetype with the strongest HIGH confidence trait",
+        "If still unclear → default to 'The Curious Explorer'"
+      ]
+    },
+    "secondary_archetype": {
+      "description": "When to include a secondary archetype",
+      "rules": [
+        "If 2+ traits match a secondary archetype → include it",
+        "If the user shows a clear secondary pattern → include it",
+        "Secondary archetype is presented as 'with qualities of [Archetype Name]'"
+      ]
+    },
+    "strength_extraction": {
+      "description": "How to extract strengths from the persona",
+      "rules": [
+        "Map user's life stories to the archetype's strengths",
+        "Include specific evidence from the user's own words",
+        "Prioritize strengths mentioned multiple times across life stages"
+      ]
+    },
+    "growth_area_extraction": {
+      "description": "How to extract growth areas",
+      "rules": [
+        "Identify patterns that were mentioned as challenges",
+        "Frame with compassion, not judgment",
+        "Connect to shadow traits when applicable"
+      ]
+    },
+    "shadow_trait_extraction": {
+      "description": "How to identify shadow traits with ethical guardrails",
+      "rules": [
+        "Only identify if 2+ indicators are present",
+        "Must be validated with user's own words",
+        "USE TENTATIVE LANGUAGE: 'It seems you might lean towards...' NOT 'You are...'",
+        "Frame with compassion: 'I notice you tend to...'",
+        "Do NOT identify if user might feel judged",
+        "Never use clinical language (avoid 'diagnosis', 'disorder', etc.)"
+      ],
+      "ethical_guardrails": [
+        "Shadow traits are observations, not diagnoses",
+        "Always use tentative, open-ended language",
+        "Validate the user's experience without labeling",
+        "If user disagrees, accept their perspective immediately",
+        "Never use shadow traits to pathologize normal behavior"
+      ]
+    },
+    "career_affinity_mapping": {
+      "description": "How to map to career affinities",
+      "rules": [
+        "Use primary career affinities from archetype",
+        "Refine based on user's specific interests (from Adult phase)",
+        "Provide 2-3 specific career paths",
+        "Explain WHY each path fits the user's persona",
+        "Include role types (Individual Contributor, Manager, Strategist, Creator) in recommendations"
+      ]
+    }
+  },
+  "conflict_resolution_rules": {
+    "description": "How to handle contradictory traits or paradoxical user data",
+    "rules": [
+      {
+        "type": "internal_contradiction",
+        "description": "User shows traits from opposite ends of a spectrum",
+        "resolution": "Label as 'balanced' or 'adaptive' personality. Example: 'You show both high independence and high collaboration, suggesting you can work well alone AND in teams.'"
+      },
+      {
+        "type": "cross_stage_contradiction",
+        "description": "User showed different traits in different life stages",
+        "resolution": "Label as 'evolved' or 'learned' trait. Example: 'You were shy as a child, but developed confidence as a teenager — that's real growth.'"
+      },
+      {
+        "type": "stated_vs_inferred_contradiction",
+        "description": "User says one thing, but their stories suggest another",
+        "resolution": "Give more weight to stories over stated beliefs. Example: 'You say you're not a leader, but I noticed you often took charge in your stories.'"
+      },
+      {
+        "type": "archetype_conflict",
+        "description": "User fits two conflicting archetypes equally well",
+        "resolution": "Present both archetypes as complementary. Example: 'You show qualities of both The Curious Explorer and The Compassionate Builder — you might be someone who explores to help others.'"
+      }
+    ]
+  },
+  "confidence_scoring": {
+    "description": "How to calculate confidence for trait matches",
+    "scoring_rules": [
+      {
+        "criterion": "Mentioned in 2+ life stages",
+        "weight": 3
+      },
+      {
+        "criterion": "Explicitly stated by the user as a core identifier",
+        "weight": 2
+      },
+      {
+        "criterion": "Mentioned in 1 life stage with strong evidence",
+        "weight": 1.5
+      },
+      {
+        "criterion": "Mentioned in 1 life stage with limited evidence",
+        "weight": 1
+      },
+      {
+        "criterion": "Implied but not explicitly stated",
+        "weight": 0.5
+      }
+    ],
+    "confidence_thresholds": {
+      "high": {
+        "score": "4+ points",
+        "description": "Strong evidence across multiple life stages",
+        "presentation": "You consistently show [trait]"
+      },
+      "medium": {
+        "score": "2-3 points",
+        "description": "Good evidence, may need more validation",
+        "presentation": "I notice a pattern of [trait]"
+      },
+      "low": {
+        "score": "1 point",
+        "description": "Limited evidence, preliminary inference",
+        "presentation": "I wonder if you might be [trait]"
+      }
+    }
+  },
+  "validation_rules": {
+    "user_confirmation": {
+      "description": "How to validate the persona with the user",
+      "rules": [
+        "Always ask for user confirmation: 'Does this feel like you?'",
+        "If user disagrees, ask: 'What would you add or change?'",
+        "Be open to correction and refinement",
+        "The user is the expert on themselves",
+        "Use the user's response to refine the persona"
+      ]
+    },
+    "fallback_persona": {
+      "description": "If no archetype matches well",
+      "rules": [
+        "Use 'The Curious Explorer' as default",
+        "Note: 'This is a preliminary persona based on the data available'",
+        "Encourage user to continue the journey for a more accurate persona",
+        "Present as 'emerging persona' rather than definitive"
+      ]
+    }
+  },
+  "persona_output_schema": {
+    "description": "Strict JSON schema for persona output (for UI rendering)",
+    "type": "object",
+    "properties": {
+      "core_identity": {
+        "type": "object",
+        "properties": {
+          "archetype_name": {
+            "type": "string"
+          },
+          "tagline": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "description_for_user": {
+            "type": "string"
+          }
+        }
+      },
+      "strengths": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "trait": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "growth_areas": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "area": {
+              "type": "string"
+            },
+            "compassionate_framing": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "shadow_traits": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "trait": {
+              "type": "string"
+            },
+            "acknowledgment": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "learning_style": {
+        "type": "object",
+        "properties": {
+          "preferred_methods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "environment": {
+            "type": "string"
+          },
+          "motivation": {
+            "type": "string"
+          }
+        }
+      },
+      "core_motivations": {
+        "type": "object",
+        "properties": {
+          "primary": {
+            "type": "string"
+          },
+          "secondary": {
+            "type": "string"
+          },
+          "tertiary": {
+            "type": "string"
+          }
+        }
+      },
+      "career_affinities": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "role_type": {
+              "type": "string"
+            },
+            "industries": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "reasoning": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "work_environment": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "work_style": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "traits_synthesized": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "core_identity",
+      "strengths",
+      "growth_areas",
+      "career_affinities"
+    ]
+  },
+  "career_mapping_reverse_index": {
+    "description": "Reverse index: Search by career to find the archetype",
+    "Healthcare": [
+      "the_compassionate_builder",
+      "the_wise_guide"
+    ],
+    "Education": [
+      "the_wise_guide",
+      "the_compassionate_builder",
+      "the_curious_explorer"
+    ],
+    "Technology": [
+      "the_curious_explorer",
+      "the_independent_thinker"
+    ],
+    "Engineering": [
+      "the_independent_thinker",
+      "the_curious_explorer"
+    ],
+    "Research": [
+      "the_curious_explorer",
+      "the_independent_thinker"
+    ],
+    "Design": [
+      "the_creative_connector",
+      "the_curious_explorer"
+    ],
+    "Entrepreneurship": [
+      "the_driven_achiever",
+      "the_independent_thinker",
+      "the_creative_connector"
+    ],
+    "Leadership": [
+      "the_driven_achiever",
+      "the_compassionate_builder",
+      "the_wise_guide"
+    ],
+    "Marketing": [
+      "the_creative_connector",
+      "the_curious_explorer"
+    ],
+    "Social Work": [
+      "the_compassionate_builder",
+      "the_wise_guide"
+    ],
+    "Consulting": [
+      "the_driven_achiever",
+      "the_independent_thinker",
+      "the_curious_explorer"
+    ],
+    "Law": [
+      "the_independent_thinker",
+      "the_driven_achiever"
+    ],
+    "HR": [
+      "the_compassionate_builder",
+      "the_wise_guide",
+      "the_creative_connector"
+    ],
+    "Finance": [
+      "the_independent_thinker",
+      "the_driven_achiever"
+    ],
+    "Product Management": [
+      "the_creative_connector",
+      "the_curious_explorer",
+      "the_driven_achiever"
+    ],
+    "Strategy": [
+      "the_independent_thinker",
+      "the_driven_achiever",
+      "the_curious_explorer"
+    ]
+  }
+}
