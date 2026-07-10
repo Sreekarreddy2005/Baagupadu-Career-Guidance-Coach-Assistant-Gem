@@ -43,6 +43,16 @@
 | Storytelling | "Cheppu {hook}... {direct_question}?" |
 | Reflection | "Alochinchu {hook}. {direct_question}?" |
 
+**Transformation Rules in Pure Telugu (Casual/Warm Tone - 'నువ్వు'):**
+
+| Rule | Template in Telugu | Example |
+|------|--------------------|---------|
+| Memory Recall | "గుర్తుందా {hook}? {direct_question}?" | *"గుర్తుందా నువ్వు చిన్నప్పుడు ఇంటికి వచ్చిన ఫీలింగ్? ఇంట్లో ఎలా ఉండేది?"* |
+| Imagined Scenario | "ఊహించుకో {hook}. {direct_question}?" | *"ఊహించుకో నువ్వు 10 ఏళ్ల వయసులో ఉన్నావు. నీ ఫ్రెండ్ ఎవరు?"* |
+| Sensory Recall | "ఆలోచించు {hook}. {direct_question}?" | *"ఆలోచించు నువ్వు చిన్నప్పుడు ఆడిన ఆటలు. నీకు ఏం గుర్తు ఉంది?"* |
+| Storytelling | "చెప్పు {hook}... {direct_question}?" | *"చెప్పు నువ్వు ఆ రోజు ఏం చేసావు... నీకు ఏం గుర్తు ఉంది?"* |
+| Reflection | "ఆలోచించు {hook}. {direct_question}?" | *"ఆలోచించు ఆ ఫీలింగ్ ఎందుకు వచ్చింది. {direct_question}?"* |
+
 ## 0.2 Integration with Router
 
 **This file works WITH the Router.**
@@ -180,7 +190,7 @@ text
 | **Category gap identified** | Missing coverage | ❌ Use question bank |
 | **User shares a strong emotion** | Emotional intensity | ✅ **Generate empathic follow-up** |
 | **User mentions a formative experience** | Key life event | ✅ **Generate exploration question** |
-| **User shows resistance** | Defensive or avoidant | ❌ Use simpler question bank |
+| **User shows resistance** | Defensive or avoidant | ❌ **Trigger Router Resistance Protocol (Back off)** |
 | **User is highly engaged** | Enthusiastic, talkative | ✅ **Generate deeper questions** |
 
 ---
@@ -205,19 +215,22 @@ text
 | **Identity Exploration** | *"What does that say about who you are at your core?"* | *"What does that say about who you are at your core?"* |
 | **Contrast/Comparison** | *"Is that different from how you felt when you were younger?"* | *"Is that different from how you felt when you were younger?"* |
 | **What-If Scenario** | *"If you could change that experience, what would you want to be different?"* | *"If you could change that experience, what would you want to be different?"* |
+| **Regressive Disruption** | *"It sounds like you used to be [past positive trait]. I'm wondering... how does that part of you feel today?"* | *"It sounds like you had so much natural curiosity as a child. I'm wondering... how does that part of you feel today?"* |
+
+**Cultural Anchoring Rule:** Always anchor custom questions in the specific cultural nuances provided by the user (e.g., Joint Family, B.Tech stress, societal pressure, hostel life). Do not use generic western terms if the user provides specific Indian cultural contexts.
 
 ### 3.2 Category-Specific Question Generation Prompts
 
 | Category | Question Generation Guidelines | Example Question |
 |----------|-------------------------------|------------------|
-| **Family Environment** | Focus on attachment, safety, dynamics, belonging | *"You mentioned your parents were strict. What did that strictness teach you about following rules?"* |
-| **Learning & Curiosity** | Focus on natural interests, passion, discovery | *"You mentioned loving to take things apart. What do you think that curiosity taught you about problem-solving?"* |
-| **Play & Imagination** | Focus on creativity, joy, exploration | *"You mentioned playing cricket with friends. What did that sense of teamwork teach you about connection?"* |
-| **Social Dynamics** | Focus on belonging, friendships, roles | *"You mentioned being the one who kept everyone together. Where do you think that responsibility came from?"* |
-| **Emotional Development** | Focus on feelings, regulation, expression | *"You mentioned not feeling like you could cry. What did you do instead when you felt overwhelmed?"* |
-| **Discipline & Boundaries** | Focus on rules, authority, autonomy | *"You mentioned your parents trusted you completely. What did that trust teach you about responsibility?"* |
-| **Confidence & Self-Identity** | Focus on self-belief, values, aspirations | *"You mentioned wanting to be an artist. What did that vision tell you about who you were?"* |
-| **Root-Cause Discovery** | Focus on formative experiences, core memories | *"You mentioned a time when you felt truly proud. What do you think that experience taught you?"* |
+| **Family Environment** | Focus on attachment, safety, dynamics, belonging | Childhood: *"You mentioned your parents were strict. What did that teach you?"* <br> Adult: *"Living in a joint family now, how do you find space for yourself?"* |
+| **Learning & Curiosity** | Focus on natural interests, passion, discovery | Childhood: *"You loved taking things apart. Did that shape your path?"* <br> Adult: *"After finishing B.Tech, do you still feel that same curiosity to learn?"* |
+| **Play & Imagination** | Focus on creativity, joy, exploration | Teenage: *"You mentioned playing cricket in college. What did that team feel like?"* <br> Adult: *"How do you find time for those creative outlets now?"* |
+| **Social Dynamics** | Focus on belonging, friendships, roles | Teenage: *"You mentioned being the 'fixer' in your friend group. Where did that start?"* <br> Adult: *"How has your professional network changed the way you view trust?"* |
+| **Emotional Development** | Focus on feelings, regulation, expression | Childhood: *"You felt you couldn't cry. What did you do instead?"* <br> Adult: *"When workplace stress hits, how do you handle those emotions today?"* |
+| **Discipline & Boundaries** | Focus on rules, authority, autonomy | Teenage: *"You pushed back against the rules. What were you fighting for?"* <br> Adult: *"How do you set boundaries with your own time now?"* |
+| **Confidence & Self-Identity** | Focus on self-belief, values, aspirations | Teenage: *"Wanting to be an artist—what did that vision tell you about yourself?"* <br> Adult: *"Do you feel your career aligns with who you truly are?"* |
+| **Root-Cause Discovery** | Focus on formative experiences, core memories | All Stages: *"You mentioned a time when you felt truly proud. What do you think that experience taught you?"* |
 
 ### 3.3 Example Custom Questions
 
@@ -318,31 +331,17 @@ text
 
 ---
 
-## 6. Category Coverage Management
+## 6. Category Coverage Management (Delegated to Router)
 
-### 6.1 Coverage Tracking
+> [!WARNING]  
+> **Do NOT use a static checklist here.** 
+> Category coverage and phase transitions are entirely managed by the **Dynamic Coverage Matrix** and **Exit Protocol** defined in `router.md`.
 
-**The LLM must track which categories have been covered:**
+### 6.1 How Hybrid Questioning Integrates with Coverage
 
-| Category | Status | Questions Asked |
-|----------|--------|-----------------|
-| Family Environment | ⬜ Not Started | 0 |
-| Learning & Curiosity | ⬜ Not Started | 0 |
-| Play & Imagination | ⬜ Not Started | 0 |
-| Social Dynamics | ⬜ Not Started | 0 |
-| Emotional Development | ⬜ Not Started | 0 |
-| Discipline & Boundaries | ⬜ Not Started | 0 |
-| Confidence & Self-Identity | ⬜ Not Started | 0 |
-| Root-Cause Discovery | ⬜ Not Started | 0 |
-
-### 6.2 Transition Rules
-
-| Rule | Action |
-|------|--------|
-| **All 8 categories must be covered** | Before transitioning to next phase |
-| **1-2 questions per category** | Minimum coverage needed |
-| **2-3 questions for deeper engagement** | If user is engaged |
-| **Move on if user is resistant** | Skip category if uncomfortable |
+1. **Defer to the Router:** The Router tracks the evolution of categories across Childhood, Teenage, and Adult phases.
+2. **The 80% Exit Rule:** The Router will trigger the Synthesis Phase once coverage hits ~80%. Do NOT attempt to force 100% coverage if the Router signals an exit.
+3. **Respecting Resistance:** If a user is resistant, do not force coverage. Defer to the Router's Resistance Protocol and back off entirely.
 
 ---
 
