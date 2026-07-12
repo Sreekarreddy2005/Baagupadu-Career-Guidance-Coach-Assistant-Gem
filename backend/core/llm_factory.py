@@ -18,7 +18,7 @@ def get_llm() -> BaseChatModel:
         if not config.GEMINI_API_KEY:
             raise ValueError("GEMINI_API_KEY is not set in environment.")
         return ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash",
+            model="gemini-3.5-flash",
             temperature=0.7,
             api_key=config.GEMINI_API_KEY
         )

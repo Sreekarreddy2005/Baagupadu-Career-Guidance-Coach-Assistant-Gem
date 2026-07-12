@@ -15,6 +15,11 @@ export default function ChatMessage({ message }: Props) {
   const isAgent  = message.sender === 'agent';
   const isSystem = message.sender === 'system' || message.isPhaseTransition;
 
+  // Safety fallback for old crashed localStorage states
+  const textContent = typeof message.text === 'string' 
+    ? message.text 
+    : (message.text as any)?.text || JSON.stringify(message.text);
+
   if (isSystem) {
     return (
       <motion.div
@@ -32,7 +37,7 @@ export default function ChatMessage({ message }: Props) {
           }}
         >
           <Sparkles className="w-3.5 h-3.5 text-[#FF6B8A]" />
-          <span>{message.text}</span>
+          <span>{textContent}</span>
           <Sparkles className="w-3.5 h-3.5 text-[#6C3CE1]" />
         </div>
       </motion.div>
@@ -80,7 +85,7 @@ export default function ChatMessage({ message }: Props) {
             boxShadow: '0 8px 16px rgba(99,102,241,0.1)',
           }}
         >
-          {message.text}
+          {textContent}
         </div>
         <span className="text-[#A0A0B8] text-[10px] px-1 opacity-70">{formatTime(message.timestamp)}</span>
       </div>

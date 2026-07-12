@@ -25,7 +25,10 @@ class SahayamAgent:
             "=== KNOWLEDGE BASE START ===\n"
             f"{kb_context}\n"
             "=== KNOWLEDGE BASE END ===\n\n"
-            "Given the user's input, respond as Sahayam following the routing rules."
+            "Given the user's input, respond as Sahayam following the routing rules.\n"
+            "CRITICAL: When you have gathered enough information across the life stages "
+            "and are ready to synthesize their persona and conclude the conversation, "
+            "you MUST append the exact string '[END_CHAT]' to the very end of your message."
         )
         return base_prompt
 
@@ -42,7 +45,17 @@ class SahayamAgent:
         # Invoke the LLM
         response = self.llm.invoke(messages)
         
+        # Extract content string safely (Gemini sometimes returns a list of blocks)
+        content = response.content
+        if isinstance(content, list):
+            content = "".join([
+                block.get("text", "") if isinstance(block, dict) else str(block) 
+                for block in content
+            ])
+        elif not isinstance(content, str):
+            content = str(content)
+            
         # Save AI response to history
-        self.chat_history.append(AIMessage(content=response.content))
+        self.chat_history.append(AIMessage(content=content))
         
-        return response.content
+        return content

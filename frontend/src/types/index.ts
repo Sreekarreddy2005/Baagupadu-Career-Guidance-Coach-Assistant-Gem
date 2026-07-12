@@ -2,10 +2,8 @@
 
 export type Phase =
   | 'idle'
-  | 'trust'
-  | 'childhood'
-  | 'teenage'
-  | 'adult'
+  | 'discovery'
+  | 'exploration'
   | 'synthesis'
   | 'guidance';
 
@@ -71,9 +69,9 @@ export const PHASES: PhaseConfig[] = [
     chatMood: 'premium',
   },
   {
-    id: 'trust',
-    label: 'Trust Building',
-    shortLabel: 'Trust',
+    id: 'discovery',
+    label: 'Initial Discovery',
+    shortLabel: 'Discovery',
     index: 1,
     agentMood: 'Getting to know you',
     agentEmoji: '👂',
@@ -84,49 +82,23 @@ export const PHASES: PhaseConfig[] = [
     chatMood: 'warm & friendly',
   },
   {
-    id: 'childhood',
-    label: 'Childhood',
-    shortLabel: 'Childhood',
+    id: 'exploration',
+    label: 'Dynamic Exploration',
+    shortLabel: 'Exploration',
     index: 2,
-    agentMood: 'Exploring Childhood...',
+    agentMood: 'Exploring your journey...',
     agentEmoji: '✨',
     moodColor: '#74B9FF',
     particleColors: ['#74B9FF', '#FDCB6E', '#FF6B8A'],
     gradient: ['#74B9FF', '#FDCB6E', '#FF6B8A'],
     bgDescription: 'Dreamy Day',
-    chatMood: 'soft & nostalgic',
-  },
-  {
-    id: 'teenage',
-    label: 'Teenage Years',
-    shortLabel: 'Teenage',
-    index: 3,
-    agentMood: 'Reliving your spark...',
-    agentEmoji: '⚡',
-    moodColor: '#6C3CE1',
-    particleColors: ['#6C3CE1', '#00CEC9', '#FF6B8A'],
-    gradient: ['#2D1B69', '#6C3CE1', '#00CEC9'],
-    bgDescription: 'Vibrant Night',
-    chatMood: 'energetic & curious',
-  },
-  {
-    id: 'adult',
-    label: 'Adult Life',
-    shortLabel: 'Adult',
-    index: 4,
-    agentMood: 'Understanding you today...',
-    agentEmoji: '🌿',
-    moodColor: '#00B894',
-    particleColors: ['#00B894', '#0984E3', '#6C3CE1'],
-    gradient: ['#00B894', '#0984E3', '#2D1B69'],
-    bgDescription: 'Grounded Present',
-    chatMood: 'clear & focused',
+    chatMood: 'curious & open',
   },
   {
     id: 'synthesis',
     label: 'Synthesis',
     shortLabel: 'Synthesis',
-    index: 5,
+    index: 3,
     agentMood: 'Reflecting...',
     agentEmoji: '💭',
     moodColor: '#FDCB6E',
@@ -139,7 +111,7 @@ export const PHASES: PhaseConfig[] = [
     id: 'guidance',
     label: 'Guidance',
     shortLabel: 'Guidance',
-    index: 6,
+    index: 4,
     agentMood: 'Finding Your Path...',
     agentEmoji: '🎯',
     moodColor: '#FFB84D',

@@ -12,8 +12,8 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import SahayamPersonalityWheel from '@/components/visualization/SahayamPersonalityWheel';
 
 const FEATURES = [
-  { icon: <Brain className="w-8 h-8 text-[#FF6B8A]" />, title: 'Deep Self-Discovery', desc: 'We explore your foundational years—childhood (0-12) to uncover your core emotional blueprint, and teenage years (13-19) to map your identity and values.' },
-  { icon: <Heart className="w-8 h-8 text-[#6C3CE1]" />, title: 'Pattern Recognition', desc: "By analyzing your adult experiences (20-30), Sahayam connects the dots between your past behaviors, ambitions, and growth patterns." },
+  { icon: <Brain className="w-8 h-8 text-[#FF6B8A]" />, title: 'Dynamic Self-Discovery', desc: 'We explore your foundational years dynamically, uncovering your core emotional blueprint and mapping your identity and values non-linearly.' },
+  { icon: <Heart className="w-8 h-8 text-[#6C3CE1]" />, title: 'Pattern Recognition', desc: "By navigating through your life experiences based on emotional cues, Sahayam connects the dots between your past behaviors, ambitions, and growth patterns." },
   { icon: <Target className="w-8 h-8 text-[#00B894]" />, title: 'Persona Synthesis', desc: "We align who you are with what you do. The system synthesizes these patterns into a comprehensive understanding of your unique persona." },
   { icon: <Map className="w-8 h-8 text-[#FFB84D]" />, title: 'Actionable Accountability', desc: "Information without execution is useless. Sahayam translates your persona insights into an actionable career roadmap, tracking your progress and assigning tasks to ensure consistency." },
 ];
@@ -255,7 +255,7 @@ export default function LandingPage() {
               {[
                 { name: "Alex Chen", role: "Product Designer", quote: "Sahayam helped me understand exactly why I was stuck in my career. The synthesis phase connected dots from my childhood that I never realized were driving my decisions today." },
                 { name: "Sarah Jenkins", role: "Software Engineer", quote: "Unlike normal AI that just outputs text, this felt like a real conversation with a mentor who actually remembered my past and cared about my emotional growth." },
-                { name: "David M.", role: "Startup Founder", quote: "The career roadmap generated after the 6-phase journey was incredibly precise. It didn't just give me roles; it gave me the exact psychological reasons why I would excel in them." }
+                { name: "David M.", role: "Startup Founder", quote: "The career roadmap generated after the dynamic exploration journey was incredibly precise. It didn't just give me roles; it gave me the exact psychological reasons why I would excel in them." }
               ].map((t, i) => (
                 <motion.div key={i} variants={slideUpVariants} whileHover={{ y: -5 }} className="p-8 rounded-[2rem] bg-gradient-to-br from-white to-white/60 backdrop-blur-sm border border-[var(--glass-border)] shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-secondary)]/5 rounded-full blur-2xl group-hover:bg-[var(--color-secondary)]/10 transition-colors" />
@@ -283,7 +283,7 @@ export default function LandingPage() {
           >
             <div className="text-center mb-20 px-4">
               <h2 className="text-3xl md:text-4xl font-extrabold text-[var(--color-text)] mb-6 tracking-tight">An Adventure to the Self</h2>
-              <p className="text-[18px] text-[var(--color-text-muted)] font-medium max-w-2xl mx-auto">Experience a structured, immersive six-phase journey before receiving a single piece of career advice.</p>
+              <p className="text-[18px] text-[var(--color-text-muted)] font-medium max-w-2xl mx-auto">Experience a dynamic, non-linear exploration journey powered by our emotional router before receiving a single piece of career advice.</p>
             </div>
             
             <div className="relative ml-4 md:ml-12">
@@ -291,11 +291,9 @@ export default function LandingPage() {
                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[var(--color-secondary)] via-[#FF6B8A] to-[var(--color-warm)] opacity-20 rounded-full" />
                
                {[
-                 { phase: 'Trust Building', icon: '🤝', duration: '5 mins', outcome: 'Establishing emotional safety' },
-                 { phase: 'Childhood', icon: '🧸', duration: '10 mins', outcome: 'Uncovering core emotional blueprint' },
-                 { phase: 'Teenage', icon: '🌱', duration: '10 mins', outcome: 'Mapping identity and early values' },
-                 { phase: 'Adult', icon: '🚀', duration: '15 mins', outcome: 'Analyzing behavioral patterns' },
-                 { phase: 'Synthesis', icon: '🧠', duration: 'System', outcome: 'Connecting dots to form persona' },
+                 { phase: 'Initial Discovery', icon: '🤝', duration: 'Dynamic', outcome: 'Establishing emotional safety & baseline' },
+                 { phase: 'Dynamic Exploration', icon: '✨', duration: 'Dynamic', outcome: 'Non-linear traversal of life stages based on emotional cues' },
+                 { phase: 'Synthesis', icon: '🧠', duration: 'System', outcome: 'Connecting dots to form your unique persona' },
                  { phase: 'Guidance', icon: '🧭', duration: 'Ongoing', outcome: 'Actionable career roadmap' }
                ].map((step, i) => (
                  <motion.div key={step.phase} variants={slideUpVariants} className="relative pl-12 pb-16 group">
