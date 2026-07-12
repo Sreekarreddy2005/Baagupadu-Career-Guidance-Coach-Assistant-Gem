@@ -1,17 +1,2014 @@
-What it is: The structure for storing user data.
-
-What it contains:
-
-Identity Data: Name, age, background
-
-Life Story Data: Childhood, teenage, adult responses
-
-Trait Data: Identified traits with confidence levels
-
-Persona Data: The synthesized persona
-
-Guidance Data: Career direction, growth areas
-
-Timestamps: When each stage was completed
-
-Why you need it: To maintain context across sessions and build a comprehensive profile.
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://baagupadu.com/schemas/user_profile_schema.json",
+    "title": "Baagupadu User Profile Schema",
+    "description": "Complete schema for storing all user data, including profile, life stages, patterns, traits, persona, and conversation memory.",
+    "version": "1.0.0",
+    "type": "object",
+    "properties": {
+        "user_id": {
+            "type": "string",
+            "description": "Unique identifier for the user",
+            "format": "uuid",
+            "examples": [
+                "550e8400-e29b-41d4-a716-446655440000"
+            ]
+        },
+        "created_at": {
+            "type": "string",
+            "description": "Timestamp when the user profile was created",
+            "format": "date-time",
+            "examples": [
+                "2026-01-15T10:30:00Z"
+            ]
+        },
+        "last_accessed": {
+            "type": "string",
+            "description": "Timestamp when the user last interacted with Sahayam",
+            "format": "date-time",
+            "examples": [
+                "2026-07-12T14:45:00Z"
+            ]
+        },
+        "user_info": {
+            "type": "object",
+            "description": "Basic user information provided during the journey",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "User's name (if provided)",
+                    "examples": [
+                        "Sreekar",
+                        "Priya"
+                    ]
+                },
+                "age": {
+                    "type": "integer",
+                    "description": "User's age (if provided)",
+                    "minimum": 16,
+                    "maximum": 30,
+                    "examples": [
+                        24
+                    ]
+                },
+                "location": {
+                    "type": "string",
+                    "description": "User's location (if provided)",
+                    "examples": [
+                        "Hyderabad, India",
+                        "Bangalore, India"
+                    ]
+                },
+                "preferred_language": {
+                    "type": "string",
+                    "description": "Preferred language for conversation",
+                    "enum": [
+                        "english",
+                        "telugu",
+                        "tanglish",
+                        "mixed"
+                    ],
+                    "examples": [
+                        "english",
+                        "tanglish"
+                    ]
+                }
+            },
+            "additionalProperties": false
+        },
+        "session_progress": {
+            "type": "object",
+            "description": "Current progress of the user through the 6-phase journey",
+            "properties": {
+                "current_phase": {
+                    "type": "string",
+                    "description": "Current phase the user is in (matches frontend store exactly)",
+                    "enum": [
+                        "discovery",
+                        "exploration",
+                        "synthesis",
+                        "guidance",
+                        "completed"
+                    ],
+                    "examples": [
+                        "exploration",
+                        "synthesis"
+                    ]
+                },
+                "phase_completed": {
+                    "type": "array",
+                    "description": "List of phases the user has completed",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "discovery",
+                            "exploration",
+                            "synthesis",
+                            "guidance"
+                        ]
+                    },
+                    "examples": [
+                        [
+                            "discovery",
+                            "exploration"
+                        ]
+                    ]
+                },
+                "phase_progress": {
+                    "type": "object",
+                    "description": "Percentage progress for each phase (0-100)",
+                    "properties": {
+                        "discovery": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 100,
+                            "examples": [
+                                100
+                            ]
+                        },
+                        "exploration": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 100,
+                            "examples": [
+                                50
+                            ]
+                        },
+                        "synthesis": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 100,
+                            "examples": [
+                                0
+                            ]
+                        },
+                        "guidance": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 100,
+                            "examples": [
+                                0
+                            ]
+                        }
+                    }
+                },
+                "last_exchange_id": {
+                    "type": "string",
+                    "description": "ID of the last exchange in the conversation",
+                    "examples": [
+                        "exchange_001"
+                    ]
+                },
+                "total_exchanges": {
+                    "type": "integer",
+                    "description": "Total number of exchanges in the conversation",
+                    "minimum": 0,
+                    "examples": [
+                        42
+                    ]
+                },
+                "current_sub_phase": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Sub-phase within exploration",
+                    "enum": [
+                        "trust_building",
+                        "childhood",
+                        "teenage",
+                        "adult",
+                        null
+                    ],
+                    "examples": [
+                        "childhood"
+                    ]
+                }
+            },
+            "additionalProperties": false
+        },
+        "life_stage_data": {
+            "type": "object",
+            "description": "All data collected from each life stage",
+            "properties": {
+                "childhood": {
+                    "type": "object",
+                    "description": "Data from the childhood exploration phase",
+                    "properties": {
+                        "responses": {
+                            "type": "array",
+                            "description": "List of user responses in the childhood phase",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "question_id": {
+                                        "type": "string",
+                                        "examples": [
+                                            "child_001"
+                                        ]
+                                    },
+                                    "response": {
+                                        "type": "string",
+                                        "examples": [
+                                            "I loved building things with Legos"
+                                        ]
+                                    },
+                                    "timestamp": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "emotional_tone": {
+                                        "type": "string",
+                                        "enum": [
+                                            "joy",
+                                            "sadness",
+                                            "anger",
+                                            "fear",
+                                            "pride",
+                                            "shame",
+                                            "neutral"
+                                        ],
+                                        "examples": [
+                                            "joy"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "teenage": {
+                    "type": "object",
+                    "description": "Data from the teenage exploration phase",
+                    "properties": {
+                        "responses": {
+                            "type": "array",
+                            "description": "List of user responses in the teenage phase",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "question_id": {
+                                        "type": "string",
+                                        "examples": [
+                                            "teen_001"
+                                        ]
+                                    },
+                                    "response": {
+                                        "type": "string",
+                                        "examples": [
+                                            "I felt like no one understood me"
+                                        ]
+                                    },
+                                    "timestamp": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "emotional_tone": {
+                                        "type": "string",
+                                        "enum": [
+                                            "joy",
+                                            "sadness",
+                                            "anger",
+                                            "fear",
+                                            "pride",
+                                            "shame",
+                                            "neutral"
+                                        ],
+                                        "examples": [
+                                            "sadness"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "adult": {
+                    "type": "object",
+                    "description": "Data from the adult exploration phase",
+                    "properties": {
+                        "responses": {
+                            "type": "array",
+                            "description": "List of user responses in the adult phase",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "question_id": {
+                                        "type": "string",
+                                        "examples": [
+                                            "adult_001"
+                                        ]
+                                    },
+                                    "response": {
+                                        "type": "string",
+                                        "examples": [
+                                            "I want to make a difference in the world"
+                                        ]
+                                    },
+                                    "timestamp": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "emotional_tone": {
+                                        "type": "string",
+                                        "enum": [
+                                            "joy",
+                                            "sadness",
+                                            "anger",
+                                            "fear",
+                                            "pride",
+                                            "shame",
+                                            "neutral"
+                                        ],
+                                        "examples": [
+                                            "pride"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+        "phase_summaries": {
+            "type": "object",
+            "description": "Compressed summaries of each completed phase (for token efficiency)",
+            "properties": {
+                "trust_building": {
+                    "type": "object",
+                    "properties": {
+                        "summary": {
+                            "type": "string",
+                            "examples": [
+                                "User was initially hesitant but opened up about career confusion"
+                            ]
+                        },
+                        "key_insights": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "emotional_context": {
+                            "type": "string",
+                            "examples": [
+                                "Hesitant \u2192 Warm \u2192 Engaged"
+                            ]
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "childhood": {
+                    "type": "object",
+                    "properties": {
+                        "summary": {
+                            "type": "string",
+                            "examples": [
+                                "User was a curious child who loved building things and asking 'why'. They felt different from other kids and often preferred being alone."
+                            ]
+                        },
+                        "key_insights": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "examples": [
+                                [
+                                    "Natural curiosity",
+                                    "Comfortable with solitude",
+                                    "Felt different from peers"
+                                ]
+                            ]
+                        },
+                        "patterns_identified": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "examples": [
+                                [
+                                    "curiosity",
+                                    "independence",
+                                    "self_awareness"
+                                ]
+                            ]
+                        },
+                        "emotional_context": {
+                            "type": "string",
+                            "examples": [
+                                "Warm, reflective, occasionally vulnerable"
+                            ]
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "teenage": {
+                    "type": "object",
+                    "properties": {
+                        "summary": {
+                            "type": "string",
+                            "examples": [
+                                "User struggled with feeling unseen in high school but developed resilience through art and found a close friend who understood them."
+                            ]
+                        },
+                        "key_insights": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "examples": [
+                                [
+                                    "Resilience through creativity",
+                                    "Value of deep connection",
+                                    "Learned social skills"
+                                ]
+                            ]
+                        },
+                        "patterns_identified": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "examples": [
+                                [
+                                    "resilience",
+                                    "creative_expression",
+                                    "social_selectivity"
+                                ]
+                            ]
+                        },
+                        "emotional_context": {
+                            "type": "string",
+                            "examples": [
+                                "Vulnerable, reflective, proud of growth"
+                            ]
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "adult": {
+                    "type": "object",
+                    "properties": {
+                        "summary": {
+                            "type": "string",
+                            "examples": [
+                                "User is purpose-driven, wants to make an impact, and values autonomy in their career."
+                            ]
+                        },
+                        "key_insights": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "examples": [
+                                [
+                                    "Purpose-driven",
+                                    "Desire for impact",
+                                    "Value autonomy"
+                                ]
+                            ]
+                        },
+                        "patterns_identified": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "examples": [
+                                [
+                                    "ambition",
+                                    "purpose_driven",
+                                    "leadership"
+                                ]
+                            ]
+                        },
+                        "emotional_context": {
+                            "type": "string",
+                            "examples": [
+                                "Energetic, hopeful, focused"
+                            ]
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "synthesis": {
+                    "type": "object",
+                    "properties": {
+                        "summary": {
+                            "type": "string",
+                            "examples": [
+                                "Persona built: The Curious Explorer. Key strengths: Natural pattern recognition, intellectual versatility, self-awareness."
+                            ]
+                        },
+                        "key_insights": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "persona_name": {
+                            "type": "string",
+                            "examples": [
+                                "The Curious Explorer"
+                            ]
+                        },
+                        "emotional_context": {
+                            "type": "string",
+                            "examples": [
+                                "Celebratory, validating"
+                            ]
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "guidance": {
+                    "type": "object",
+                    "properties": {
+                        "summary": {
+                            "type": "string",
+                            "examples": [
+                                "Career roadmap delivered: Product Designer with UX Research and Product Management alternatives. Skill gaps: Figma, User Research, Prototyping."
+                            ]
+                        },
+                        "key_insights": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "primary_career": {
+                            "type": "string",
+                            "examples": [
+                                "Product Designer"
+                            ]
+                        },
+                        "emotional_context": {
+                            "type": "string",
+                            "examples": [
+                                "Hopeful, motivated, clear direction"
+                            ]
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+        "inferences": {
+            "type": "object",
+            "description": "All inferences drawn from the user's data (from inference_engine.md)",
+            "properties": {
+                "traits": {
+                    "type": "array",
+                    "description": "Identified traits with confidence levels",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "trait_name": {
+                                "type": "string",
+                                "examples": [
+                                    "Curiosity",
+                                    "Leadership",
+                                    "Resilience"
+                                ]
+                            },
+                            "confidence": {
+                                "type": "string",
+                                "enum": [
+                                    "HIGH",
+                                    "MEDIUM",
+                                    "LOW"
+                                ]
+                            },
+                            "evidence": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "examples": [
+                                    [
+                                        "\"I always asked 'why'\" (Childhood)",
+                                        "\"I got lost in research\" (Teenage)"
+                                    ]
+                                ]
+                            },
+                            "life_stages": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "enum": [
+                                        "CHILDHOOD",
+                                        "TEENAGE",
+                                        "ADULT"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "trait_name",
+                            "confidence",
+                            "evidence"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "identity_drivers": {
+                    "type": "array",
+                    "description": "Tier 3 identity drivers (motivations, fears, values)",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "driver": {
+                                "type": "string",
+                                "examples": [
+                                    "Desire for Impact",
+                                    "Fear of Failure",
+                                    "Need for Autonomy"
+                                ]
+                            },
+                            "confidence": {
+                                "type": "string",
+                                "enum": [
+                                    "HIGH",
+                                    "MEDIUM",
+                                    "LOW"
+                                ]
+                            },
+                            "evidence": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "examples": [
+                                    [
+                                        "\"I want to make a difference\"",
+                                        "\"I was terrified of failing\""
+                                    ]
+                                ]
+                            }
+                        },
+                        "required": [
+                            "driver",
+                            "confidence",
+                            "evidence"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "shadow_traits": {
+                    "type": "array",
+                    "description": "Identified shadow traits with tentative confidence",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "trait": {
+                                "type": "string",
+                                "enum": [
+                                    "People-Pleasing",
+                                    "Hyper-Independence",
+                                    "Perfectionism",
+                                    "Avoidance",
+                                    "Overthinking"
+                                ]
+                            },
+                            "confidence": {
+                                "type": "string",
+                                "enum": [
+                                    "TENTATIVE",
+                                    "CONFIRMED"
+                                ]
+                            },
+                            "evidence": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "examples": [
+                                    [
+                                        "\"I always wanted to make everyone happy\"",
+                                        "\"I never said no\""
+                                    ]
+                                ]
+                            }
+                        },
+                        "required": [
+                            "trait",
+                            "confidence",
+                            "evidence"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "pattern_disruptions": {
+                    "type": "array",
+                    "description": "Pattern disruptions where the user evolved",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "disruption": {
+                                "type": "string",
+                                "examples": [
+                                    "People-pleaser \u2192 Boundary-setter"
+                                ]
+                            },
+                            "from": {
+                                "type": "string",
+                                "examples": [
+                                    "People-Pleasing"
+                                ]
+                            },
+                            "to": {
+                                "type": "string",
+                                "examples": [
+                                    "Boundary-Setting"
+                                ]
+                            },
+                            "interpretation": {
+                                "type": "string",
+                                "examples": [
+                                    "Learned self-protection after being taken advantage of"
+                                ]
+                            },
+                            "life_stages": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "enum": [
+                                        "CHILDHOOD",
+                                        "TEENAGE",
+                                        "ADULT"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "disruption",
+                            "from",
+                            "to",
+                            "interpretation"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "contradictions": {
+                    "type": "array",
+                    "description": "Contradictions in user data that need attention",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "INTERNAL",
+                                    "CROSS_STAGE",
+                                    "VALUE",
+                                    "SHADOW"
+                                ]
+                            },
+                            "description": {
+                                "type": "string",
+                                "examples": [
+                                    "User values both freedom and stability"
+                                ]
+                            },
+                            "resolution": {
+                                "type": "string",
+                                "examples": [
+                                    "Noted as a tension to explore"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "type",
+                            "description"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "patterns": {
+            "type": "object",
+            "description": "Identified patterns from pattern_recognition.md",
+            "properties": {
+                "behavioral": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "examples": [
+                                    "Leadership",
+                                    "Independence"
+                                ]
+                            },
+                            "confidence": {
+                                "type": "string",
+                                "enum": [
+                                    "HIGH",
+                                    "MEDIUM",
+                                    "LOW"
+                                ]
+                            },
+                            "evidence": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "life_stages": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "enum": [
+                                        "CHILDHOOD",
+                                        "TEENAGE",
+                                        "ADULT"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "confidence"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "emotional": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "examples": [
+                                    "Resilience",
+                                    "Anxiety"
+                                ]
+                            },
+                            "confidence": {
+                                "type": "string",
+                                "enum": [
+                                    "HIGH",
+                                    "MEDIUM",
+                                    "LOW"
+                                ]
+                            },
+                            "evidence": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "life_stages": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "enum": [
+                                        "CHILDHOOD",
+                                        "TEENAGE",
+                                        "ADULT"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "confidence"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "cognitive": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "examples": [
+                                    "Analytical Thinking",
+                                    "Big-Picture Orientation"
+                                ]
+                            },
+                            "confidence": {
+                                "type": "string",
+                                "enum": [
+                                    "HIGH",
+                                    "MEDIUM",
+                                    "LOW"
+                                ]
+                            },
+                            "evidence": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "life_stages": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "enum": [
+                                        "CHILDHOOD",
+                                        "TEENAGE",
+                                        "ADULT"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "confidence"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "social": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "examples": [
+                                    "People-Pleasing",
+                                    "Social Selectivity"
+                                ]
+                            },
+                            "confidence": {
+                                "type": "string",
+                                "enum": [
+                                    "HIGH",
+                                    "MEDIUM",
+                                    "LOW"
+                                ]
+                            },
+                            "evidence": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "life_stages": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "enum": [
+                                        "CHILDHOOD",
+                                        "TEENAGE",
+                                        "ADULT"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "confidence"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "examples": [
+                                    "Impact",
+                                    "Authenticity",
+                                    "Freedom"
+                                ]
+                            },
+                            "confidence": {
+                                "type": "string",
+                                "enum": [
+                                    "HIGH",
+                                    "MEDIUM",
+                                    "LOW"
+                                ]
+                            },
+                            "evidence": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "life_stages": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "enum": [
+                                        "CHILDHOOD",
+                                        "TEENAGE",
+                                        "ADULT"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "confidence"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "disruptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "from": {
+                                "type": "string",
+                                "examples": [
+                                    "People-Pleasing"
+                                ]
+                            },
+                            "to": {
+                                "type": "string",
+                                "examples": [
+                                    "Boundary-Setting"
+                                ]
+                            },
+                            "interpretation": {
+                                "type": "string",
+                                "examples": [
+                                    "Learned self-protection"
+                                ]
+                            },
+                            "life_stages": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "enum": [
+                                        "CHILDHOOD",
+                                        "TEENAGE",
+                                        "ADULT"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "from",
+                            "to",
+                            "interpretation"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "holding_pen": {
+                    "type": "array",
+                    "description": "Patterns with only 1 piece of evidence (waiting for confirmation)",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "evidence": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "HOLDING"
+                                ]
+                            },
+                            "reason": {
+                                "type": "string",
+                                "examples": [
+                                    "Waiting for 2nd evidence"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "status"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "persona": {
+            "type": "object",
+            "description": "The synthesized persona (from persona_building.md)",
+            "properties": {
+                "core_identity": {
+                    "type": "object",
+                    "properties": {
+                        "archetype_name": {
+                            "type": "string",
+                            "examples": [
+                                "The Curious Explorer"
+                            ]
+                        },
+                        "tagline": {
+                            "type": "string",
+                            "examples": [
+                                "Always learning, always questioning, always seeking."
+                            ]
+                        },
+                        "description": {
+                            "type": "string"
+                        },
+                        "description_for_user": {
+                            "type": "string"
+                        },
+                        "secondary_archetype": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "examples": [
+                                "The Driven Achiever"
+                            ]
+                        },
+                        "secondary_explanation": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "childhood_evidence": {
+                            "type": "string"
+                        },
+                        "teenage_evidence": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "archetype_name"
+                    ],
+                    "additionalProperties": false
+                },
+                "core_drivers": {
+                    "type": "object",
+                    "properties": {
+                        "primary_driver": {
+                            "type": "string",
+                            "examples": [
+                                "A deep desire to create things that matter"
+                            ]
+                        },
+                        "secondary_driver": {
+                            "type": "string",
+                            "examples": [
+                                "A need for autonomy and intellectual freedom"
+                            ]
+                        },
+                        "core_fear_or_value": {
+                            "type": "string",
+                            "examples": [
+                                "Fear of failure"
+                            ]
+                        },
+                        "synthesis": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "primary_driver"
+                    ],
+                    "additionalProperties": false
+                },
+                "strengths": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "trait": {
+                                "type": "string"
+                            },
+                            "evidence": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "trait",
+                            "evidence"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "growth_and_complexity": {
+                    "type": "object",
+                    "properties": {
+                        "growth_areas": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "area": {
+                                        "type": "string"
+                                    },
+                                    "compassionate_framing": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "area",
+                                    "compassionate_framing"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "shadow_traits": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "trait": {
+                                        "type": "string"
+                                    },
+                                    "acknowledgment": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "trait",
+                                    "acknowledgment"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "core_values_and_non_negotiables": {
+                    "type": "object",
+                    "properties": {
+                        "core_values": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "non_negotiables": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "value": {
+                                        "type": "string"
+                                    },
+                                    "reason": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "value",
+                                    "reason"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "flow_and_burnout": {
+                    "type": "object",
+                    "properties": {
+                        "flow_triggers": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "burnout_triggers": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "balance_strategy": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "learning_style": {
+                    "type": "object",
+                    "properties": {
+                        "preferred_methods": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "ideal_environment": {
+                            "type": "string"
+                        },
+                        "motivations": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "career_affinities": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "role_type": {
+                                "type": "string"
+                            },
+                            "industry": {
+                                "type": "string"
+                            },
+                            "reasoning": {
+                                "type": "string"
+                            },
+                            "psychological_fit": {
+                                "type": "string"
+                            },
+                            "execution_risk": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "role_type",
+                            "industry",
+                            "reasoning"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "work_environment": {
+                    "type": "object",
+                    "properties": {
+                        "thrive_in": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "struggle_in": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "work_style": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "guidance_note": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "guidance": {
+            "type": "object",
+            "description": "Career guidance and roadmap (from guidance_template.md)",
+            "properties": {
+                "primary_career_path": {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string"
+                        },
+                        "role_type": {
+                            "type": "string"
+                        },
+                        "industry": {
+                            "type": "string"
+                        },
+                        "reasoning": {
+                            "type": "string"
+                        },
+                        "psychological_fit": {
+                            "type": "string"
+                        },
+                        "execution_risk": {
+                            "type": "string"
+                        },
+                        "day_in_the_life": {
+                            "type": "string"
+                        },
+                        "growth_trajectory": {
+                            "type": "string"
+                        },
+                        "transition_reality_check": {
+                            "type": "object",
+                            "properties": {
+                                "financial_considerations": {
+                                    "type": "string"
+                                },
+                                "market_demand": {
+                                    "type": "string"
+                                },
+                                "timeline_realism": {
+                                    "type": "string"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "required": [
+                        "title"
+                    ],
+                    "additionalProperties": false
+                },
+                "alternative_paths": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string"
+                            },
+                            "role_type": {
+                                "type": "string"
+                            },
+                            "industry": {
+                                "type": "string"
+                            },
+                            "reasoning": {
+                                "type": "string"
+                            },
+                            "why_alternative": {
+                                "type": "string"
+                            },
+                            "execution_risk": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "title",
+                            "reasoning"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "skill_gap_analysis": {
+                    "type": "object",
+                    "properties": {
+                        "current_skills": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "required_skills": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "critical_gaps": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "skill": {
+                                        "type": "string"
+                                    },
+                                    "severity": {
+                                        "type": "string",
+                                        "enum": [
+                                            "CRITICAL",
+                                            "BRIDGEABLE",
+                                            "SOFT_SKILL"
+                                        ]
+                                    },
+                                    "recommended_action": {
+                                        "type": "string"
+                                    },
+                                    "time_estimate": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "skill",
+                                    "severity",
+                                    "recommended_action"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "bridgeable_gaps": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "skill": {
+                                        "type": "string"
+                                    },
+                                    "transferable_skill": {
+                                        "type": "string"
+                                    },
+                                    "recommended_action": {
+                                        "type": "string"
+                                    },
+                                    "time_estimate": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "skill",
+                                    "recommended_action"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "soft_skill_gaps": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "skill": {
+                                        "type": "string"
+                                    },
+                                    "recommended_action": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "skill",
+                                    "recommended_action"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "learning_path": {
+                    "type": "object",
+                    "properties": {
+                        "formal_education": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "program": {
+                                        "type": "string"
+                                    },
+                                    "institution": {
+                                        "type": "string"
+                                    },
+                                    "duration": {
+                                        "type": "string"
+                                    },
+                                    "priority": {
+                                        "type": "string",
+                                        "enum": [
+                                            "HIGH",
+                                            "MEDIUM",
+                                            "LOW"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "program"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "certifications": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "provider": {
+                                        "type": "string"
+                                    },
+                                    "duration": {
+                                        "type": "string"
+                                    },
+                                    "priority": {
+                                        "type": "string",
+                                        "enum": [
+                                            "HIGH",
+                                            "MEDIUM",
+                                            "LOW"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "self_directed_projects": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "duration": {
+                                        "type": "string"
+                                    },
+                                    "priority": {
+                                        "type": "string",
+                                        "enum": [
+                                            "HIGH",
+                                            "MEDIUM",
+                                            "LOW"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "name"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "networking_strategy": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "action": {
+                                        "type": "string"
+                                    },
+                                    "why": {
+                                        "type": "string"
+                                    },
+                                    "frequency": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "action"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "action_plan": {
+                    "type": "object",
+                    "properties": {
+                        "first_week": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "action": {
+                                        "type": "string"
+                                    },
+                                    "why": {
+                                        "type": "string"
+                                    },
+                                    "timeframe": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "action"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "first_month": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "action": {
+                                        "type": "string"
+                                    },
+                                    "why": {
+                                        "type": "string"
+                                    },
+                                    "timeframe": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "action"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "first_quarter": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "action": {
+                                        "type": "string"
+                                    },
+                                    "why": {
+                                        "type": "string"
+                                    },
+                                    "timeframe": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "action"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "first_year": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "action": {
+                                        "type": "string"
+                                    },
+                                    "why": {
+                                        "type": "string"
+                                    },
+                                    "timeframe": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "action"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "work_environment_fit": {
+                    "type": "object",
+                    "properties": {
+                        "ideal_environments": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "avoid_environments": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "team_dynamics": {
+                            "type": "string"
+                        },
+                        "management_style": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "success_metrics": {
+                    "type": "object",
+                    "properties": {
+                        "behavioral_metrics": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "metric": {
+                                        "type": "string"
+                                    },
+                                    "target": {
+                                        "type": "string"
+                                    },
+                                    "timeframe": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "metric",
+                                    "target"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "outcome_metrics": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "metric": {
+                                        "type": "string"
+                                    },
+                                    "target": {
+                                        "type": "string"
+                                    },
+                                    "timeframe": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "metric",
+                                    "target"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "motivational_note": {
+                    "type": "string"
+                },
+                "next_steps": {
+                    "type": "object",
+                    "properties": {
+                        "immediate_action": {
+                            "type": "string"
+                        },
+                        "resources": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "validation_question": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+        "conversation_memory": {
+            "type": "object",
+            "description": "Conversation history and memory management",
+            "properties": {
+                "last_5_exchanges": {
+                    "type": "array",
+                    "description": "Last 5 exchanges (short-term memory)",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "sender": {
+                                "type": "string",
+                                "enum": [
+                                    "user",
+                                    "sahayam"
+                                ]
+                            },
+                            "message": {
+                                "type": "string"
+                            },
+                            "timestamp": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        },
+                        "required": [
+                            "sender",
+                            "message"
+                        ],
+                        "additionalProperties": false
+                    },
+                    "maxItems": 5
+                },
+                "phase_summaries": {
+                    "type": "object",
+                    "description": "Summaries of each completed phase",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "summary": {
+                                "type": "string"
+                            },
+                            "key_insights": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "patterns_identified": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "emotional_context": {
+                                "type": "string"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "blocked_topics": {
+                    "type": "array",
+                    "description": "Topics the user has asked to forget",
+                    "items": {
+                        "type": "string"
+                    },
+                    "examples": [
+                        [
+                            "father",
+                            "abuse",
+                            "trauma"
+                        ]
+                    ]
+                },
+                "unresolved_topics": {
+                    "type": "array",
+                    "description": "Topics to revisit later",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "topic": {
+                                "type": "string"
+                            },
+                            "mentioned_at": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "reason": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "topic"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "metadata": {
+            "type": "object",
+            "description": "Additional metadata about the user's journey",
+            "properties": {
+                "total_exchanges": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "last_phase": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "emotional_context": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "examples": [
+                        "Warm, reflective",
+                        "Anxious but engaged"
+                    ]
+                },
+                "journey_completed": {
+                    "type": "boolean",
+                    "examples": [
+                        false
+                    ]
+                },
+                "persona_built": {
+                    "type": "boolean",
+                    "examples": [
+                        false
+                    ]
+                },
+                "guidance_delivered": {
+                    "type": "boolean",
+                    "examples": [
+                        false
+                    ]
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "user_id",
+        "created_at",
+        "session_progress"
+    ],
+    "additionalProperties": false
+}
