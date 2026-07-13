@@ -12,6 +12,7 @@ import { Sparkles, LayoutDashboard, MessageSquare, Wrench, Map as MapIcon, Setti
 import Sidebar3DAvatar from '@/components/agent/Sidebar3DAvatar';
 import CareerRoadmap from '@/components/visualization/CareerRoadmap';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { UserButton } from '@clerk/nextjs';
 
 export default function ChatPage() {
   const { currentPhase, showVisualization, agentState } = useChatStore();
@@ -36,7 +37,10 @@ export default function ChatPage() {
               </div>
               <span className="font-bold text-[16px] text-[var(--color-text)]">Baagupadu</span>
             </Link>
-            <ThemeToggle />
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <UserButton afterSignOutUrl="/" />
+            </div>
           </div>
 
           <div className="flex-1 overflow-y-auto scrollbar-hide flex flex-col items-center">

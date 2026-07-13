@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChatMessage as ChatMessageType } from '@/types';
 import { messageVariants } from '@/lib/utils/animations';
@@ -12,6 +13,8 @@ function formatTime(ts: number) {
 }
 
 export default function ChatMessage({ message }: Props) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const isAgent  = message.sender === 'agent';
   const isSystem = message.sender === 'system' || message.isPhaseTransition;
 
@@ -87,7 +90,7 @@ export default function ChatMessage({ message }: Props) {
         >
           {textContent}
         </div>
-        <span className="text-[#A0A0B8] text-[10px] px-1 opacity-70">{formatTime(message.timestamp)}</span>
+        <span className="text-[#A0A0B8] text-[10px] px-1 opacity-70">{mounted ? formatTime(message.timestamp) : ''}</span>
       </div>
 
       {/* User avatar dot */}

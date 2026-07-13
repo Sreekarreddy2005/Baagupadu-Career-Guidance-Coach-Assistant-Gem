@@ -32,15 +32,23 @@ class SahayamAgent:
         )
         return base_prompt
 
-    def chat(self, user_input: str) -> str:
+    def chat(self, user_input: str, profile: dict = None) -> str:
         """
         Sends the user's message to the LLM along with the knowledge base context.
+        Injects the user profile if provided.
         """
         from langchain_core.messages import AIMessage
+        import json
         
         self.chat_history.append(HumanMessage(content=user_input))
         
-        messages = [SystemMessage(content=self._system_prompt)] + self.chat_history
+        messages = [SystemMessage(content=self._system_prompt)]
+        
+        if profile:
+            profile_context = f"\n\nCURRENT USER PROFILE STATE:\n{json.dumps(profile, indent=2)}\n\nUse this profile to maintain context and update your patterns/inferences."
+            messages[0].content += profile_context
+            
+        messages += self.chat_history
         
         # Invoke the LLM
         response = self.llm.invoke(messages)
@@ -57,5 +65,9 @@ class SahayamAgent:
             
         # Save AI response to history
         self.chat_history.append(AIMessage(content=content))
+        
+        # Token optimization: Keep only the last 5 exchanges (10 messages)
+        if len(self.chat_history) > 10:
+            self.chat_history = self.chat_history[-10:]
         
         return content

@@ -10,6 +10,7 @@ import AuraOverlay from '@/components/agent/AuraOverlay';
 import Hero3DAvatar from '@/components/agent/Hero3DAvatar';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import SahayamPersonalityWheel from '@/components/visualization/SahayamPersonalityWheel';
+import { useAuth, UserButton } from '@clerk/nextjs';
 
 const FEATURES = [
   { icon: <Brain className="w-8 h-8 text-[#FF6B8A]" />, title: 'Dynamic Self-Discovery', desc: 'We explore your foundational years dynamically, uncovering your core emotional blueprint and mapping your identity and values non-linearly.' },
@@ -29,6 +30,7 @@ const PERSONALITY_TRAITS = [
 export default function LandingPage() {
   const { scrollYProgress } = useScroll();
   const yOffset = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const { isSignedIn, isLoaded } = useAuth();
 
   return (
     <>
@@ -65,12 +67,24 @@ export default function LandingPage() {
             
             <div className="flex items-center gap-4">
               <ThemeToggle />
-              <Link href="#" className="hidden sm:block text-[var(--color-text-muted)] font-medium text-sm hover:text-[var(--color-text)] transition-colors">Login</Link>
-              <Link href="/chat">
-                <button className="px-5 py-2 rounded-full border border-[var(--color-secondary)] text-[var(--color-secondary)] font-medium text-sm hover:bg-[var(--color-secondary)] hover:text-white transition-colors">
-                  Sign Up Free
-                </button>
-              </Link>
+              
+              {isLoaded && !isSignedIn && (
+                <>
+                  <Link href="/login" className="hidden sm:block text-[var(--color-text-muted)] font-medium text-sm hover:text-[var(--color-text)] transition-colors">Login</Link>
+                  <Link href="/login">
+                    <button className="px-5 py-2 rounded-full border border-[var(--color-secondary)] text-[var(--color-secondary)] font-medium text-sm hover:bg-[var(--color-secondary)] hover:text-white transition-colors">
+                      Sign Up Free
+                    </button>
+                  </Link>
+                </>
+              )}
+
+              {isLoaded && isSignedIn && (
+                <>
+                  <Link href="/chat" className="hidden sm:block text-[var(--color-text-muted)] font-medium text-sm hover:text-[var(--color-text)] transition-colors">Go to Chat</Link>
+                  <UserButton afterSignOutUrl="/" />
+                </>
+              )}
             </div>
           </motion.nav>
 
