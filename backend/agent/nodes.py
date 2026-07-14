@@ -1,4 +1,5 @@
 import json
+import re
 from langchain_core.messages import SystemMessage, AIMessage, HumanMessage
 from backend.core.llm_factory import get_llm
 from backend.knowledge_base.loader import KnowledgeBaseLoader
@@ -98,7 +99,23 @@ def responder_node(state: AgentState):
         elif not isinstance(content, str):
             content = str(content)
             
-        return {"messages": [AIMessage(content=content)], "errors": errors}
+        # Parse for JSON payloads at the end of the message (Synthesis & Guidance phases)
+        json_match = re.search(r'```json\s*(\{.*?\})\s*```', content, re.DOTALL)
+        if json_match:
+            try:
+                extracted_data = json.loads(json_match.group(1))
+                # Strip the JSON block out of the conversational response so the user doesn't see it
+                content = re.sub(r'```json\s*\{.*?\}\s*```', '', content, flags=re.DOTALL).strip()
+                
+                # Assign to the correct profile location based on current phase
+                if current_phase == "synthesis":
+                    profile["persona"] = extracted_data
+                elif current_phase == "guidance":
+                    profile.setdefault("guidance", {})["roadmap"] = extracted_data
+            except Exception as e:
+                errors.append(f"JSON Parse Error in responder_node: {str(e)}")
+            
+        return {"messages": [AIMessage(content=content)], "profile": profile, "errors": errors}
         
     except Exception as e:
         error_msg = f"ResponderNode Error: {str(e)}"
@@ -150,16 +167,6 @@ def profile_updater_node(state: AgentState):
             
             # 4. Consistency / Safety Signal
             consistency_score = 20 if any("RESISTANCE" in a for a in alerts) else min(100, 85 + (word_count % 15))
-            
-            # Instant Persona Generation for Testing (Unlocks the Ledger Download Button)
-            if not profile.get("persona"):
-                profile["persona"] = {
-                    "core_traits": ["Analytical", "Reflective", "Adaptable"],
-                    "communication_style": "Direct but thoughtful",
-                    "motivators": ["Meaningful impact", "Continuous learning", "Autonomy"],
-                    "career_archetype": "The Strategic Builder",
-                    "growth_areas": ["Embracing vulnerability", "Delegating tasks"]
-                }
             
             # Average overall score
             current_overall = int((depth_score + vulnerability_score + self_awareness_score + consistency_score) / 4)
