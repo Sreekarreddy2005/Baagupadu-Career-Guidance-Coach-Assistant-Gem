@@ -44,7 +44,7 @@ export default function LandingPage() {
           style={{ y: yOffset }}
         >
           {/* Navbar */}
-          <motion.nav 
+          <motion.nav
             variants={slideUpVariants}
             className="flex items-center justify-between w-full py-6 px-4 md:px-8 mb-16"
           >
@@ -57,17 +57,17 @@ export default function LandingPage() {
                 <span className="font-medium text-[1.1rem] text-[var(--color-text-muted)] opacity-80 group-hover:text-[#818CF8] transition-colors duration-300">బాగుపడు</span>
               </div>
             </Link>
-            
+
             <div className="hidden md:flex items-center gap-8 text-[var(--color-text-muted)] font-medium text-sm">
               <Link href="/how-it-works" className="hover:text-[var(--color-text)] transition-colors">How It Works</Link>
               <Link href="/mentors" className="hover:text-[var(--color-text)] transition-colors">Mentors</Link>
               <Link href="#" className="hover:text-[var(--color-text)] transition-colors">Pricing</Link>
               <Link href="#" className="hover:text-[var(--color-text)] transition-colors">Resources</Link>
             </div>
-            
+
             <div className="flex items-center gap-4">
               <ThemeToggle />
-              
+
               {isLoaded && !isSignedIn && (
                 <>
                   <Link href="/login" className="hidden sm:block text-[var(--color-text-muted)] font-medium text-sm hover:text-[var(--color-text)] transition-colors">Login</Link>
@@ -114,10 +114,10 @@ export default function LandingPage() {
               {/* Interactive Preview Element */}
               <motion.div variants={slideUpVariants} className="w-full max-w-lg mb-10">
                 <div className="relative flex items-center bg-white/80 backdrop-blur-md rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-[var(--glass-border)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all duration-300 group">
-                  <input 
-                    type="text" 
-                    placeholder="Ask Sahayam anything..." 
-                    className="w-full bg-transparent px-6 py-4 outline-none text-[var(--color-text)] placeholder-[var(--color-text-muted)]/70 text-[15px] font-medium" 
+                  <input
+                    type="text"
+                    placeholder="Ask Sahayam anything..."
+                    className="w-full bg-transparent px-6 py-4 outline-none text-[var(--color-text)] placeholder-[var(--color-text-muted)]/70 text-[15px] font-medium"
                     suppressHydrationWarning
                   />
                   <button suppressHydrationWarning className="absolute right-2 top-2 bottom-2 bg-[var(--color-text)] hover:bg-[var(--color-primary-dark)] text-white px-5 rounded-full text-sm font-semibold transition-all shadow-sm group-hover:scale-[1.02] active:scale-95 flex items-center gap-1">
@@ -148,7 +148,7 @@ export default function LandingPage() {
                 </div>
               </motion.div>
             </div>
-            
+
             <div className="flex-1 w-full flex justify-center lg:justify-end relative lg:translate-x-12">
               <motion.div variants={slideUpVariants} className="w-full max-w-[500px] aspect-square relative z-10">
                 <Hero3DAvatar />
@@ -170,8 +170,8 @@ export default function LandingPage() {
                 {/* Soft anchoring glow instead of a hard box */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-secondary)]/10 to-[#FF6B8A]/10 rounded-full blur-[60px] -z-10" />
                 <div className="relative w-full h-[400px] flex items-center justify-center">
-                   <AuraOverlay mode="dashboard" />
-                   <SahayamCharacter mode="dashboard" />
+                  <AuraOverlay mode="dashboard" />
+                  <SahayamCharacter mode="dashboard" />
                 </div>
               </div>
 
@@ -193,7 +193,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Quote Callout */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -264,7 +264,7 @@ export default function LandingPage() {
                 <span className="text-xl md:text-2xl font-bold tracking-tight">Y Combinator</span>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 { name: "Alex Chen", role: "Product Designer", quote: "Sahayam helped me understand exactly why I was stuck in my career. The synthesis phase connected dots from my childhood that I never realized were driving my decisions today." },
@@ -299,30 +299,30 @@ export default function LandingPage() {
               <h2 className="text-3xl md:text-4xl font-extrabold text-[var(--color-text)] mb-6 tracking-tight">An Adventure to the Self</h2>
               <p className="text-[18px] text-[var(--color-text-muted)] font-medium max-w-2xl mx-auto">Experience a dynamic, non-linear exploration journey powered by our emotional router before receiving a single piece of career advice.</p>
             </div>
-            
+
             <div className="relative ml-4 md:ml-12">
-               {/* Vertical Line */}
-               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[var(--color-secondary)] via-[#FF6B8A] to-[var(--color-warm)] opacity-20 rounded-full" />
-               
-               {[
-                 { phase: 'Initial Discovery', icon: '🤝', duration: 'Dynamic', outcome: 'Establishing emotional safety & baseline' },
-                 { phase: 'Dynamic Exploration', icon: '✨', duration: 'Dynamic', outcome: 'Non-linear traversal of life stages based on emotional cues' },
-                 { phase: 'Synthesis', icon: '🧠', duration: 'System', outcome: 'Connecting dots to form your unique persona' },
-                 { phase: 'Guidance', icon: '🧭', duration: 'Ongoing', outcome: 'Actionable career roadmap' }
-               ].map((step, i) => (
-                 <motion.div key={step.phase} variants={slideUpVariants} className="relative pl-12 pb-16 group">
-                   <div className="absolute -left-[20px] top-0 w-11 h-11 rounded-full bg-white border-4 border-[var(--color-surface)] group-hover:border-[var(--color-secondary)] group-hover:scale-110 shadow-sm flex items-center justify-center text-lg transition-all duration-300 z-10">
-                     {step.icon}
-                   </div>
-                   <div className="bg-white/50 hover:bg-white rounded-2xl p-6 border border-transparent hover:border-[var(--glass-border)] hover:shadow-lg transition-all duration-300 -mt-2 cursor-default">
-                     <h3 className="text-[22px] font-bold text-[var(--color-text)] mb-2 group-hover:text-[var(--color-secondary)] transition-colors">{step.phase}</h3>
-                     <div className="flex gap-4 text-[14px] font-semibold text-[var(--color-text-muted)]">
-                       <span className="bg-[var(--color-surface)] px-3 py-1 rounded-full text-[var(--color-text)]">{step.duration}</span>
-                       <span className="py-1">{step.outcome}</span>
-                     </div>
-                   </div>
-                 </motion.div>
-               ))}
+              {/* Vertical Line */}
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[var(--color-secondary)] via-[#FF6B8A] to-[var(--color-warm)] opacity-20 rounded-full" />
+
+              {[
+                { phase: 'Initial Discovery', icon: '🤝', duration: 'Dynamic', outcome: 'Establishing emotional safety & baseline' },
+                { phase: 'Dynamic Exploration', icon: '✨', duration: 'Dynamic', outcome: 'Non-linear traversal of life stages based on emotional cues' },
+                { phase: 'Synthesis', icon: '🧠', duration: 'System', outcome: 'Connecting dots to form your unique persona' },
+                { phase: 'Guidance', icon: '🧭', duration: 'Ongoing', outcome: 'Actionable career roadmap' }
+              ].map((step, i) => (
+                <motion.div key={step.phase} variants={slideUpVariants} className="relative pl-12 pb-16 group">
+                  <div className="absolute -left-[20px] top-0 w-11 h-11 rounded-full bg-white border-4 border-[var(--color-surface)] group-hover:border-[var(--color-secondary)] group-hover:scale-110 shadow-sm flex items-center justify-center text-lg transition-all duration-300 z-10">
+                    {step.icon}
+                  </div>
+                  <div className="bg-white/50 hover:bg-white rounded-2xl p-6 border border-transparent hover:border-[var(--glass-border)] hover:shadow-lg transition-all duration-300 -mt-2 cursor-default">
+                    <h3 className="text-[22px] font-bold text-[var(--color-text)] mb-2 group-hover:text-[var(--color-secondary)] transition-colors">{step.phase}</h3>
+                    <div className="flex gap-4 text-[14px] font-semibold text-[var(--color-text-muted)]">
+                      <span className="bg-[var(--color-surface)] px-3 py-1 rounded-full text-[var(--color-text)]">{step.duration}</span>
+                      <span className="py-1">{step.outcome}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
 
@@ -342,25 +342,24 @@ export default function LandingPage() {
               <h2 className="text-3xl md:text-4xl font-extrabold text-[var(--color-text)] mb-6 tracking-tight">The Ecosystem Roadmap</h2>
               <p className="text-[18px] text-[var(--color-text-muted)] font-medium">This is where Baagupadu is heading. We are building a comprehensive life-navigation platform.</p>
             </div>
-            
+
             <div className="flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
               <div className="hidden md:block absolute top-1/2 left-10 right-10 h-[2px] bg-gradient-to-r from-[var(--color-secondary)] via-[var(--glass-border)] to-[var(--glass-border)] -translate-y-1/2 -z-10" />
-              
+
               {[
                 { title: 'Nenu Evaru?', desc: 'Self Discovery', active: true },
                 { title: 'Career Path', desc: 'Direction', active: false },
                 { title: 'Skill Builder', desc: 'Development', active: false },
                 { title: 'Life Plan', desc: 'Long-term', active: false }
               ].map((step, i) => (
-                <motion.div 
-                  key={step.title} 
+                <motion.div
+                  key={step.title}
                   variants={slideUpVariants}
                   whileHover={{ y: -5 }}
-                  className={`flex flex-col items-center bg-white p-6 rounded-2xl border w-full md:w-[22%] text-center transition-all duration-300 ${
-                    step.active 
-                      ? 'shadow-xl border-[var(--color-secondary)] ring-4 ring-[var(--color-secondary)]/10' 
-                      : 'shadow-sm border-[var(--glass-border)] opacity-80 hover:opacity-100 hover:shadow-md'
-                  }`}
+                  className={`flex flex-col items-center bg-white p-6 rounded-2xl border w-full md:w-[22%] text-center transition-all duration-300 ${step.active
+                    ? 'shadow-xl border-[var(--color-secondary)] ring-4 ring-[var(--color-secondary)]/10'
+                    : 'shadow-sm border-[var(--glass-border)] opacity-80 hover:opacity-100 hover:shadow-md'
+                    }`}
                 >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold mb-4 ${step.active ? 'bg-[var(--color-secondary)] text-white' : 'bg-[var(--color-surface)] text-[var(--color-text-muted)]'}`}>
                     {i + 1}
@@ -388,7 +387,7 @@ export default function LandingPage() {
                 The AI-powered mentoring ecosystem that understands who you are before advising you on what to become.
               </p>
             </div>
-            
+
             <div className="flex flex-wrap gap-12 md:gap-24">
               <div>
                 <h4 className="font-bold text-[var(--color-text)] mb-6 text-[13px] uppercase tracking-widest">Product</h4>
@@ -410,7 +409,7 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-[var(--glass-border)] text-sm font-medium text-[var(--color-text-muted)]">
             <p>© {new Date().getFullYear()} Baagupadu. All rights reserved.</p>
             <div className="flex items-center gap-6 mt-4 md:mt-0">

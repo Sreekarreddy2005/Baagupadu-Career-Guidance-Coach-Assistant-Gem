@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import AnimatedBackground from '@/components/ui/AnimatedBackground';
@@ -7,16 +9,52 @@ import AgentAvatar from '@/components/agent/AgentAvatar';
 import ChatContainer from '@/components/chat/ChatContainer';
 import PersonaVisualization from '@/components/visualization/PersonaVisualization';
 import { useChatStore } from '@/lib/store/chatStore';
+import { useUserProfileStore } from '@/stores/userProfileStore';
 import { PHASES } from '@/types';
 import { Sparkles, LayoutDashboard, MessageSquare, Wrench, Map as MapIcon, Settings, RefreshCw } from 'lucide-react';
 import Sidebar3DAvatar from '@/components/agent/Sidebar3DAvatar';
 import CareerRoadmap from '@/components/visualization/CareerRoadmap';
+import { HealthWidget } from '@/components/chat/HealthWidget';
+import { LedgerWidget } from '@/components/chat/LedgerWidget';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { UserButton } from '@clerk/nextjs';
+import { useAuth, UserButton } from '@clerk/nextjs';
+import { resetSahayamChat } from '@/lib/api';
 
 export default function ChatPage() {
   const { currentPhase, showVisualization, agentState } = useChatStore();
+  const { profile, loadProfile, isLoading } = useUserProfileStore();
+  const { getToken } = useAuth();
+  const router = useRouter();
+  
   const phaseConfig = PHASES.find((p) => p.id === currentPhase) ?? PHASES[0];
+
+  useEffect(() => {
+    async function initProfile() {
+      const token = await getToken();
+      if (token) {
+        await loadProfile(token);
+      }
+    }
+    initProfile();
+  }, [getToken, loadProfile]);
+
+  useEffect(() => {
+    if (!isLoading && profile) {
+      if (!profile.life_stage_data?.demographics) {
+        router.push('/onboarding');
+      }
+    }
+  }, [profile, isLoading, router]);
+
+  if (isLoading || (!isLoading && profile && !profile.life_stage_data?.demographics)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-secondary)]"></div>
+      </div>
+    );
+  }
+
+  const healthMetrics = profile?.session_progress?.health_metrics;
 
   return (
     <>
@@ -60,14 +98,15 @@ export default function ChatPage() {
             {/* Navigation Menu */}
             <nav className="w-full space-y-1">
               {[
-                { icon: <LayoutDashboard size={18} />, label: 'Dashboard', active: false },
-                { icon: <MessageSquare size={18} />, label: 'Chat', active: true },
-                { icon: <Wrench size={18} />, label: 'Skills', active: false },
-                { icon: <MapIcon size={18} />, label: 'Roadmap', active: false },
-                { icon: <Settings size={18} />, label: 'Settings', active: false },
+                { icon: <LayoutDashboard size={18} />, label: 'Dashboard', active: false, href: '#' },
+                { icon: <MessageSquare size={18} />, label: 'Chat', active: true, href: '/chat' },
+                { icon: <Wrench size={18} />, label: 'Skills', active: false, href: '#' },
+                { icon: <MapIcon size={18} />, label: 'Roadmap', active: false, href: '#' },
+                { icon: <Settings size={18} />, label: 'Settings', active: false, href: '/settings' },
               ].map((item) => (
-                <button
+                <Link
                   key={item.label}
+                  href={item.href}
                   className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all font-medium text-sm ${
                     item.active
                       ? 'bg-[var(--color-secondary)] text-white shadow-md'
@@ -83,15 +122,20 @@ export default function ChatPage() {
                       Active
                     </span>
                   )}
-                </button>
+                </Link>
               ))}
             </nav>
             
             <div className="w-full mt-8 pt-6 border-t border-black/5">
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (confirm('Are you sure you want to restart your journey? All chat history will be lost.')) {
                     useChatStore.getState().clearMessages();
+                    const token = await getToken();
+                    if (token) {
+                      await resetSahayamChat(token);
+                      await loadProfile(token);
+                    }
                   }
                 }}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors font-medium text-sm"
@@ -108,9 +152,14 @@ export default function ChatPage() {
           <ChatContainer />
         </main>
 
-        {/* ── Right Column (Roadmap) (Column 3) ── */}
-        <aside className="hidden xl:flex flex-col w-[380px] flex-shrink-0 bg-white border-l border-black/5 p-6 overflow-y-auto scrollbar-hide z-10">
+        {/* ── Right Column (Roadmap & Metrics) (Column 3) ── */}
+        <aside className="hidden xl:flex flex-col w-[380px] flex-shrink-0 bg-white border-l border-black/5 p-6 overflow-y-auto scrollbar-hide z-10 space-y-6">
           <CareerRoadmap />
+          
+          <div className="w-full h-px bg-black/5 my-2"></div>
+          
+          <LedgerWidget />
+          <HealthWidget metrics={healthMetrics} />
         </aside>
       </div>
     </>

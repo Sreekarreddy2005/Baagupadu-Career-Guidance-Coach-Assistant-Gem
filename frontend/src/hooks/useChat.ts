@@ -2,6 +2,9 @@
 
 import { useCallback } from 'react';
 import { useChatStore } from '@/lib/store/chatStore';
+import { useUserProfileStore } from '@/stores/userProfileStore';
+import { useAuth } from '@clerk/nextjs';
+import { chatWithSahayam } from '@/lib/api';
 
 export function useDemoChat() {
   const {
@@ -13,6 +16,8 @@ export function useDemoChat() {
     setShowVisualization,
     currentPhase,
   } = useChatStore();
+  const { loadProfile } = useUserProfileStore();
+  const { getToken } = useAuth();
 
   const sendMessage = useCallback(
     async (text: string) => {
@@ -23,17 +28,17 @@ export function useDemoChat() {
       try {
         setAgentState('thinking');
         
-        // Fetch from backend
-        const response = await fetch('http://localhost:8000/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ message: text }),
-        });
+        const token = await getToken();
+        if (!token) {
+          throw new Error("You must be logged in to chat.");
+        }
         
-        const data = await response.json();
+        // Fetch from backend using api.ts which passes the token
+        const data = await chatWithSahayam(text, token);
         let reply = data.response;
+
+        // Force a re-fetch of the profile from the backend to instantly sync new health metrics
+        await loadProfile(token);
 
         setAgentState('typing');
         
@@ -82,12 +87,12 @@ export function useDemoChat() {
         setAgentState('idle');
         addMessage({
           sender: 'system',
-          text: 'Error: Could not reach the Sahayam backend. Please ensure the server is running.',
+          text: `Error: Could not reach the Sahayam backend. ${error}`,
           phase: currentPhase,
         });
       }
     },
-    [addMessage, setAgentState, setPhase, completePhase, setPersonaResult, setShowVisualization, currentPhase]
+    [addMessage, setAgentState, setPhase, completePhase, setPersonaResult, setShowVisualization, currentPhase, getToken, loadProfile]
   );
 
   return { sendMessage };

@@ -30,6 +30,15 @@ export interface ChatMessage {
   isPhaseTransition?: boolean;
 }
 
+export interface HealthMetrics {
+  overall_score: number;
+  depth_score: number;
+  vulnerability_score: number;
+  self_awareness_score: number;
+  consistency_score: number;
+  last_calculated_at: string;
+}
+
 export type AgentState =
   | 'idle'
   | 'listening'

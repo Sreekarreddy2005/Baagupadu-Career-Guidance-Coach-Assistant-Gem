@@ -7,10 +7,12 @@ import ChatMessage from './ChatMessage';
 import TypingIndicator from './TypingIndicator';
 import PhaseProgress from './PhaseProgress';
 import { useChatStore } from '@/lib/store/chatStore';
+import { useUserProfileStore } from '@/stores/userProfileStore';
 import { useDemoChat } from '@/hooks/useChat';
 
 export default function ChatContainer() {
   const { messages, agentState } = useChatStore();
+  const { profile } = useUserProfileStore();
   const { sendMessage } = useDemoChat();
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
@@ -44,8 +46,10 @@ export default function ChatContainer() {
     e.target.style.height = `${Math.min(e.target.scrollHeight, 110)}px`;
   };
 
+  const healthMetrics = profile?.session_progress?.health_metrics;
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
 
       {/* ── Phase progress header ── */}
       <div
@@ -56,7 +60,7 @@ export default function ChatContainer() {
       </div>
 
       {/* ── Message list ── */}
-      <div className="flex-1 overflow-y-auto px-5 py-8 scrollbar-thin flex flex-col items-center">
+      <div className="flex-1 overflow-y-auto px-5 py-8 scrollbar-thin flex flex-col items-center relative">
         <div className="w-full max-w-3xl space-y-6 flex-1 flex flex-col justify-end">
           <AnimatePresence initial={false}>
             {messages.map((msg) => (

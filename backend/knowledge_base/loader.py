@@ -52,10 +52,74 @@ class KnowledgeBaseLoader:
                         banks[name] = content
         return banks
 
+    def get_phase_context(self, phase: str) -> str:
+        """
+        Dynamically orchestrates and aggregates ONLY the markdown files, JSON frameworks, 
+        and JSON question banks needed for the specific conversational phase.
+        """
+        context_parts = []
+        prompts = self.get_prompts()
+        frameworks = self.get_frameworks()
+        banks = self.get_question_banks()
+        
+        # Always include core system instructions
+        if "system_prompt" in prompts:
+            context_parts.append(f"Document: system_prompt\n{prompts['system_prompt']}\n")
+            
+        # 1. Orchestrate Markdown Files
+        target_md = []
+        target_json_fw = []
+        target_json_qb = []
+        
+        if phase == "discovery":
+            target_md = ["router", "trust_building_phase", "childhood_exploration", "hybrid_questioning", "question_transformation"]
+            target_json_qb = ["childhood_questions"]
+            target_json_fw = ["trait_framework"]
+            
+        elif phase == "exploration":
+            target_md = ["router", "teenage_exploration", "adult_exploration", "trait_inference", "hybrid_questioning"]
+            target_json_qb = ["teenage_questions", "adult_questions"]
+            target_json_fw = ["trait_framework"]
+            
+        elif phase == "synthesis":
+            target_md = ["persona_building", "trait_inference"]
+            target_json_qb = []
+            target_json_fw = ["trait_framework", "persona_framework"]
+            
+        elif phase == "guidance":
+            target_md = ["guidance_delivery"]
+            target_json_qb = []
+            target_json_fw = ["career_framework"]
+            
+        else:
+            # Fallback
+            target_md = ["router"]
+
+        # Append Markdown Prompts
+        context_parts.append(f"--- PHASE SPECIFIC INSTRUCTIONS ({phase.upper()}) ---")
+        for file in target_md:
+            if file in prompts:
+                context_parts.append(f"Document: {file}\n{prompts[file]}\n")
+                
+        # Append JSON Frameworks
+        if target_json_fw:
+            context_parts.append("--- FRAMEWORKS ---")
+            for fw in target_json_fw:
+                if fw in frameworks:
+                    context_parts.append(f"Framework: {fw}\n{json.dumps(frameworks[fw], indent=2)}\n")
+                    
+        # Append JSON Question Banks
+        if target_json_qb:
+            context_parts.append("--- QUESTION BANKS ---")
+            for qb in target_json_qb:
+                if qb in banks:
+                    context_parts.append(f"Question Bank: {qb}\n{json.dumps(banks[qb], indent=2)}\n")
+                    
+        return "\n".join(context_parts)
+
     def get_all_context(self) -> str:
         """
-        Aggregates all loaded knowledge into a single context string
-        (useful for injecting into system prompts).
+        Legacy method that dumps everything. Use get_phase_context instead.
         """
         context_parts = []
         
