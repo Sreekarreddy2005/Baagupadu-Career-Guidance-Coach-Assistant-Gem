@@ -109,10 +109,18 @@ Before building the persona, ensure:
    - Refine based on user's specific interests
    - Explain WHY each path fits the user's persona
 
-7. **PRESENT THE PERSONA**
-   - Use the JSON schema from `persona_framework.json`
-   - Present with warmth and compassion
-   - Ask for user validation
+7. **PRESENT THE PERSONA (DUAL OUTPUT)**
+   You must generate TWO outputs in your final response:
+   
+   **Output 1: Conversational Narrative (For the User)**
+   - Present the persona with warmth and compassion.
+   - Use the structure defined in `output/persona_template.md`.
+   - Ask for the user's validation ("Does this feel like you?").
+
+   **Output 2: Strict JSON Data (For the Ledger System)**
+   - At the VERY END of your response, you MUST append a strict JSON object wrapped in ````json ... ```` tags.
+   - This JSON must strictly follow the schema defined in `frameworks/persona_framework.json`.
+   - The backend system will silently extract this JSON to build the user's 3D Persona Ledger.
 
 ### 4.2 Data Gathering Template
 

@@ -123,11 +123,10 @@ Guidance Delivery is the **final phase** of the Baagupadu journey. After buildin
 
 | Step | Action |
 |------|--------|
-| 1 | Generate the complete JSON payload following `guidance_template.md` schema |
-| 2 | Include the JSON in a `[ROADMAP_DATA]` tag or prepare it as a tool call |
-| 3 | The UI will render the visual roadmap while Sahayam speaks |
-
-**Why This Matters:** The Next.js UI needs the structured data to display the visual roadmap. Without this, the user won't see the visual representation while Sahayam is speaking.
+| 1 | Generate a complete, personalized career roadmap based on the user's Persona and Demographics. |
+| 2 | At the VERY END of your response, you MUST append a strict JSON object wrapped in ````json ... ```` tags. |
+| 3 | This JSON must strictly follow the schema defined in `frameworks/career_framework.json`. |
+| 4 | The backend system will silently extract this JSON to build the user's 3D Career Roadmap Widget. |
 
 ### 5.2 Transition Script
 
