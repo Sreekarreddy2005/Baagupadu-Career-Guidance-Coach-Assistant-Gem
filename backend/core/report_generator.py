@@ -9,7 +9,6 @@ def create_persona_docx(profile: dict) -> io.BytesIO:
     # Title
     title = doc.add_heading('Baagupadu: Your Authentic Persona & Roadmap', 0)
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    
     doc.add_paragraph('\n')
     
     # 1. Demographics
@@ -30,26 +29,38 @@ def create_persona_docx(profile: dict) -> io.BytesIO:
     if persona:
         doc.add_heading('2. Your Authentic Self', level=1)
         
-        archetype = persona.get('archetype', 'Unknown Archetype')
-        p = doc.add_paragraph()
-        p.add_run('Core Identity: ').bold = True
-        p.add_run(f"{archetype}\n")
-        
-        summary = persona.get('summary', '')
-        if summary:
-            doc.add_paragraph(summary)
+        core_identity = persona.get('core_identity', {})
+        if core_identity:
+            p = doc.add_paragraph()
+            p.add_run('Core Identity: ').bold = True
+            p.add_run(f"{core_identity.get('archetype_name', 'Unknown Archetype')}\n")
+            p.add_run('Tagline: ').bold = True
+            p.add_run(f"{core_identity.get('tagline', '')}\n\n")
+            doc.add_paragraph(core_identity.get('description_for_user', core_identity.get('description', '')))
             
-        strengths = persona.get('key_strengths', [])
+        strengths = persona.get('strengths', [])
         if strengths:
             doc.add_heading('Key Strengths', level=2)
             for strength in strengths:
-                doc.add_paragraph(strength, style='List Bullet')
+                p = doc.add_paragraph(style='List Bullet')
+                p.add_run(f"{strength.get('trait', '')}: ").bold = True
+                p.add_run(strength.get('evidence', ''))
                 
         growth = persona.get('growth_areas', [])
         if growth:
             doc.add_heading('Growth Areas', level=2)
             for area in growth:
-                doc.add_paragraph(area, style='List Bullet')
+                p = doc.add_paragraph(style='List Bullet')
+                p.add_run(f"{area.get('area', '')}: ").bold = True
+                p.add_run(area.get('compassionate_framing', ''))
+
+        shadow = persona.get('shadow_traits', [])
+        if shadow:
+            doc.add_heading('Shadow Traits', level=2)
+            for trait in shadow:
+                p = doc.add_paragraph(style='List Bullet')
+                p.add_run(f"{trait.get('trait', '')}: ").bold = True
+                p.add_run(trait.get('acknowledgment', ''))
                 
         doc.add_paragraph('\n')
         
@@ -65,20 +76,46 @@ def create_persona_docx(profile: dict) -> io.BytesIO:
             p.add_run(f"{primary_path.get('title', 'Unknown')}\n")
             doc.add_paragraph(primary_path.get('reasoning', ''))
             
-        # We can expand this later when we update the prompt to be more step-by-step
-        
         milestones = roadmap.get('action_plan', [])
         if milestones:
             doc.add_heading('Action Plan', level=2)
-            for step in milestones:
-                if isinstance(step, dict):
-                    timeframe = step.get('timeframe', 'Action')
-                    action = step.get('action', '')
-                    p = doc.add_paragraph(style='List Bullet')
-                    p.add_run(f"{timeframe}: ").bold = True
-                    p.add_run(action)
+            for period in milestones:
+                if isinstance(period, dict):
+                    timeframe = period.get('timeframe', 'Action')
+                    tasks = period.get('tasks', [])
+                    
+                    doc.add_heading(timeframe, level=3)
+                    for task in tasks:
+                        action = task.get('action', '')
+                        points = task.get('points', 0)
+                        p = doc.add_paragraph(style='List Bullet')
+                        p.add_run(action)
+                        if points:
+                            p.add_run(f" (+{points} SP)").italic = True
                 else:
-                    doc.add_paragraph(str(step), style='List Bullet')
+                    doc.add_paragraph(str(period), style='List Bullet')
+
+    doc.add_paragraph('\n')
+
+    # 4. Final Summary & Quality Signals
+    final_summary = roadmap.get('final_summary', {})
+    if final_summary:
+        doc.add_heading('4. Coach Summary', level=1)
+        doc.add_paragraph(final_summary.get('coaching_feedback', ''))
+        
+        insights = final_summary.get('deep_insights', [])
+        if insights:
+            doc.add_heading('Deep Insights', level=2)
+            for insight in insights:
+                doc.add_paragraph(insight, style='List Bullet')
+
+    quality = roadmap.get('quality_signals', {})
+    if quality:
+        doc.add_heading('Session Quality Metrics', level=2)
+        p = doc.add_paragraph()
+        for k, v in quality.items():
+            p.add_run(f"{k.replace('_', ' ').title()}: ").bold = True
+            p.add_run(f"{v}\n")
 
     doc.add_paragraph('\n')
     footer = doc.add_paragraph()

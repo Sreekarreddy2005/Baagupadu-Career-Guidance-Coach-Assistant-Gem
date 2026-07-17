@@ -489,6 +489,49 @@
           "transformation_rule": "relationship_reflection"
         }
       ]
+    },
+    {
+      "category": "hard_skills_and_experience",
+      "name": "Hard Skills & Experience",
+      "description": "Understanding education, past work experience, technical skills, and identifying the skill-gap delta for career pivoting.",
+      "source": "Career Counseling, Skill Gap Analysis, Practical Career Guidance",
+      "questions": [
+        {
+          "id": "adult_skills_001",
+          "direct_question": "What did you study in school or college, and did it align with what you actually wanted to do?",
+          "purpose": "Understanding formal education and alignment with interests",
+          "tone": "curious",
+          "transformation_rule": "memory_recall"
+        },
+        {
+          "id": "adult_skills_002",
+          "direct_question": "Can you walk me through the different jobs or roles you've had in the past?",
+          "purpose": "Understanding past work history and timeline",
+          "tone": "exploratory",
+          "transformation_rule": "storytelling"
+        },
+        {
+          "id": "adult_skills_003",
+          "direct_question": "Since you mentioned wanting to pivot into a new role, what technical skills or basics do you already know that might help you?",
+          "purpose": "Understanding current baseline of hard skills related to desired role",
+          "tone": "practical",
+          "transformation_rule": "self_assessment"
+        },
+        {
+          "id": "adult_skills_004",
+          "direct_question": "What was the most technically challenging thing you had to learn in your previous roles?",
+          "purpose": "Understanding learning capacity for hard skills",
+          "tone": "reflective",
+          "transformation_rule": "achievement_reflection"
+        },
+        {
+          "id": "adult_skills_005",
+          "direct_question": "If you had to rate your current knowledge of the tools required for your dream job, where do you feel you are starting from?",
+          "purpose": "Identifying the skill gap delta",
+          "tone": "practical",
+          "transformation_rule": "self_assessment"
+        }
+      ]
     }
   ],
   "follow_up_strategies": {

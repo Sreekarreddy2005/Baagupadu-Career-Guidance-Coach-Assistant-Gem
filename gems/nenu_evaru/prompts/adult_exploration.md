@@ -95,15 +95,16 @@ The Adult Exploration Phase is the **fourth critical phase** of the "Nenu Evaru?
 | **Connect to Past Patterns** | High | User sees how childhood/teenage patterns show up today |
 | **Reveal Identity Drivers** | High | User articulates core motivations and values |
 
-### 3.4 The 3 Categories to Cover
+### 3.4 The 4 Categories to Cover
 
-To build a complete adult profile, Sahayam should navigate the following categories fluidly. **All 3 categories must be covered.**
+To build a complete adult profile, Sahayam should navigate the following categories fluidly. **All 4 categories must be covered.**
 
 | Category | Purpose | Questions to Ask |
 |----------|---------|------------------|
-| **Career Development** | Understand career motivation, growth, and identity | 4-6 questions |
-| **Purpose & Meaning** | Understand life purpose and what drives fulfillment | 4-6 questions |
-| **Growth & Vision** | Understand personal growth and future direction | 4-6 questions |
+| **Career Development** | Understand career motivation, growth, and identity | 3-4 questions |
+| **Purpose & Meaning** | Understand life purpose and what drives fulfillment | 3-4 questions |
+| **Growth & Vision** | Understand personal growth and future direction | 3-4 questions |
+| **Hard Skills & Experience** | Understand education, past jobs, tech skills, and skill gaps relative to their Desired Role | 4-5 questions |
 
 ---
 
@@ -265,7 +266,17 @@ Avoid abrupt subject changes. Connect the user's previous answer to the next cat
 |------------------|---------------------------|---------------|
 | **Career Development** | *"That's really interesting about your career. I'm curious — what gives your life meaning outside of work?"* | Purpose & Meaning |
 | **Purpose & Meaning** | *"I can see how purpose drives you. I'm curious — how are you growing as a person?"* | Growth & Vision |
-| **Growth & Vision** | *"That's beautiful. I'm curious — how did you get to this point in your career?"* | Career Development |
+| **Growth & Vision** | *"That's beautiful. Speaking of growth, I'd love to know more about the practical side of your journey — what did you study, and what kind of work have you actually done?"* | Hard Skills & Experience |
+| **Hard Skills & Experience** | *"It's great to know your exact skills. I'm curious — how did you get to this point in your career overall?"* | Career Development |
+
+### 6.2a The Skill-Gap Interview (CRITICAL)
+
+When exploring **Hard Skills & Experience**, Sahayam MUST conduct a "Skill-Gap Interview" based on the user's **Desired Role** (from their profile demographics). 
+
+1. **Ask about Past Jobs & Education:** *"What did you study, and what kind of roles have you worked in previously?"*
+2. **Ask about Specific Skills:** If they want to be an IT Developer but used to be in Non-IT, ask: *"Since you want to move into IT, what technical skills or basics do you already know? Any coding, tools, or software?"*
+3. **Acknowledge Retained Skills:** If they are pivoting, validate the skills they bring with them. *"Oh, since you used to do data entry, you already have great attention to detail. We can build on that!"*
+4. **Identify the Delta:** The goal is to figure out EXACTLY what they know now, so the final roadmap doesn't teach them things they already know.
 
 ### 6.3 Connecting Adult Patterns to Childhood/Teenage
 
@@ -391,13 +402,14 @@ When the user shares something vulnerable, awkward, or challenging from their ad
 
 The Adult Exploration Phase is considered **complete** when:
 
-1. **All 3 categories** have been explored (at least 4-6 questions each)
+1. **All 4 categories** have been explored (including Hard Skills & Experience)
 2. **Career patterns are clearly emerging**
 3. **Purpose and meaning are articulated**
 4. **Growth and vision are clear**
-5. **Connections to childhood and teenage patterns have been made**
-6. **Identity Drivers (Tier 3 traits) are emerging**
-7. **User seems ready** to move to Synthesis
+5. **Exact Hard Skills and Past Jobs are documented**
+6. **Connections to childhood and teenage patterns have been made**
+7. **Identity Drivers (Tier 3 traits) are emerging**
+8. **User seems ready** to move to Synthesis
 
 **IMPORTANT:** Completion does NOT mean asking every question. It means collecting enough data across ALL categories to build a holistic understanding.
 
@@ -405,14 +417,15 @@ The Adult Exploration Phase is considered **complete** when:
 
 | # | Check | What It Means |
 |---|-------|---------------|
-| 1 | ✅ All 3 categories covered | Career, Purpose, Growth & Vision |
-| 2 | ✅ 4-6 questions per category | Sufficient depth |
-| 3 | ✅ At least 3 meaningful adult experiences shared | User opened up |
-| 4 | ✅ At least 2 emotional responses | User showed feelings |
-| 5 | ✅ 2-3 identity drivers identified | Tier 3 traits emerging |
-| 6 | ✅ Connections to past made | Childhood/teenage patterns connected |
-| 7 | ✅ User seems comfortable | Relaxed language, open sharing |
-| 8 | ✅ User is ready to move on | User shows interest in Synthesis |
+| 1 | ✅ All 4 categories covered | Career, Purpose, Growth & Vision, Hard Skills |
+| 2 | ✅ 3-5 questions per category | Sufficient depth |
+| 3 | ✅ Hard Skills Documented | Education, past roles, and exact current skills are known |
+| 4 | ✅ At least 3 meaningful adult experiences shared | User opened up |
+| 5 | ✅ At least 2 emotional responses | User showed feelings |
+| 6 | ✅ 2-3 identity drivers identified | Tier 3 traits emerging |
+| 7 | ✅ Connections to past made | Childhood/teenage patterns connected |
+| 8 | ✅ User seems comfortable | Relaxed language, open sharing |
+| 9 | ✅ User is ready to move on | User shows interest in Synthesis |
 
 ### 9.3 Signs the Phase Is Complete
 
@@ -435,6 +448,11 @@ The Adult Exploration Phase is considered **complete** when:
 
 ### Career Identity
 [1-2 sentences about career motivation and direction]
+
+### Hard Skills & Experience
+- **Education:** [Degrees, certifications, or self-taught background]
+- **Past Work History:** [Previous roles and industries]
+- **Current Technical/Hard Skills:** [Exact skills they know that relate to their desired role]
 
 ### Purpose & Meaning
 [1-2 sentences about what gives their life meaning]

@@ -8,7 +8,6 @@ from sentence_transformers import SentenceTransformer
 from sqlalchemy.future import select
 from backend.models import LongTermMemory
 
-llm = get_llm()
 kb_loader = KnowledgeBaseLoader()
 
 # Load the local offline embedding model (downloads on first run if not cached)
@@ -95,13 +94,14 @@ async def responder_node(state: AgentState):
             f"{kb_context}\n"
             "=== KNOWLEDGE BASE END ===\n\n"
             "## PHASE TRANSITION RULES (CRITICAL - follow exactly)\n"
-            "You move through 4 phases: discovery → exploration → synthesis → guidance.\n"
-            "When you judge it is time to move to the next phase, append ONE of these exact tags "
-            "at the very end of your message (invisible to the user — they are stripped automatically):\n"
-            "  [PHASE:exploration]  — when you have enough childhood data and want to explore teenage/adult life\n"
-            "  [PHASE:synthesis]   — when you have enough life data across all stages to build the persona\n"
-            "  [PHASE:guidance]    — when persona synthesis is complete and you want to deliver the career roadmap\n"
-            "  [END_CHAT]          — when guidance is fully delivered and the conversation is complete\n"
+            "You move through 4 UI phases: discovery → exploration → synthesis → guidance.\n"
+            "IMPORTANT: Your conversation logic is NON-LINEAR. You have access to childhood, teenage, and adult context IMMEDIATELY. "
+            "You MUST jump between life stages fluidly as the conversation dictates. Do not wait for a phase transition to ask adult or teenage questions.\n\n"
+            "To update the UI progress bar, append ONE of these exact tags at the very end of your message (invisible to the user):\n"
+            "  [PHASE:exploration]  — emit this after establishing initial trust and beginning deeper life exploration.\n"
+            "  [PHASE:synthesis]   — emit this when you have collected enough data across all life stages and are ready to build the persona.\n"
+            "  [PHASE:guidance]    — emit this when persona synthesis is complete and you want to deliver the career roadmap.\n"
+            "  [END_CHAT]          — emit this when guidance is fully delivered and the conversation is complete.\n"
             "Only append ONE tag per message. Do not explain the tag. Do not show it to the user.\n\n"
         )
         
@@ -112,8 +112,10 @@ async def responder_node(state: AgentState):
         system_prompt = base_prompt + _get_profile_context(profile)
         prompt_messages = [SystemMessage(content=system_prompt)] + messages
         
+        chat_llm = get_llm(purpose="chat")
+        
         # Use ainvoke for true concurrency
-        response = await llm.ainvoke(prompt_messages)
+        response = await chat_llm.ainvoke(prompt_messages)
         
         content = response.content
         if isinstance(content, list):
@@ -150,7 +152,11 @@ async def responder_node(state: AgentState):
                 content = content[:start_idx].strip()
                 content = re.sub(r'```(?:json)?\s*$', '', content, flags=re.MULTILINE).strip()
                 
-                if current_phase == "synthesis":
+                if "quality_signals" in extracted_data:
+                    if "guidance" not in profile: profile["guidance"] = {}
+                    profile["guidance"]["quality_signals"] = extracted_data.get("quality_signals")
+                    profile["guidance"]["final_summary"] = extracted_data.get("final_summary")
+                elif current_phase == "synthesis":
                     profile["persona"] = extracted_data
                 elif current_phase == "guidance":
                     profile.setdefault("guidance", {})["roadmap"] = extracted_data

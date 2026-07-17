@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Target, CheckCircle2, Circle, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Target, CheckCircle2, Circle, HelpCircle, ChevronDown, ChevronUp, Calendar, Clock, CalendarDays } from 'lucide-react';
 import { useUserProfileStore } from '@/stores/userProfileStore';
 import { useDemoChat } from '@/hooks/useChat';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -54,14 +54,36 @@ export const AccountabilityTracker: React.FC = () => {
           const isOldSchema = !period.tasks && period.action;
           const tasks = isOldSchema ? [{ id: `old-${idx}`, action: period.action, points: 100 }] : period.tasks;
           const isExpanded = expandedTimeframes[period.timeframe];
+          
+          let timeframeIcon = <Calendar size={14} />;
+          let headerColor = "text-slate-700";
+          let bgHeader = "bg-slate-50";
+          
+          const tName = period.timeframe.toLowerCase();
+          if (tName.includes('daily')) {
+            timeframeIcon = <Clock size={14} className="text-blue-500" />;
+            headerColor = "text-blue-800";
+            bgHeader = "bg-blue-50/50";
+          } else if (tName.includes('week')) {
+            timeframeIcon = <CalendarDays size={14} className="text-emerald-500" />;
+            headerColor = "text-emerald-800";
+            bgHeader = "bg-emerald-50/50";
+          } else if (tName.includes('month')) {
+            timeframeIcon = <Calendar size={14} className="text-purple-500" />;
+            headerColor = "text-purple-800";
+            bgHeader = "bg-purple-50/50";
+          }
 
           return (
             <div key={idx} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
               <button 
                 onClick={() => toggleTimeframe(period.timeframe)}
-                className="w-full px-4 py-3 bg-slate-50 flex justify-between items-center hover:bg-slate-100 transition-colors"
+                className={`w-full px-4 py-3 ${bgHeader} flex justify-between items-center hover:opacity-80 transition-colors`}
               >
-                <span className="font-bold text-slate-700 uppercase tracking-wider text-xs">{period.timeframe}</span>
+                <div className="flex items-center gap-2">
+                  {timeframeIcon}
+                  <span className={`font-bold ${headerColor} uppercase tracking-wider text-xs`}>{period.timeframe}</span>
+                </div>
                 {isExpanded ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
               </button>
 

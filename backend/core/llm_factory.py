@@ -1,10 +1,19 @@
 from backend.core.config import config
 from langchain_core.language_models.chat_models import BaseChatModel
 
-def get_llm() -> BaseChatModel:
+def get_llm(purpose: str = "chat") -> BaseChatModel:
     provider = config.LLM_PROVIDER
     
-    if provider == "openai":
+    if provider == "ollama":
+        from langchain_openai import ChatOpenAI
+        model_name = config.OLLAMA_CHAT_MODEL if purpose == "chat" else config.OLLAMA_LOGIC_MODEL
+        return ChatOpenAI(
+            model=model_name,
+            temperature=0.7 if purpose == "chat" else 0.1,
+            api_key="ollama", # dummy key for local
+            base_url=config.OLLAMA_BASE_URL
+        )
+    elif provider == "openai":
         from langchain_openai import ChatOpenAI
         if not config.OPENAI_API_KEY:
             raise ValueError("OPENAI_API_KEY is not set in environment.")

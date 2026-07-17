@@ -75,14 +75,13 @@ class KnowledgeBaseLoader:
         target_json_fw = []
         target_json_qb = []
         
-        if phase == "discovery":
-            target_md = ["router", "trust_building_phase", "childhood_exploration", "hybrid_questioning", "question_transformation"]
-            target_json_qb = ["childhood_questions"]
-            target_json_fw = ["trait_framework"]
-            
-        elif phase == "exploration":
-            target_md = ["router", "teenage_exploration", "adult_exploration", "trait_inference", "hybrid_questioning"]
-            target_json_qb = ["teenage_questions", "adult_questions"]
+        if phase == "discovery" or phase == "exploration":
+            target_md = [
+                "router", "trust_building_phase", "childhood_exploration", 
+                "teenage_exploration", "adult_exploration", "hybrid_questioning", 
+                "question_transformation", "trait_inference"
+            ]
+            target_json_qb = ["childhood_questions", "teenage_questions", "adult_questions"]
             target_json_fw = ["trait_framework"]
             
         elif phase == "synthesis":

@@ -5,7 +5,7 @@
   --bg-color: #FDFBF7;
   --surface-color: #F4F1E9;
   --text-color: #1E293B;
-  --text-muted-color: #64748B;
+  --text-muted-color: #475569;
   
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(0, 0, 0, 0.05);
@@ -71,7 +71,7 @@ html, body {
   background: var(--color-background);
   color: var(--color-text);
   font-family: 'Inter', var(--font-sans);
-  font-size: 17px;
+  font-size: 18.5px;
   font-weight: 500;
   min-height: 100%;
   -webkit-font-smoothing: antialiased;
@@ -220,4 +220,18 @@ html, body {
 @keyframes float-c {
   0%, 100% { transform: translateY(0px); }
   50%       { transform: translateY(-9px); }
+}
+
+/* ── Marquee Animation for Rolling Banner ── */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+  display: inline-flex;
+  white-space: nowrap;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
 }

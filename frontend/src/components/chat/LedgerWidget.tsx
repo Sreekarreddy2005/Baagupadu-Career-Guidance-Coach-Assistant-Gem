@@ -1,13 +1,36 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Shield, FileText, Download, BookOpen } from 'lucide-react';
 import { useUserProfileStore } from '@/stores/userProfileStore';
 import { useChatStore } from '@/lib/store/chatStore';
+import { StructuredReportModal } from '@/components/visualization/StructuredReportModal';
+import { MessageSquare } from 'lucide-react';
 
 export const LedgerWidget: React.FC = () => {
   const { profile } = useUserProfileStore();
-  const { currentPhase } = useChatStore();
+  const { currentPhase, messages } = useChatStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleDownloadTranscript = () => {
+    if (!messages || messages.length === 0) return;
+    
+    let transcriptText = "=== SAHAYAM CAREER COACH TRANSCRIPT ===\n\n";
+    
+    messages.forEach((msg) => {
+      const role = msg.sender === 'user' ? 'You' : 'Sahayam';
+      const time = new Date(msg.timestamp).toLocaleString();
+      transcriptText += `[${time}] ${role}:\n${msg.text}\n\n`;
+    });
+    
+    const blob = new Blob([transcriptText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sahayam_transcript_${new Date().toISOString().split('T')[0]}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const handleDownloadPersona = async () => {
     if (!profile?.persona) return;
@@ -37,7 +60,8 @@ export const LedgerWidget: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-[#f8f9fa] rounded-2xl p-6 border border-black/5 shadow-sm">
+    <>
+      <div className="w-full bg-[#f8f9fa] rounded-2xl p-6 border border-black/5 shadow-sm">
       
       {/* Header section */}
       <div className="flex justify-between items-start mb-6">
@@ -58,13 +82,16 @@ export const LedgerWidget: React.FC = () => {
       <div className="flex flex-col gap-4">
         
         {/* Structured Report */}
-        <button className="w-full flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200 hover:border-blue-300 hover:shadow-sm transition-all group">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="w-full flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200 hover:border-blue-300 hover:shadow-sm transition-all group"
+        >
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-blue-100 transition-colors">
               <FileText size={16} />
             </div>
             <div className="flex flex-col items-start">
-              <span className="text-sm font-bold text-slate-800">View structured report</span>
+              <span className="text-sm font-semibold text-slate-800">View structured report</span>
               <span className="text-[10px] text-slate-500 font-medium">Detailed session summary</span>
             </div>
           </div>
@@ -82,11 +109,28 @@ export const LedgerWidget: React.FC = () => {
               <Download size={16} />
             </div>
             <div className="flex flex-col items-start">
-              <span className="text-sm font-bold text-slate-800">Download Persona</span>
+              <span className="text-sm font-semibold text-slate-800">Download Persona</span>
               <span className="text-[10px] text-slate-500 font-medium">JSON format export</span>
             </div>
           </div>
           <Download size={14} className="text-slate-400 group-hover:text-amber-500 transition-colors" />
+        </button>
+
+        {/* Download Transcript */}
+        <button 
+          onClick={handleDownloadTranscript}
+          className="w-full flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200 hover:border-purple-300 hover:shadow-sm transition-all group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-purple-50 text-purple-600 group-hover:bg-purple-100 transition-colors">
+              <MessageSquare size={16} />
+            </div>
+            <div className="flex flex-col items-start">
+              <span className="text-sm font-semibold text-slate-800">Download Transcript</span>
+              <span className="text-[10px] text-slate-500 font-medium">Text file export</span>
+            </div>
+          </div>
+          <Download size={14} className="text-slate-400 group-hover:text-purple-500 transition-colors" />
         </button>
 
       </div>
@@ -106,5 +150,11 @@ export const LedgerWidget: React.FC = () => {
       </div>
 
     </div>
+      
+      <StructuredReportModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
+    </>
   );
 };

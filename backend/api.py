@@ -7,6 +7,7 @@ from pydantic import BaseModel
 import uvicorn
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy import func
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -62,12 +63,38 @@ async def get_profile(user_id: str = Depends(verify_token), db: AsyncSession = D
         await db.commit()
         await db.refresh(profile)
 
+    # Fetch recent conversations for the sidebar
+    conv_result = await db.execute(
+        select(Conversation)
+        .where(Conversation.user_id == user_id)
+        .order_by(Conversation.start_time.desc())
+        .limit(10)
+    )
+    conversations = conv_result.scalars().all()
+    
+    sessions_dict = {}
+    for conv in conversations:
+        # Fetch messages for this conversation
+        msg_result = await db.execute(
+            select(Message)
+            .where(Message.conversation_id == conv.id)
+            .order_by(Message.timestamp.asc())
+        )
+        msgs = msg_result.scalars().all()
+        sessions_dict[str(conv.id)] = {
+            "title": f"Chat {conv.start_time.strftime('%b %d')}",
+            "messages": [{"role": m.role, "content": m.content, "timestamp": m.timestamp.isoformat()} for m in msgs]
+        }
+
     return {
         "user_id": profile.user_id,
         "session_progress": profile.session_progress,
         "life_stage_data": profile.life_stage_data,
         "persona": profile.persona,
         "guidance": profile.guidance,
+        "conversation_memory": {
+            "sessions": sessions_dict
+        }
     }
 
 @app.post("/api/chat")
@@ -158,7 +185,17 @@ async def reset_chat(user_id: str = Depends(verify_token), db: AsyncSession = De
         flag_modified(db_profile, "guidance")
         
         db.add(db_profile)
-        await db.commit()
+        
+    # Close any active conversation for this user
+    conv_result = await db.execute(
+        select(Conversation).where(Conversation.user_id == user_id, Conversation.end_time.is_(None))
+    )
+    active_conversations = conv_result.scalars().all()
+    for conv in active_conversations:
+        conv.end_time = func.now()
+        db.add(conv)
+        
+    await db.commit()
         
     return {"status": "success"}
 
@@ -220,6 +257,22 @@ async def generate_report(user_id: str = Depends(verify_token), db: AsyncSession
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         headers=headers
     )
+
+@app.delete("/api/user")
+async def delete_user_account(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
+    """
+    Deletes the user and cascades to all related data (conversations, messages, LTM, profile).
+    """
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalars().first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    await db.delete(user)
+    await db.commit()
+    
+    return {"status": "success", "message": "User and all associated data permanently deleted"}
 
 if __name__ == "__main__":
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)

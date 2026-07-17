@@ -21,6 +21,7 @@ import { SankalpamWidget } from '@/components/chat/SankalpamWidget';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useAuth, UserButton } from '@clerk/nextjs';
 import { resetSahayamChat } from '@/lib/api';
+import RollingBanner from '@/components/ui/RollingBanner';
 
 export default function ChatPage() {
   const { currentPhase, showVisualization, agentState, activeSessionId, setActiveSessionId, clearMessages, setMessages } = useChatStore();
@@ -77,8 +78,11 @@ export default function ChatPage() {
         {showVisualization && <PersonaVisualization />}
       </AnimatePresence>
 
-      <div className="min-h-screen flex overflow-hidden bg-background" style={{ height: '100dvh' }}>
-        {/* ── Left Sidebar (Column 1) ── */}
+      <div className="flex flex-col overflow-hidden bg-background" style={{ height: '100dvh' }}>
+        <RollingBanner message="Welcome back! Start a new chat to test your offline AI." />
+        
+        <div className="flex flex-1 overflow-hidden">
+          {/* ── Left Sidebar (Column 1) ── */}
         <aside className="hidden lg:flex flex-col w-64 flex-shrink-0 bg-white border-r border-black/5 p-6 z-10 shadow-sm relative">
           <div className="flex items-center justify-between mb-8">
             <Link href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
@@ -146,8 +150,13 @@ export default function ChatPage() {
               
               <button 
                 onClick={async () => {
-                  if (confirm('Start a new exploration?')) {
+                  if (confirm('Start a new exploration? This will reset your current persona and roadmap.')) {
                     clearMessages();
+                    const token = await getToken();
+                    if (token) {
+                      await resetSahayamChat(token);
+                      await loadProfile(token);
+                    }
                     const newId = crypto.randomUUID();
                     setActiveSessionId(newId);
                   }
@@ -219,6 +228,7 @@ export default function ChatPage() {
           <AccountabilityTracker />
           <HealthWidget metrics={healthMetrics} />
         </aside>
+      </div>
       </div>
     </>
   );

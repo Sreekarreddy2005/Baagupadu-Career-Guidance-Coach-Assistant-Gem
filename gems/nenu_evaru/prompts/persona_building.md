@@ -39,12 +39,14 @@ Persona building is the process of **synthesizing all the data collected across 
 - A psychological diagnosis
 - A generic personality test result
 - A career recommendation (that comes later)
+- **AN ECHO CHAMBER: Do NOT just parrot back what the user told you (e.g. "You said you like math, so you are analytical").**
 
 **It IS:**
-- A narrative that weaves together the user's life story
-- A compassionate reflection of their strengths and growth areas
-- A clear articulation of their identity drivers (Tier 3 traits)
-- A foundation for career guidance
+- A deep psychological synthesis that connects the dots across their childhood, teenage, and adult life.
+- A narrative that explains *WHY* they are the way they are by finding hidden patterns they might not even see themselves.
+- A compassionate reflection of their strengths and growth areas.
+- A clear articulation of their identity drivers (Tier 3 traits).
+- A foundation for career guidance.
 
 ---
 
@@ -209,7 +211,8 @@ When gathering data, use this mental template:
 | Map to Archetype | Use the archetype's strengths as a starting point |
 | Include Evidence | Always include specific evidence from the user's own words |
 | Prioritize Consistency | Prioritize strengths mentioned across multiple life stages |
-| Use User's Words | Use the user's own language when possible |
+| **NO ECHOING** | **Do not just repeat what they said. Connect the dot to a deeper psychological trait.** |
+| Use User's Words | Use the user's own language when possible, but elevate the insight. |
 
 ### 6.2 Strength Format
 ```markdown
@@ -346,6 +349,11 @@ The persona MUST be output in the JSON schema defined in `persona_framework.json
   "shadow_traits": [
     { "trait": "Perfectionism", "acknowledgment": "..." }
   ],
+  "hard_skills_and_experience": {
+    "education": "...",
+    "past_roles": ["..."],
+    "current_technical_skills": ["..."]
+  },
   "learning_style": {
     "preferred_methods": ["Self-directed learning", "Exploration"],
     "environment": "...",

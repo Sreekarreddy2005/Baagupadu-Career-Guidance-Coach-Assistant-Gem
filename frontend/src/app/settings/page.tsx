@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@clerk/nextjs';
+import { useAuth, useClerk } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
-import { updateDemographics } from '@/lib/api';
+import { updateDemographics, deleteUserAccount } from '@/lib/api';
 import { useUserProfileStore } from '@/stores/userProfileStore';
 import AnimatedBackground from '@/components/ui/AnimatedBackground';
 import { Settings, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react';
@@ -13,9 +13,11 @@ import Link from 'next/link';
 export default function SettingsPage() {
   const router = useRouter();
   const { getToken } = useAuth();
+  const { signOut } = useClerk();
   const { profile, loadProfile, isLoading: isProfileLoading } = useUserProfileStore();
   
   const [loading, setLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
     full_name: '',
@@ -71,6 +73,28 @@ export default function SettingsPage() {
       alert("Something went wrong saving your profile. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm(
+      "DANGER: Are you absolutely sure you want to delete your account? This will permanently wipe all your chat history, memory, and persona data. This action cannot be undone."
+    );
+    
+    if (!confirmDelete) return;
+    
+    setIsDeleting(true);
+    try {
+      const token = await getToken();
+      if (!token) throw new Error("Not authenticated");
+      
+      await deleteUserAccount(token);
+      await signOut();
+      router.push("/");
+    } catch (error) {
+      console.error("Failed to delete account", error);
+      alert("Something went wrong deleting your account. Please try again.");
+      setIsDeleting(false);
     }
   };
 
@@ -230,6 +254,25 @@ export default function SettingsPage() {
               </button>
             </div>
           </form>
+
+          {/* DANGER ZONE */}
+          <div className="mt-12 pt-8 border-t border-red-200">
+            <h2 className="text-xl font-semibold text-red-600 mb-2">Danger Zone</h2>
+            <p className="text-sm text-slate-500 font-medium mb-6">
+              Permanently delete your account and wipe all chat history, memory, and persona data from our servers. This action cannot be undone.
+            </p>
+            <button 
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
+              className="py-3 px-6 rounded-xl bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 font-semibold shadow-sm transition-all flex items-center gap-2 disabled:opacity-70"
+            >
+              {isDeleting ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Deleting Account...</>
+              ) : (
+                <>Delete Account & Data</>
+              )}
+            </button>
+          </div>
         </motion.div>
       </div>
     </>

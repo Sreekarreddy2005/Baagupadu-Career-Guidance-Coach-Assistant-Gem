@@ -12,6 +12,7 @@ import Hero3DAvatar from '@/components/agent/Hero3DAvatar';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import SahayamPersonalityWheel from '@/components/visualization/SahayamPersonalityWheel';
 import { useAuth, UserButton } from '@clerk/nextjs';
+import RollingBanner from '@/components/ui/RollingBanner';
 
 const FEATURES = [
   { icon: <Brain className="w-8 h-8 text-[#FF6B8A]" />, title: 'Dynamic Self-Discovery', desc: 'We explore your foundational years dynamically, uncovering your core emotional blueprint and mapping your identity and values non-linearly.' },
@@ -52,18 +53,17 @@ export default function LandingPage() {
   return (
     <>
       <AnimatedBackground />
-      <main className="min-h-screen flex flex-col items-center justify-start text-center px-4 py-20 overflow-x-hidden relative">
+      <main className="min-h-screen flex flex-col items-center justify-start text-center overflow-x-hidden relative pt-6 pb-20">
         <motion.div
-          className="w-full max-w-6xl relative z-10"
+          className="w-full max-w-6xl relative z-30 px-4"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          style={{ y: yOffset }}
         >
           {/* Navbar */}
           <motion.nav
             variants={slideUpVariants}
-            className="flex items-center justify-between w-full py-6 px-4 md:px-8 mb-16"
+            className="flex items-center justify-between w-full py-6 px-4 md:px-8 mb-4"
           >
             <Link href="/" className="flex items-center gap-3 group cursor-pointer relative">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--color-secondary)] to-[#818CF8] shadow-md group-hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] transition-all duration-300">
@@ -104,14 +104,41 @@ export default function LandingPage() {
               )}
             </div>
           </motion.nav>
+        </motion.div>
 
+        {/* Full-width edge-to-edge Rolling Banner below Navbar */}
+        <motion.div 
+          className="w-full mb-8 shadow-sm border-y border-[var(--color-secondary)]/20 relative z-20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <RollingBanner message="🚀 Special Offer: Upgrade to Pro and unlock 1-on-1 mentorship sessions!" />
+        </motion.div>
+
+        <motion.div
+          className="w-full max-w-6xl relative z-10 px-4 mt-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           <div className="flex flex-col lg:flex-row items-center justify-between gap-12 mb-32 px-4 md:px-8 text-left">
             <div className="flex-1 max-w-xl">
               <motion.div
                 variants={slideUpVariants}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 backdrop-blur-sm border border-[var(--glass-border)] text-sm font-semibold text-[var(--color-text-muted)] mb-8 shadow-sm hover:shadow-[0_0_25px_rgba(108,60,225,0.25)] hover:border-[var(--color-secondary)]/40 hover:text-[var(--color-text)] transition-all duration-300 cursor-default"
+                className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-md border border-[var(--color-secondary)]/20 shadow-[0_4px_20px_rgba(99,102,241,0.08)] hover:shadow-[0_4px_25px_rgba(99,102,241,0.15)] transition-all duration-300 cursor-default group mb-8"
               >
-                Baagupadu <span className="mx-2 text-xs">/</span> బాగుపడు <span className="mx-2 text-xs">—</span> Telugu: "To Prosper & Better Oneself"
+                <div className="w-6 h-6 rounded-full bg-[var(--color-secondary)]/10 flex items-center justify-center">
+                  <Sparkles className="w-3.5 h-3.5 text-[var(--color-secondary)] group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
+                </div>
+                <div className="flex items-center gap-2 text-[14px]">
+                  <span className="font-bold text-[var(--color-text)] tracking-wide">బాగుపడు</span>
+                  <span className="text-[var(--color-text-muted)] text-[12px] font-medium">(Baagupadu)</span>
+                  <div className="w-1 h-1 rounded-full bg-[var(--color-text-muted)]/40 mx-1"></div>
+                  <span className="font-semibold bg-gradient-to-r from-[var(--color-secondary)] to-[#FF6B8A] bg-clip-text text-transparent">
+                    "To Prosper & Better Oneself"
+                  </span>
+                </div>
               </motion.div>
               <motion.h1
                 variants={slideUpVariants}
