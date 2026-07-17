@@ -1,46 +1,44 @@
 import sys
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import uvicorn
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from backend.agent.sahayam_engine import SahayamAgent
+from backend.auth import verify_token
+from backend.database import engine, get_db, Base, init_db
+from backend.models import User, ProfileState, Conversation, Message, LongTermMemory
+from backend.core.report_generator import create_persona_docx
+from sqlalchemy.orm.attributes import flag_modified
 
 app = FastAPI(title="Sahayam Backend API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, restrict this to frontend URL
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-from fastapi import Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from backend.auth import verify_token
-from backend.database import engine, get_db, Base
-from backend.models import User, UserProfile
-
 class ChatRequest(BaseModel):
     message: str
+    session_id: str
 
-# Create a global instance of the agent for now (MVP state management)
 agent = None
 
 @app.on_event("startup")
 async def startup_event():
     global agent
     try:
-        # Initialize Database Tables
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
+        await init_db()
         print("✅ Database tables created/verified.")
-
         agent = SahayamAgent()
         print("✅ Sahayam Agent initialized.")
     except Exception as e:
@@ -48,19 +46,18 @@ async def startup_event():
 
 @app.get("/api/profile")
 async def get_profile(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(UserProfile).where(UserProfile.user_id == user_id))
+    result = await db.execute(select(ProfileState).where(ProfileState.user_id == user_id))
     profile = result.scalars().first()
 
     if not profile:
-        # Ensure user exists in users table first
+        # Ensure user exists
         user_result = await db.execute(select(User).where(User.id == user_id))
         user = user_result.scalars().first()
         if not user:
             user = User(id=user_id)
             db.add(user)
         
-        # Create an empty default profile
-        profile = UserProfile(user_id=user_id)
+        profile = ProfileState(user_id=user_id)
         db.add(profile)
         await db.commit()
         await db.refresh(profile)
@@ -69,14 +66,9 @@ async def get_profile(user_id: str = Depends(verify_token), db: AsyncSession = D
         "user_id": profile.user_id,
         "session_progress": profile.session_progress,
         "life_stage_data": profile.life_stage_data,
-        "inferences": profile.inferences,
-        "patterns": profile.patterns,
         "persona": profile.persona,
         "guidance": profile.guidance,
-        "conversation_memory": profile.conversation_memory,
     }
-
-from sqlalchemy.orm.attributes import flag_modified
 
 @app.post("/api/chat")
 async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
@@ -84,82 +76,86 @@ async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: A
     if not agent:
         return {"response": "Error: Agent not initialized properly."}
 
-    # Fetch user profile from DB
-    result = await db.execute(select(UserProfile).where(UserProfile.user_id == user_id))
+    # 1. Fetch short-term state
+    result = await db.execute(select(ProfileState).where(ProfileState.user_id == user_id))
     db_profile = result.scalars().first()
-    
     if not db_profile:
-        raise HTTPException(status_code=404, detail="Profile not found. Call /api/profile first.")
+        raise HTTPException(status_code=404, detail="Profile not found.")
 
-    # Convert DB model to dict for the agent
+    # 2. Get active conversation or create one
+    conv_result = await db.execute(
+        select(Conversation).where(Conversation.user_id == user_id).order_by(Conversation.start_time.desc()).limit(1)
+    )
+    conversation = conv_result.scalars().first()
+    if not conversation or conversation.end_time:
+        conversation = Conversation(user_id=user_id)
+        db.add(conversation)
+        await db.commit()
+        await db.refresh(conversation)
+
+    # 3. Save User Message
+    user_msg = Message(conversation_id=conversation.id, role="user", content=request.message)
+    db.add(user_msg)
+    await db.commit()
+
+    # Pass dict state to agent
     profile_dict = {
         "user_id": db_profile.user_id,
+        "conversation_id": conversation.id,
         "session_progress": db_profile.session_progress or {},
         "life_stage_data": db_profile.life_stage_data or {},
-        "inferences": db_profile.inferences or {},
-        "patterns": db_profile.patterns or {},
         "persona": db_profile.persona or {},
         "guidance": db_profile.guidance or {},
-        "conversation_memory": db_profile.conversation_memory or {},
     }
 
     try:
-        response = agent.chat(request.message, profile_dict)
+        # The agent internally fetches context via pgvector and saves new insights
+        response = await agent.chat_async(request.message, profile_dict, request.session_id, db)
         
-        # Save updated profile back to DB by assigning shallow copies
-        # and explicitly flagging as modified for SQLAlchemy JSON columns
+        current_phase = profile_dict.get("session_progress", {}).get("current_phase", "discovery")
+        chat_completed = profile_dict.get("session_progress", {}).get("completed", False)
+
+        # 4. Update short-term profile state
         db_profile.session_progress = dict(profile_dict.get("session_progress", {}))
-        db_profile.life_stage_data = dict(profile_dict.get("life_stage_data", {}))
-        db_profile.inferences = dict(profile_dict.get("inferences", {}))
-        db_profile.patterns = dict(profile_dict.get("patterns", {}))
         db_profile.persona = dict(profile_dict.get("persona", {}))
         db_profile.guidance = dict(profile_dict.get("guidance", {}))
-        db_profile.conversation_memory = dict(profile_dict.get("conversation_memory", {}))
         
         flag_modified(db_profile, "session_progress")
-        flag_modified(db_profile, "life_stage_data")
-        flag_modified(db_profile, "inferences")
-        flag_modified(db_profile, "patterns")
         flag_modified(db_profile, "persona")
         flag_modified(db_profile, "guidance")
-        flag_modified(db_profile, "conversation_memory")
+        
+        # 5. Save AI Message
+        ai_msg = Message(conversation_id=conversation.id, role="ai", content=response)
+        db.add(ai_msg)
         
         db.add(db_profile)
         await db.commit()
 
-        return {"response": response}
+        return {
+            "response": response,
+            "current_phase": current_phase,
+            "chat_completed": chat_completed,
+        }
     except Exception as e:
         print(f"Chat Error: {e}")
         return {"response": f"Error processing request"}
 
 @app.post("/api/reset")
 async def reset_chat(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
-    global agent
-    if agent:
-        agent.chat_history = []
-        
-    result = await db.execute(select(UserProfile).where(UserProfile.user_id == user_id))
+    result = await db.execute(select(ProfileState).where(ProfileState.user_id == user_id))
     db_profile = result.scalars().first()
     
     if db_profile:
-        # Preserve demographics!
         demographics = db_profile.life_stage_data.get("demographics") if db_profile.life_stage_data else None
-        
         db_profile.session_progress = {}
         db_profile.life_stage_data = {"demographics": demographics} if demographics else {}
-        db_profile.inferences = {}
-        db_profile.patterns = {}
         db_profile.persona = {}
         db_profile.guidance = {}
-        db_profile.conversation_memory = {}
         
         flag_modified(db_profile, "session_progress")
         flag_modified(db_profile, "life_stage_data")
-        flag_modified(db_profile, "inferences")
-        flag_modified(db_profile, "patterns")
         flag_modified(db_profile, "persona")
         flag_modified(db_profile, "guidance")
-        flag_modified(db_profile, "conversation_memory")
         
         db.add(db_profile)
         await db.commit()
@@ -176,7 +172,7 @@ class DemographicsRequest(BaseModel):
 
 @app.post("/api/profile/demographics")
 async def update_demographics(request: DemographicsRequest, user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(UserProfile).where(UserProfile.user_id == user_id))
+    result = await db.execute(select(ProfileState).where(ProfileState.user_id == user_id))
     db_profile = result.scalars().first()
     
     if not db_profile:
@@ -198,6 +194,32 @@ async def update_demographics(request: DemographicsRequest, user_id: str = Depen
     await db.commit()
     
     return {"status": "success", "demographics": life_stage_data["demographics"]}
+
+@app.get("/api/generate-report")
+async def generate_report(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(ProfileState).where(ProfileState.user_id == user_id))
+    db_profile = result.scalars().first()
+    
+    if not db_profile:
+        raise HTTPException(status_code=404, detail="Profile not found.")
+        
+    profile_dict = {
+        "life_stage_data": db_profile.life_stage_data or {},
+        "persona": db_profile.persona or {},
+        "guidance": db_profile.guidance or {},
+    }
+    
+    file_stream = create_persona_docx(profile_dict)
+    
+    headers = {
+        'Content-Disposition': 'attachment; filename="baagupadu_report.docx"'
+    }
+    
+    return StreamingResponse(
+        iter([file_stream.getvalue()]), 
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers=headers
+    )
 
 if __name__ == "__main__":
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)

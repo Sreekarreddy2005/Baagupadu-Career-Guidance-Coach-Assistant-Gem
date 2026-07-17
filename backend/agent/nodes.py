@@ -4,12 +4,19 @@ from langchain_core.messages import SystemMessage, AIMessage, HumanMessage
 from backend.core.llm_factory import get_llm
 from backend.knowledge_base.loader import KnowledgeBaseLoader
 from backend.agent.state import AgentState
+from sentence_transformers import SentenceTransformer
+from sqlalchemy.future import select
+from backend.models import LongTermMemory
 
 llm = get_llm()
 kb_loader = KnowledgeBaseLoader()
 
+# Load the local offline embedding model (downloads on first run if not cached)
+embedder = SentenceTransformer('all-MiniLM-L6-v2')
+
 def _get_profile_context(profile: dict) -> str:
     demographics = profile.get("life_stage_data", {}).get("demographics", {})
+    session_prog = profile.get("session_progress", {})
     
     demo_str = ""
     if demographics:
@@ -24,29 +31,22 @@ def _get_profile_context(profile: dict) -> str:
             "CRITICAL: Tailor your tone, analogies, and questions heavily based on this context. "
             "If they provided a Desired Role, hunt for traits in their childhood that match that role.\n\n"
         )
-        
+
     return f"\n\n{demo_str}CURRENT USER PROFILE STATE:\n{json.dumps(profile, indent=2)}\n\nUse this profile to maintain context."
 
-def router_node(state: AgentState):
-    """
-    Acts as the Director. Determines if we should change phases based on the user's input.
-    Also tracks safety alerts and resistance protocols.
-    """
+async def router_node(state: AgentState):
     messages = state.get("messages", [])
     alerts = []
     errors = []
     
     try:
-        # Simple heuristic alert tracking for MVP (Can be upgraded to a fast LLM call)
         if messages:
             last_msg = messages[-1].content.lower()
             
-            # Trauma/Safety Alerts
             safety_keywords = ["abuse", "suicide", "trauma", "kill myself", "depressed", "give up", "hopeless"]
             if any(k in last_msg for k in safety_keywords):
                 alerts.append("CRITICAL_SAFETY_ALERT: User shows signs of severe distress. Trigger Trauma Protocol.")
                 
-            # Resistance Alerts
             resistance_keywords = ["don't want to talk", "stop", "none of your business", "skip", "i don't know"]
             if any(k in last_msg for k in resistance_keywords):
                 alerts.append("RESISTANCE_ALERT: User is guarded. Trigger Resistance Protocol. Back off gracefully.")
@@ -54,138 +54,163 @@ def router_node(state: AgentState):
     except Exception as e:
         errors.append(f"RouterNode Error: {str(e)}")
 
-    return {"alerts": alerts, "errors": errors}
+    return {"alerts": alerts, "errors": errors, "new_phase": None, "chat_ended": False}
 
-def responder_node(state: AgentState):
-    """
-    Generates the response using dynamically orchestrated Knowledge Base files.
-    """
+async def responder_node(state: AgentState):
     messages = state.get("messages", [])
     profile = state.get("profile", {})
     alerts = state.get("alerts", [])
     errors = state.get("errors", [])
     current_phase = state.get("current_phase", "discovery")
+    db = state.get("db_session")
+    user_input = state.get("user_input", "")
     
     try:
-        # Dynamically load ONLY the markdown files needed for this specific phase!
+        # Fetch relevant Long-Term Memories via pgvector
+        ltm_context = ""
+        if db and user_input:
+            query_embedding = embedder.encode(user_input).tolist()
+            # Order by cosine distance (<=> operator in pgvector)
+            result = await db.execute(
+                select(LongTermMemory)
+                .where(LongTermMemory.user_id == profile.get("user_id"))
+                .order_by(LongTermMemory.embedding.cosine_distance(query_embedding))
+                .limit(3)
+            )
+            memories = result.scalars().all()
+            if memories:
+                ltm_context = "=== LONG-TERM MEMORY (Retrieved via pgvector) ===\n"
+                for mem in memories:
+                    ltm_context += f"- [{mem.memory_type}]: {mem.content}\n"
+                ltm_context += "Use these memories to inform your response deeply.\n\n"
+
         kb_context = kb_loader.get_phase_context(current_phase)
         
         base_prompt = (
             "You are Sahayam, the AI agent for the Baagupadu project. "
             "Your goal is to guide the user holistically based on the non-linear "
             "rules defined in the knowledge base.\n\n"
+            f"{ltm_context}"
             "=== KNOWLEDGE BASE START ===\n"
             f"{kb_context}\n"
             "=== KNOWLEDGE BASE END ===\n\n"
-            "CRITICAL: When you have gathered enough information across the life stages "
-            "and are ready to synthesize their persona and conclude the conversation, "
-            "you MUST append the exact string '[END_CHAT]' to the very end of your message."
+            "## PHASE TRANSITION RULES (CRITICAL - follow exactly)\n"
+            "You move through 4 phases: discovery → exploration → synthesis → guidance.\n"
+            "When you judge it is time to move to the next phase, append ONE of these exact tags "
+            "at the very end of your message (invisible to the user — they are stripped automatically):\n"
+            "  [PHASE:exploration]  — when you have enough childhood data and want to explore teenage/adult life\n"
+            "  [PHASE:synthesis]   — when you have enough life data across all stages to build the persona\n"
+            "  [PHASE:guidance]    — when persona synthesis is complete and you want to deliver the career roadmap\n"
+            "  [END_CHAT]          — when guidance is fully delivered and the conversation is complete\n"
+            "Only append ONE tag per message. Do not explain the tag. Do not show it to the user.\n\n"
         )
         
-        # Inject Active Alerts into the System Prompt so the Agent respects them
         if alerts:
             alert_context = "\n\n!!! ACTIVE ROUTER ALERTS !!!\n" + "\n".join(alerts) + "\nYou MUST adjust your response to handle these alerts immediately."
             base_prompt += alert_context
             
         system_prompt = base_prompt + _get_profile_context(profile)
-        
         prompt_messages = [SystemMessage(content=system_prompt)] + messages
         
-        response = llm.invoke(prompt_messages)
+        # Use ainvoke for true concurrency
+        response = await llm.ainvoke(prompt_messages)
         
         content = response.content
         if isinstance(content, list):
             content = "".join([block.get("text", "") if isinstance(block, dict) else str(block) for block in content])
         elif not isinstance(content, str):
             content = str(content)
+
+        new_phase = None
+        chat_ended = False
+        valid_phases = ["exploration", "synthesis", "guidance"]
+
+        phase_match = re.search(r'\[PHASE:(\w+)\]', content)
+        if phase_match:
+            detected = phase_match.group(1).lower()
+            if detected in valid_phases:
+                new_phase = detected
+                print(f"🔄 Phase transition detected: {current_phase} → {new_phase}")
+            content = re.sub(r'\[PHASE:\w+\]', '', content).strip()
+
+        if '[END_CHAT]' in content:
+            chat_ended = True
+            content = content.replace('[END_CHAT]', '').strip()
+            print("✅ End-of-conversation signal detected.")
             
-        # Parse for JSON payloads at the end of the message (Synthesis & Guidance phases)
-        json_match = re.search(r'```json\s*(\{.*?\})\s*```', content, re.DOTALL)
-        if json_match:
-            try:
-                extracted_data = json.loads(json_match.group(1))
-                # Strip the JSON block out of the conversational response so the user doesn't see it
-                content = re.sub(r'```json\s*\{.*?\}\s*```', '', content, flags=re.DOTALL).strip()
+        # Parse JSON blocks
+        try:
+            start_idx = content.find('{')
+            end_idx = content.rfind('}')
+            
+            if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+                json_str = content[start_idx:end_idx+1]
+                extracted_data = json.loads(json_str)
                 
-                # Assign to the correct profile location based on current phase
+                content = content[:start_idx].strip()
+                content = re.sub(r'```(?:json)?\s*$', '', content, flags=re.MULTILINE).strip()
+                
                 if current_phase == "synthesis":
                     profile["persona"] = extracted_data
                 elif current_phase == "guidance":
                     profile.setdefault("guidance", {})["roadmap"] = extracted_data
-            except Exception as e:
-                errors.append(f"JSON Parse Error in responder_node: {str(e)}")
+        except Exception as e:
+            errors.append(f"JSON Parse Error in responder_node: {str(e)}")
             
-        return {"messages": [AIMessage(content=content)], "profile": profile, "errors": errors}
+        return {
+            "messages": [AIMessage(content=content)],
+            "profile": profile,
+            "errors": errors,
+            "new_phase": new_phase,
+            "chat_ended": chat_ended,
+        }
         
     except Exception as e:
         error_msg = f"ResponderNode Error: {str(e)}"
         print(f"❌ {error_msg}")
         errors.append(error_msg)
-        # Provide a graceful fallback to the user
         fallback = "I apologize, but I am having trouble connecting to my cognitive engine right now. Could you please try sending your message again?"
-        return {"messages": [AIMessage(content=fallback)], "errors": errors}
+        return {"messages": [AIMessage(content=fallback)], "errors": errors, "new_phase": None, "chat_ended": False}
 
-def profile_updater_node(state: AgentState):
-    """
-    Dynamically updates the profile and calculates Response Health Metrics.
-    """
+async def profile_updater_node(state: AgentState):
     profile = state.get("profile", {})
     messages = state.get("messages", [])
     errors = state.get("errors", [])
     alerts = state.get("alerts", [])
+    new_phase = state.get("new_phase", None)
+    chat_ended = state.get("chat_ended", False)
+    db = state.get("db_session")
     
     try:
-        if len(messages) >= 2:
-            last_exchanges = profile.get("conversation_memory", {}).get("last_5_exchanges", [])
-            
-            user_msg = next((m.content for m in reversed(messages) if isinstance(m, HumanMessage)), "")
-            ai_msg = next((m.content for m in reversed(messages) if isinstance(m, AIMessage)), "")
-            
-            last_exchanges.append({"user": user_msg, "ai": ai_msg})
-            
-            if len(last_exchanges) > 5:
-                last_exchanges = last_exchanges[-5:]
-                
-            profile.setdefault("conversation_memory", {})["last_5_exchanges"] = last_exchanges
+        session_prog = profile.setdefault("session_progress", {})
+        current_phase = session_prog.get("current_phase", "discovery")
 
-            # === Calculate Response Health Metrics ===
-            user_words = user_msg.lower().split()
-            word_count = len(user_words)
+        if new_phase and new_phase != current_phase:
+            session_prog["previous_phase"] = current_phase
+            session_prog["current_phase"] = new_phase
+
+        if chat_ended:
+            session_prog["completed"] = True
+            session_prog["current_phase"] = "completed"
+
+        if len(messages) >= 2:
+            user_msg = next((m.content for m in reversed(messages) if isinstance(m, HumanMessage)), "")
             
-            # 1. Dynamic Depth Signal (Highly sensitive to length)
-            depth_score = min(100, max(15, int((word_count / 15) * 100)))
-            
-            # 2. Dynamic Vulnerability Signal
-            vuln_words = {"love", "hate", "sad", "happy", "fear", "angry", "lonely", "cry", "pain", "joy", "anxious", "proud", "shame", "guilt", "hurt"}
-            base_vuln = 100 if any(w in user_words for w in vuln_words) else 35
-            vulnerability_score = min(100, base_vuln + (word_count % 15) * 2) # Add some organic noise
-            
-            # 3. Dynamic Self-Awareness Signal
-            aware_words = {"because", "feel", "think", "realized", "understand", "why", "maybe", "perhaps", "notice", "wonder"}
-            base_aware = 100 if any(w in user_words for w in aware_words) else 40
-            self_awareness_score = min(100, base_aware + (word_count % 10) * 3) # Add some organic noise
-            
-            # 4. Consistency / Safety Signal
-            consistency_score = 20 if any("RESISTANCE" in a for a in alerts) else min(100, 85 + (word_count % 15))
-            
-            # Average overall score
-            current_overall = int((depth_score + vulnerability_score + self_awareness_score + consistency_score) / 4)
-            
-            session_prog = profile.setdefault("session_progress", {})
-            existing_metrics = session_prog.get("health_metrics", {})
-            prev_overall = existing_metrics.get("overall_score", current_overall)
-            
-            # Smooth transition (70% previous, 30% new)
-            smoothed_overall = int((prev_overall * 0.7) + (current_overall * 0.3))
-            
-            session_prog["health_metrics"] = {
-                "overall_score": smoothed_overall,
-                "depth_score": depth_score,
-                "vulnerability_score": vulnerability_score,
-                "self_awareness_score": self_awareness_score,
-                "consistency_score": consistency_score,
-                "last_calculated_at": "now"
-            }
+            # Simple heuristic Insight Extraction for LTM
+            if db and user_msg:
+                # In production, we'd use an LLM call to extract crisp insights.
+                # Here, we save messages with high emotional resonance as vectorized insights.
+                vuln_words = {"love", "hate", "sad", "happy", "fear", "angry", "lonely", "cry", "pain"}
+                if any(w in user_msg.lower() for w in vuln_words) or len(user_msg.split()) > 20:
+                    embedding = embedder.encode(user_msg).tolist()
+                    ltm = LongTermMemory(
+                        user_id=profile.get("user_id"),
+                        memory_type="conversation_insight",
+                        content=user_msg,
+                        embedding=embedding
+                    )
+                    db.add(ltm)
+                    # We do not commit here because the caller api.py handles the commit
 
         return {"profile": profile, "errors": errors}
     except Exception as e:
@@ -195,7 +220,4 @@ def profile_updater_node(state: AgentState):
         return {"errors": errors}
 
 def should_update_profile(state: AgentState):
-    """Conditional edge to determine if we update the profile."""
-    # Since the user requested dynamic execution, we can return True to update after every AI response, 
-    # or conditionally based on a flag. For MVP dynamic safety, we update it every time an AI message is generated.
     return "update_profile"

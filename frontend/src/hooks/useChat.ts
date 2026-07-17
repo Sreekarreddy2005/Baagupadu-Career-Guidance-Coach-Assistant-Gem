@@ -15,6 +15,8 @@ export function useDemoChat() {
     setPersonaResult,
     setShowVisualization,
     currentPhase,
+    activeSessionId,
+    setActiveSessionId,
   } = useChatStore();
   const { loadProfile } = useUserProfileStore();
   const { getToken } = useAuth();
@@ -33,8 +35,14 @@ export function useDemoChat() {
           throw new Error("You must be logged in to chat.");
         }
         
-        // Fetch from backend using api.ts which passes the token
-        const data = await chatWithSahayam(text, token);
+        let sessionId = activeSessionId;
+        if (!sessionId) {
+          sessionId = crypto.randomUUID();
+          setActiveSessionId(sessionId);
+        }
+        
+        // Fetch from backend using api.ts which passes the token and session ID
+        const data = await chatWithSahayam(text, sessionId, token);
         let reply = data.response;
 
         // Force a re-fetch of the profile from the backend to instantly sync new health metrics
@@ -42,44 +50,37 @@ export function useDemoChat() {
 
         setAgentState('typing');
         
+        // Sync phase with backend
+        const backendPhase = data.current_phase || 'discovery';
+        if (backendPhase !== currentPhase) {
+          completePhase(currentPhase);
+          setPhase(backendPhase);
+          
+          if (backendPhase === 'synthesis' || backendPhase === 'guidance') {
+            setShowVisualization(true);
+          }
+          
+          addMessage({
+            sender: 'system',
+            text: `Moving to ${backendPhase.charAt(0).toUpperCase() + backendPhase.slice(1)} phase...`,
+            isPhaseTransition: true,
+            phase: backendPhase,
+          });
+        }
+        
         // Check if the AI indicated the chat should end
-        if (reply.includes('[END_CHAT]')) {
+        if (reply.includes('[END_CHAT]') || data.chat_completed) {
            reply = reply.replace('[END_CHAT]', '').trim();
-           
-           setTimeout(() => {
-             setAgentState('celebrating');
-             completePhase('exploration');
-             setPhase('synthesis');
-             
-             // Transition visually through the final phases
-             setTimeout(() => {
-               completePhase('synthesis');
-               setPhase('guidance');
-               setShowVisualization(true);
-             }, 1000);
-           }, 1500);
-           
+           setAgentState('celebrating');
         } else {
            setAgentState('idle');
-           
-           // Automatically transition UI from Discovery to Exploration after first message
-           if (currentPhase === 'discovery') {
-              completePhase('discovery');
-              setPhase('exploration');
-              addMessage({
-                sender: 'system',
-                text: 'Moving to Dynamic Exploration phase...',
-                isPhaseTransition: true,
-                phase: 'exploration',
-              });
-           }
         }
 
         // Add the agent's message
         addMessage({
           sender: 'agent',
           text: reply,
-          phase: currentPhase === 'discovery' ? 'exploration' : currentPhase,
+          phase: backendPhase,
         });
 
       } catch (error) {
@@ -92,7 +93,7 @@ export function useDemoChat() {
         });
       }
     },
-    [addMessage, setAgentState, setPhase, completePhase, setPersonaResult, setShowVisualization, currentPhase, getToken, loadProfile]
+    [addMessage, setAgentState, setPhase, completePhase, setPersonaResult, setShowVisualization, currentPhase, activeSessionId, setActiveSessionId, getToken, loadProfile]
   );
 
   return { sendMessage };

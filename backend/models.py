@@ -1,6 +1,7 @@
-from sqlalchemy import Column, String, DateTime, ForeignKey, JSON
+from sqlalchemy import Column, String, DateTime, ForeignKey, JSON, Integer, Text
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
+from pgvector.sqlalchemy import Vector
 from backend.database import Base
 
 class User(Base):
@@ -11,23 +12,70 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     last_login = Column(DateTime(timezone=True), onupdate=func.now())
 
-    profile = relationship("UserProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    # Relationships
+    profile_state = relationship("ProfileState", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    conversations = relationship("Conversation", back_populates="user", cascade="all, delete-orphan")
+    long_term_memories = relationship("LongTermMemory", back_populates="user", cascade="all, delete-orphan")
 
 
-class UserProfile(Base):
-    __tablename__ = "user_profiles"
+class Conversation(Base):
+    __tablename__ = "conversations"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(String(255), ForeignKey("users.id"))
+    start_time = Column(DateTime(timezone=True), server_default=func.now())
+    end_time = Column(DateTime(timezone=True), nullable=True)
+    
+    user = relationship("User", back_populates="conversations")
+    messages = relationship("Message", back_populates="conversation", cascade="all, delete-orphan", order_by="Message.timestamp")
+
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    conversation_id = Column(Integer, ForeignKey("conversations.id"))
+    role = Column(String(50)) # 'user', 'ai', 'system'
+    content = Column(Text)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    
+    conversation = relationship("Conversation", back_populates="messages")
+
+
+class ProfileState(Base):
+    """
+    Stores UI-specific tracking states like phase progress and generated roadmaps.
+    This replaces the old massive JSON blob, pushing memory/context to Vector/Message tables.
+    """
+    __tablename__ = "profile_state"
 
     user_id = Column(String(255), ForeignKey("users.id"), primary_key=True)
     
-    # Store the complex, deeply nested JSON objects directly
     session_progress = Column(JSON, default=dict)
     life_stage_data = Column(JSON, default=dict)
-    inferences = Column(JSON, default=dict)
-    patterns = Column(JSON, default=dict)
     persona = Column(JSON, default=dict)
     guidance = Column(JSON, default=dict)
-    conversation_memory = Column(JSON, default=dict)
     
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    user = relationship("User", back_populates="profile")
+    user = relationship("User", back_populates="profile_state")
+
+
+class LongTermMemory(Base):
+    """
+    Stores extracted behavioral patterns and insights as vectorized embeddings.
+    """
+    __tablename__ = "long_term_memory"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(String(255), ForeignKey("users.id"), index=True)
+    
+    memory_type = Column(String(100)) # e.g., 'childhood_insight', 'career_pattern', 'user_preference'
+    content = Column(Text) # The actual insight text
+    
+    # all-MiniLM-L6-v2 produces 384-dimensional embeddings
+    embedding = Column(Vector(384))
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", back_populates="long_term_memories")

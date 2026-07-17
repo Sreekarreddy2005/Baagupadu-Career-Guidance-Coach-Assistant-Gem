@@ -65,6 +65,10 @@ class KnowledgeBaseLoader:
         # Always include core system instructions
         if "system_prompt" in prompts:
             context_parts.append(f"Document: system_prompt\n{prompts['system_prompt']}\n")
+
+        # Always include the efficiency engine — applies globally across ALL phases
+        if "efficient_persona_engine" in prompts:
+            context_parts.append(f"Document: efficient_persona_engine (GLOBAL CONSTRAINT — HIGHEST PRIORITY)\n{prompts['efficient_persona_engine']}\n")
             
         # 1. Orchestrate Markdown Files
         target_md = []

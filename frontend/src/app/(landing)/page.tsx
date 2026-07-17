@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight, Brain, Heart, Map, Target } from 'lucide-react';
 import AnimatedBackground from '@/components/ui/AnimatedBackground';
 import { containerVariants, slideUpVariants } from '@/lib/utils/animations';
@@ -27,10 +28,26 @@ const PERSONALITY_TRAITS = [
   { label: 'Storyteller', percentage: 5, color: '#6DD5B8' },
 ];
 
+const MODES = [
+  { id: 0, label: 'Empathetic',  chipLabel: 'Empathetic',  icon: Heart,    color: '#FF6B8A', gradFrom: '#FF6B8A', gradTo: '#FF8E53',  desc: 'Friend Mode'  },
+  { id: 1, label: 'Coach Mode',  chipLabel: 'Coach Mode',  icon: Target,   color: '#6366F1', gradFrom: '#6366F1', gradTo: '#818CF8',  desc: 'Strict Mode'  },
+  { id: 2, label: 'Mentor Mode', chipLabel: 'Mentor Mode', icon: Brain,    color: '#06B6D4', gradFrom: '#06B6D4', gradTo: '#6366F1',  desc: 'Wisdom Mode' },
+  { id: 3, label: 'Always On',   chipLabel: 'Always On',   icon: Sparkles, color: '#10B981', gradFrom: '#10B981', gradTo: '#06B6D4',  desc: 'Live Mode'    },
+] as const;
+
 export default function LandingPage() {
   const { scrollYProgress } = useScroll();
   const yOffset = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const { isSignedIn, isLoaded } = useAuth();
+  const [activeModeIdx, setActiveModeIdx] = useState(0);
+  const activeMode = MODES[activeModeIdx];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveModeIdx(prev => (prev + 1) % MODES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
@@ -158,56 +175,238 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Sahayam Introduction Section */}
-          <motion.div
+          {/* ═══════════════════════════════════════════════════════════
+              Meet Sahayam — Theme-Matched Redesign
+          ═══════════════════════════════════════════════════════════ */}
+          <motion.section
             id="sahayam"
-            variants={slideUpVariants}
-            className="w-full relative py-20 my-24 bg-gradient-to-b from-transparent via-indigo-50/40 to-transparent rounded-[4rem]"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={containerVariants}
+            className="w-full relative my-24 overflow-hidden rounded-[3rem]"
           >
-            <div className="flex flex-col lg:flex-row items-center gap-12 md:gap-16 px-4 md:px-8">
-              {/* Agent Visual */}
-              <div className="w-full lg:w-5/12 flex items-center justify-center relative">
-                {/* Soft anchoring glow instead of a hard box */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-secondary)]/10 to-[#FF6B8A]/10 rounded-full blur-[60px] -z-10" />
-                <div className="relative w-full h-[400px] flex items-center justify-center">
-                  <AuraOverlay mode="dashboard" />
-                  <SahayamCharacter mode="dashboard" />
-                </div>
-              </div>
+            {/* ── Background: matches site warm palette ── */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-secondary)]/8 via-[var(--color-background)] to-[var(--color-accent)]/6 rounded-[3rem]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_25%_30%,rgba(99,102,241,0.10)_0%,transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_75%_75%,rgba(226,125,96,0.08)_0%,transparent_55%)]" />
+            {/* Subtle dot grid — visible in light mode */}
+            <div className="absolute inset-0 opacity-[0.25]" style={{
+              backgroundImage: 'radial-gradient(rgba(99,102,241,0.25) 1px, transparent 1px)',
+              backgroundSize: '28px 28px'
+            }} />
 
-              {/* Text & Traits */}
-              <div className="w-full lg:w-7/12 relative z-10">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-secondary)]/10 text-[var(--color-secondary)] font-bold text-[11px] uppercase tracking-widest mb-6">
-                  Your AI Companion
+            <div className="relative z-10 px-6 md:px-12 py-16 md:py-20">
+
+              {/* ── Section Header ── */}
+              <motion.div variants={slideUpVariants} className="text-center mb-16">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[var(--color-secondary)]/25 bg-[var(--color-secondary)]/8 text-[var(--color-secondary)] font-bold text-[11px] uppercase tracking-widest mb-5">
+                  <Sparkles className="w-3 h-3" /> Your AI Companion
                 </div>
-                <h3 className="text-4xl md:text-5xl font-extrabold mb-4 text-[var(--color-text)] tracking-tight">Meet <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-secondary)] to-[#FF6B8A]">Sahayam</span></h3>
-                <h4 className="text-[20px] text-[var(--color-text-muted)] font-semibold mb-6">— Your Personal AI Mentor</h4>
-                <p className="text-[var(--color-text)] font-normal leading-relaxed mb-10 text-[18px]">
-                  Sahayam adapts dynamically to your needs. It acts as a friendly companion when you are consistent, transitions into a strict coach when discipline drops, and becomes a mentor when you need strategic career guidance.
+                <h2 className="text-5xl md:text-6xl font-black text-[var(--color-text)] tracking-tight mb-4">
+                  Meet{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-secondary)] via-[#FF6B8A] to-[var(--color-accent)]">
+                    Sahayam
+                  </span>
+                </h2>
+                <p className="text-[var(--color-text-muted)] text-[18px] max-w-xl mx-auto font-medium leading-relaxed">
+                  An AI that <em className="text-[var(--color-text)] not-italic font-semibold">listens</em> like a best friend, <em className="text-[var(--color-text)] not-italic font-semibold">guides</em> like a mentor, and <em className="text-[var(--color-text)] not-italic font-semibold">pushes</em> like a coach — all in one conversation.
                 </p>
+              </motion.div>
 
-                <div className="space-y-6 bg-white/60 backdrop-blur-md p-8 rounded-[2rem] border border-[var(--glass-border)] shadow-[0_8px_32px_rgba(0,0,0,0.04)] relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[var(--color-secondary)]/10 to-transparent rounded-full blur-3xl -z-10" />
-                  <h5 className="text-[14px] font-bold text-[var(--color-text-muted)] uppercase tracking-widest mb-4">Personality Blend</h5>
-                  <SahayamPersonalityWheel />
-                </div>
+              {/* ── Main Stage: 3-column layout ── */}
+              <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-10 mb-14">
 
-                {/* Quote Callout */}
+                {/* Left trait cards */}
+                <motion.div variants={containerVariants} className="flex flex-col gap-4 w-full lg:w-[28%]">
+                  {[
+                    { icon: Heart, label: 'Emotional Memory', desc: 'Remembers what you felt, not just what you said', color: '#FF6B8A', bg: 'bg-[#FF6B8A]/5 border-[#FF6B8A]/15' },
+                    { icon: Brain, label: 'Non-Linear Thinking', desc: 'Explores your story in the order it matters emotionally', color: '#6366F1', bg: 'bg-[#6366F1]/5 border-[#6366F1]/15' },
+                    { icon: Sparkles, label: 'Persona Synthesis', desc: 'Builds your career identity from 8 life-stage signals', color: '#06B6D4', bg: 'bg-[#06B6D4]/5 border-[#06B6D4]/15' },
+                  ].map(({ icon: Icon, label, desc, color, bg }) => (
+                    <motion.div
+                      key={label}
+                      variants={slideUpVariants}
+                      whileHover={{ x: 4, scale: 1.02 }}
+                      transition={{ type: 'spring', stiffness: 300 }}
+                      className={`flex items-start gap-3 p-4 rounded-2xl border backdrop-blur-sm cursor-default bg-white/70 border-[var(--glass-border)] shadow-sm hover:shadow-md transition-shadow`}
+                    >
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${color}18` }}>
+                        <Icon size={17} style={{ color }} />
+                      </div>
+                      <div>
+                        <p className="text-[var(--color-text)] font-bold text-sm mb-0.5">{label}</p>
+                        <p className="text-[var(--color-text-muted)] text-[12px] leading-relaxed">{desc}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+
+                {/* Centre: Avatar stage */}
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.6 }}
-                  className="mt-8 p-6 bg-white/80 backdrop-blur-lg border border-[var(--color-secondary)]/20 shadow-lg shadow-[var(--color-secondary)]/5 rounded-2xl relative"
+                  variants={slideUpVariants}
+                  className="relative w-full lg:w-[42%] flex flex-col items-center"
                 >
-                  <div className="absolute -top-5 -left-2 text-6xl text-[var(--color-secondary)]/30 font-serif">&quot;</div>
-                  <p className="text-[17px] font-medium italic text-[var(--color-text)] relative z-10">
-                    The moment a person realizes that the world is shaped by people no smarter than them, everything changes.
-                  </p>
+                  {/* Glowing disc — color follows active mode */}
+                  <motion.div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] rounded-full blur-[60px]"
+                    animate={{ background: `radial-gradient(circle, ${activeMode.color}30 0%, ${activeMode.color}12 55%, transparent 80%)` }}
+                    transition={{ duration: 0.8 }}
+                  />
+                  {/* Spinning rings — inner ring tints to active mode color */}
+                  <motion.div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[310px] h-[310px] rounded-full animate-[spin_25s_linear_infinite] border-dashed"
+                    animate={{ borderColor: `${activeMode.color}40` }}
+                    transition={{ duration: 0.8 }}
+                    style={{ border: '1px dashed' }}
+                  />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[370px] h-[370px] border border-[var(--color-accent)]/10 rounded-full animate-[spin_40s_linear_infinite_reverse]" />
+
+                  {/* Avatar canvas — AuraOverlay reacts to active mode color */}
+                  <div className="relative w-[320px] h-[320px] md:w-[370px] md:h-[370px]">
+                    <AuraOverlay mode="dashboard" auraColor={activeMode.color} />
+                    <SahayamCharacter mode="dashboard" />
+                  </div>
+
+                  {/* Active mode label — floats below avatar, transitions smoothly */}
+                  <motion.div
+                    key={activeMode.id}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.35 }}
+                    className="absolute -bottom-7 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full border shadow-md whitespace-nowrap z-20"
+                    style={{
+                      background: `${activeMode.color}15`,
+                      borderColor: `${activeMode.color}35`,
+                    }}
+                  >
+                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: activeMode.color }} />
+                    <span className="text-[11px] font-bold" style={{ color: activeMode.color }}>
+                      {activeMode.label} — {activeMode.desc}
+                    </span>
+                  </motion.div>
+
+                  {/* Floating pill chips — active one highlights, others dim */}
+                  {MODES.map((m, idx) => {
+                    const isActive = idx === activeModeIdx;
+                    const positions = [
+                      'top-6 left-2 md:left-4',
+                      'top-10 right-2 md:right-4',
+                      'bottom-8 left-2 md:left-4',
+                      'bottom-4 right-2 md:right-4',
+                    ];
+                    const floatAnims = ['float-a 4s ease-in-out infinite', 'float-b 5s ease-in-out infinite', 'float-c 4.5s ease-in-out infinite', 'float-a 6s ease-in-out infinite reverse'];
+                    const ModeIcon = m.icon;
+                    return (
+                      <motion.div
+                        key={m.id}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.4 + idx * 0.15, type: 'spring' }}
+                        animate={{
+                          opacity: isActive ? 1 : 0.45,
+                          scale: isActive ? 1.08 : 1,
+                        }}
+                        className={`absolute ${positions[idx]} flex items-center gap-1.5 bg-white/85 backdrop-blur-md shadow-md rounded-full pl-1.5 pr-3 py-1.5 z-20 transition-all duration-500`}
+                        style={{
+                          animation: floatAnims[idx],
+                          border: isActive ? `1.5px solid ${m.color}` : '1px solid rgba(0,0,0,0.06)',
+                          boxShadow: isActive ? `0 0 12px ${m.color}35` : undefined,
+                        }}
+                      >
+                        <div
+                          className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                          style={{ background: `linear-gradient(135deg, ${m.gradFrom}, ${m.gradTo})` }}
+                        >
+                          <ModeIcon size={10} className="text-white" />
+                        </div>
+                        <span className="text-[11px] font-bold" style={{ color: isActive ? m.color : 'var(--color-text)' }}>
+                          {m.chipLabel}
+                        </span>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+
+                {/* Right trait cards */}
+                <motion.div variants={containerVariants} className="flex flex-col gap-4 w-full lg:w-[28%]">
+                  {[
+                    { icon: Target, label: 'Adaptive Pressure', desc: 'Gets stricter when you slack, warmer when you push forward', color: '#FFB84D' },
+                    { icon: Map, label: 'Actionable Roadmap', desc: 'Converts your persona into a step-by-step career path', color: '#10B981' },
+                    { icon: ArrowRight, label: 'Bridges the Gap', desc: 'Kills the space between knowing what you want and actually getting there', color: '#E27D60' },
+                  ].map(({ icon: Icon, label, desc, color }) => (
+                    <motion.div
+                      key={label}
+                      variants={slideUpVariants}
+                      whileHover={{ x: -4, scale: 1.02 }}
+                      transition={{ type: 'spring', stiffness: 300 }}
+                      className="flex items-start gap-3 p-4 rounded-2xl border backdrop-blur-sm cursor-default bg-white/70 border-[var(--glass-border)] shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${color}18` }}>
+                        <Icon size={17} style={{ color }} />
+                      </div>
+                      <div>
+                        <p className="text-[var(--color-text)] font-bold text-sm mb-0.5">{label}</p>
+                        <p className="text-[var(--color-text-muted)] text-[12px] leading-relaxed">{desc}</p>
+                      </div>
+                    </motion.div>
+                  ))}
                 </motion.div>
               </div>
+
+              {/* ── Bottom: Personality Wheel + Description ── */}
+              <motion.div
+                variants={slideUpVariants}
+                className="flex flex-col lg:flex-row items-center gap-10 bg-white/60 backdrop-blur-md border border-[var(--glass-border)] rounded-3xl p-8 md:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.04)]"
+              >
+                {/* Left: Description + mode pills */}
+                <div className="w-full lg:w-1/2">
+                  <p className="text-[var(--color-text-muted)] text-sm font-bold uppercase tracking-widest mb-3">Personality Composition</p>
+                  <h3 className="text-2xl md:text-3xl font-black text-[var(--color-text)] mb-4 leading-tight">
+                    Sahayam isn&apos;t one thing.<br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-accent)]">
+                      It&apos;s everything you need.
+                    </span>
+                  </h3>
+                  <p className="text-[var(--color-text-muted)] text-[15px] leading-relaxed mb-6">
+                    The personality blend shifts based on where you are in your journey. It leads with empathy, follows with strategy, and always ends with accountability.
+                  </p>
+                  {/* Mode pills */}
+                  <div className="flex flex-wrap gap-2.5">
+                    {[
+                      { label: 'Friend', pct: '40%', color: '#FF6B8A' },
+                      { label: 'Mentor', pct: '25%', color: '#6C3CE1' },
+                      { label: 'Explorer', pct: '20%', color: '#00CEC9' },
+                      { label: 'Coach', pct: '10%', color: '#FFB84D' },
+                      { label: 'Storyteller', pct: '5%', color: '#6DD5B8' },
+                    ].map(({ label, pct, color }) => (
+                      <div key={label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[var(--glass-border)] bg-white/80">
+                        <div className="w-2 h-2 rounded-full" style={{ background: color }} />
+                        <span className="text-[var(--color-text)] text-xs font-bold">{label}</span>
+                        <span className="text-[var(--color-text-muted)] text-xs">{pct}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Quote */}
+                  <div className="mt-6 p-5 rounded-2xl border border-[var(--color-secondary)]/15 bg-[var(--color-secondary)]/5 relative">
+                    <div className="absolute -top-4 -left-1 text-5xl text-[var(--color-secondary)]/25 font-serif leading-none">&ldquo;</div>
+                    <p className="text-[var(--color-text)] text-[14px] font-medium italic relative z-10 pt-1 leading-relaxed">
+                      The moment a person realizes the world is shaped by people no smarter than them, everything changes.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right: Personality wheel */}
+                <div className="w-full lg:w-1/2 flex justify-center">
+                  <SahayamPersonalityWheel />
+                </div>
+              </motion.div>
+
             </div>
-          </motion.div>
+          </motion.section>
 
           {/* Features Section */}
           <motion.div

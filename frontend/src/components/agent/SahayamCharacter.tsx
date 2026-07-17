@@ -19,7 +19,7 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
   // Dynamic Proportional Fit
   let scale = 1.0;
   if (mode === 'dashboard') {
-    scale = 1.4; // Correctly sized for 400px container
+    scale = 1.3; // Properly fitted full-body scale
   } else if (mode === 'hero') {
     scale = 1.0;
   } else {
@@ -53,7 +53,7 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
 
     if (mainGroupRef.current) {
       // Breathing vertical oscillation
-      const baseY = (mode === 'dashboard' ? -0.8 : -0.5) + Math.sin(t * 1.5) * 0.05;
+      const baseY = (mode === 'dashboard' ? -0.3 : -0.5) + Math.sin(t * 1.5) * 0.05;
       mainGroupRef.current.position.y = THREE.MathUtils.lerp(mainGroupRef.current.position.y, baseY, 5 * delta);
     }
     
@@ -239,7 +239,7 @@ function ProceduralBot({ mode }: { mode: 'hero' | 'sidebar' | 'dashboard' }) {
 export default function SahayamCharacter({ mode = 'sidebar' }: Props) {
   let cameraZ = 5.5;
   if (mode === 'hero') cameraZ = 7.5;
-  else if (mode === 'dashboard') cameraZ = 6.5; 
+  else if (mode === 'dashboard') cameraZ = 8.5; 
   
   return (
     <Canvas
@@ -248,8 +248,8 @@ export default function SahayamCharacter({ mode = 'sidebar' }: Props) {
       gl={{ alpha: true, antialias: true }}
       dpr={[1, 2]}
       camera={{
-        position: mode === 'sidebar' ? [0, 0.2, 5.5] : [0, 0, cameraZ],
-        fov: mode === 'sidebar' ? 45 : 50,
+        position: mode === 'sidebar' ? [0, 0.2, 5.5] : (mode === 'dashboard' ? [0, -0.3, 8.5] : [0, 0, cameraZ]),
+        fov: mode === 'sidebar' ? 45 : (mode === 'dashboard' ? 60 : 50),
       }}
       shadows
     >
@@ -268,7 +268,7 @@ export default function SahayamCharacter({ mode = 'sidebar' }: Props) {
         maxAzimuthAngle={Math.PI / 3}
         minPolarAngle={Math.PI / 2.5}
         maxPolarAngle={Math.PI / 1.8}
-        target={[0, 0, 0]}
+        target={[0, -0.3, 0]}
       />
     </Canvas>
   );

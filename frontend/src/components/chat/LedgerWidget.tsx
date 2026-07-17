@@ -9,15 +9,31 @@ export const LedgerWidget: React.FC = () => {
   const { profile } = useUserProfileStore();
   const { currentPhase } = useChatStore();
 
-  const handleDownloadPersona = () => {
+  const handleDownloadPersona = async () => {
     if (!profile?.persona) return;
-    const blob = new Blob([JSON.stringify(profile.persona, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'baagupadu_user_persona.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    
+    try {
+      const token = await window.Clerk?.session?.getToken();
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/api/generate-report`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) throw new Error('Failed to generate report');
+      
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'baagupadu_report.docx';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading report:', error);
+      alert('Sorry, there was an issue generating your report.');
+    }
   };
 
   return (

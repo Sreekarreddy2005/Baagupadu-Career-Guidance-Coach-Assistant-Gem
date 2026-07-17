@@ -6,3 +6,9 @@ langchain-google-genai
 langchain-anthropic
 python-dotenv
 pydantic
+sqlalchemy
+asyncpg
+pgvector
+sentence-transformers
+supabase
+python-docx

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
@@ -11,17 +11,19 @@ import PersonaVisualization from '@/components/visualization/PersonaVisualizatio
 import { useChatStore } from '@/lib/store/chatStore';
 import { useUserProfileStore } from '@/stores/userProfileStore';
 import { PHASES } from '@/types';
-import { Sparkles, LayoutDashboard, MessageSquare, Wrench, Map as MapIcon, Settings, RefreshCw } from 'lucide-react';
+import { Sparkles, LayoutDashboard, MessageSquare, Wrench, Map as MapIcon, Settings, RefreshCw, Plus, MoreHorizontal } from 'lucide-react';
 import Sidebar3DAvatar from '@/components/agent/Sidebar3DAvatar';
 import CareerRoadmap from '@/components/visualization/CareerRoadmap';
 import { HealthWidget } from '@/components/chat/HealthWidget';
 import { LedgerWidget } from '@/components/chat/LedgerWidget';
+import { AccountabilityTracker } from '@/components/chat/AccountabilityTracker';
+import { SankalpamWidget } from '@/components/chat/SankalpamWidget';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useAuth, UserButton } from '@clerk/nextjs';
 import { resetSahayamChat } from '@/lib/api';
 
 export default function ChatPage() {
-  const { currentPhase, showVisualization, agentState } = useChatStore();
+  const { currentPhase, showVisualization, agentState, activeSessionId, setActiveSessionId, clearMessages, setMessages } = useChatStore();
   const { profile, loadProfile, isLoading } = useUserProfileStore();
   const { getToken } = useAuth();
   const router = useRouter();
@@ -46,10 +48,20 @@ export default function ChatPage() {
     }
   }, [profile, isLoading, router]);
 
+  const sessions = useMemo(() => {
+    return Object.entries(profile?.conversation_memory?.sessions || {});
+  }, [profile?.conversation_memory?.sessions]);
+
   if (isLoading || (!isLoading && profile && !profile.life_stage_data?.demographics)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-secondary)]"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
+        {/* AI-native loading glow */}
+        <div className="relative w-16 h-16 flex items-center justify-center">
+          <div className="absolute inset-0 rounded-full border-t-2 border-[var(--color-secondary)] animate-spin" />
+          <div className="w-8 h-8 rounded-full bg-[var(--color-secondary)]/20 animate-pulse" />
+          <Sparkles className="absolute text-[var(--color-secondary)] w-5 h-5 animate-pulse" />
+        </div>
+        <p className="text-[var(--color-text-muted)] font-medium tracking-wide animate-pulse">Waking Sahayam...</p>
       </div>
     );
   }
@@ -126,23 +138,67 @@ export default function ChatPage() {
               ))}
             </nav>
             
-            <div className="w-full mt-8 pt-6 border-t border-black/5">
-              <button
+            {/* Recent Sessions (Real Data) */}
+            <div className="w-full mt-6 flex flex-col">
+              <div className="flex items-center justify-between px-2 mb-2">
+                <span className="text-[11px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider">Recent Sessions</span>
+              </div>
+              
+              <button 
                 onClick={async () => {
-                  if (confirm('Are you sure you want to restart your journey? All chat history will be lost.')) {
-                    useChatStore.getState().clearMessages();
-                    const token = await getToken();
-                    if (token) {
-                      await resetSahayamChat(token);
-                      await loadProfile(token);
-                    }
+                  if (confirm('Start a new exploration?')) {
+                    clearMessages();
+                    const newId = crypto.randomUUID();
+                    setActiveSessionId(newId);
                   }
                 }}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors font-medium text-sm"
+                className="w-full flex items-center gap-2 px-3 py-2 mb-2 rounded-lg border border-black/10 text-[var(--color-text)] hover:bg-[var(--color-secondary)] hover:text-white hover:border-[var(--color-secondary)] transition-all font-medium text-sm group shadow-sm"
               >
-                <RefreshCw size={16} />
-                Restart Journey
+                <Plus size={16} className="text-[var(--color-secondary)] group-hover:text-white transition-colors" />
+                New Chat
               </button>
+
+              <div className="space-y-1 overflow-y-auto max-h-[220px] scrollbar-hide pr-1 -mx-2 px-2">
+                {sessions.map(([id, session]: [string, any]) => {
+                  const isActive = id === activeSessionId;
+                  return (
+                    <div 
+                      key={id}
+                      onClick={() => {
+                        setActiveSessionId(id);
+                        // Convert DB serialized messages back to ChatMessage UI format
+                        const loadedMessages = (session.messages || []).map((m: any, idx: number) => ({
+                          id: `msg-${id}-${idx}`,
+                          sender: m.role,
+                          text: m.content,
+                          timestamp: m.timestamp ? new Date(m.timestamp).getTime() : Date.now() - (session.messages.length - idx) * 1000,
+                          phase: 'exploration'
+                        }));
+                        if (loadedMessages.length > 0) {
+                          setMessages(loadedMessages);
+                        } else {
+                          clearMessages();
+                        }
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer group transition-colors ${
+                        isActive 
+                          ? 'bg-[var(--color-secondary)]/10 text-[var(--color-secondary)]' 
+                          : 'text-[var(--color-text-muted)] hover:bg-black/5 hover:text-[var(--color-text)]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 truncate pr-2">
+                        <MessageSquare size={14} className={`flex-shrink-0 ${isActive ? '' : 'opacity-70 group-hover:opacity-100'}`} />
+                        <span className={`text-[13px] truncate ${isActive ? 'font-medium' : ''}`}>
+                          {session.title || 'Career Chat'}
+                        </span>
+                      </div>
+                      {!isActive && (
+                        <MoreHorizontal size={14} className="opacity-0 group-hover:opacity-100 flex-shrink-0 text-[var(--color-text-muted)] hover:text-[var(--color-text)]" />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </aside>
@@ -158,7 +214,9 @@ export default function ChatPage() {
           
           <div className="w-full h-px bg-black/5 my-2"></div>
           
+          <SankalpamWidget />
           <LedgerWidget />
+          <AccountabilityTracker />
           <HealthWidget metrics={healthMetrics} />
         </aside>
       </div>
