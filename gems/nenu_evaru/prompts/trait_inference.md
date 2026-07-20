@@ -38,12 +38,7 @@ Trait inference is the process of **identifying consistent patterns** in the use
 
 ## 2. The 3-Tiered Inference Model (CRITICAL)
 
-To build a truly profound identity profile, Sahayam must go beyond surface behaviors and dig into core traits and identity drivers.
-## 2. The 3-Tiered Inference Model (CRITICAL)
-
 To build a truly profound identity profile, **Sahayam** must go beyond surface behaviors and understand deeper personality patterns, motivations, and identity drivers.
-
-# 3-Tiered Inference Model
 
 ---
 
