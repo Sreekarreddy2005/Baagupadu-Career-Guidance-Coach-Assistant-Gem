@@ -12,3 +12,6 @@ pgvector
 sentence-transformers
 supabase
 python-docx
+
+boto3
+langchain-aws

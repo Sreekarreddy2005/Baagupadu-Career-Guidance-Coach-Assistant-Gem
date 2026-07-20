@@ -40,5 +40,14 @@ def get_llm(purpose: str = "chat") -> BaseChatModel:
             temperature=0.7,
             api_key=config.ANTHROPIC_API_KEY
         )
+    elif provider == "bedrock":
+        from langchain_aws import ChatBedrock
+        # We use Llama 3.1 70B Instruct for both Chatting and Logic/Evaluation
+        # because 70B is powerful enough to handle both tasks flawlessly.
+        # Note: Using the US cross-region inference profile as on-demand is restricted.
+        return ChatBedrock(
+            model_id="us.meta.llama3-1-70b-instruct-v1:0",
+            model_kwargs={"temperature": 0.7 if purpose == "chat" else 0.1}
+        )
     else:
         raise ValueError(f"Unsupported LLM_PROVIDER: {provider}")

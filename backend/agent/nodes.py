@@ -6,7 +6,7 @@ from backend.knowledge_base.loader import KnowledgeBaseLoader
 from backend.agent.state import AgentState
 from sentence_transformers import SentenceTransformer
 from sqlalchemy.future import select
-from backend.models import LongTermMemory
+from backend.models import LongTermMemory, KnowledgeBaseChunk
 
 kb_loader = KnowledgeBaseLoader()
 
@@ -21,17 +21,74 @@ def _get_profile_context(profile: dict) -> str:
     if demographics:
         demo_str = (
             "--- USER DEMOGRAPHICS ---\n"
-            f"Name: {demographics.get('full_name', 'Unknown')}\n"
+            f"User's Name: {demographics.get('full_name', 'Unknown')}\n"
             f"Location: {demographics.get('location', 'Unknown')}\n"
             f"Age Range: {demographics.get('age_range', 'Unknown')}\n"
             f"Current Status: {demographics.get('current_status', 'Unknown')}\n"
             f"Desired Role/Direction: {demographics.get('desired_role', 'Unknown')}\n"
             f"Primary Goal: {demographics.get('primary_goal', 'Unknown')}\n\n"
-            "CRITICAL: Tailor your tone, analogies, and questions heavily based on this context. "
+            "CRITICAL: You are talking directly TO this user. Always address them in the second person ('you', 'your'). "
+            "You may use their name occasionally to be personal, but NEVER refer to them in the third person (e.g., do NOT say 'Sreekar's childhood', say 'your childhood'). "
+            "Tailor your tone, analogies, and questions heavily based on this context. "
             "If they provided a Desired Role, hunt for traits in their childhood that match that role.\n\n"
         )
 
-    return f"\n\n{demo_str}CURRENT USER PROFILE STATE:\n{json.dumps(profile, indent=2)}\n\nUse this profile to maintain context."
+    if profile.get("persona"):
+        demo_str += f"Current Persona Draft:\n{json.dumps(profile['persona'], indent=2)}\n\n"
+        
+    if profile.get("guidance", {}).get("quality_signals"):
+        signals = profile["guidance"]["quality_signals"]
+        demo_str += f"Current Quality Signals & Uncovered Traits:\n{json.dumps(signals, indent=2)}\n\n"
+
+    return f"\n\n{demo_str}Use this context to inform your responses."
+
+async def context_router_node(state: AgentState):
+    """
+    A fast pre-routing node that uses a smaller Logic LLM to categorize the conversation 
+    topic and decide which specific Markdown files to load into the main LLM's context.
+    """
+    messages = state.get("messages", [])
+    current_phase = state.get("current_phase", "discovery")
+    micro_phase = None
+    
+    if current_phase == "exploration" and messages:
+        # Get the last user message
+        last_user_msg = next((m.content for m in reversed(messages) if isinstance(m, HumanMessage)), "")
+        
+        if last_user_msg:
+            # Use the logic model to quickly classify
+            logic_llm = get_llm(purpose="logic")
+            prompt = (
+                "You are a routing agent. Read the user's message and determine if the conversational focus "
+                "is about their 'childhood', 'teenage' years, or 'adult' life. "
+                "If it's about growing up, kids, early school, output: childhood\n"
+                "If it's about high school, teens, college, output: teenage\n"
+                "If it's about career, recent jobs, adult life, output: adult\n"
+                "If it is none of these or general, output: general\n\n"
+                "User Message:\n" + last_user_msg + "\n\n"
+                "Output ONLY a single word from the list above. No explanation."
+            )
+            
+            try:
+                response = await logic_llm.ainvoke([SystemMessage(content=prompt)])
+                result = response.content.strip().lower()
+                
+                # Clean up any weird outputs
+                if "childhood" in result:
+                    micro_phase = "childhood"
+                elif "teenage" in result:
+                    micro_phase = "teenage"
+                elif "adult" in result:
+                    micro_phase = "adult"
+                else:
+                    micro_phase = "general"
+                    
+                print(f"🧠 Logic Router determined Micro-Phase: {micro_phase}")
+            except Exception as e:
+                print(f"⚠️ Logic Router failed: {e}. Defaulting to general exploration.")
+                micro_phase = "general"
+
+    return {"micro_phase": micro_phase}
 
 async def router_node(state: AgentState):
     messages = state.get("messages", [])
@@ -83,12 +140,28 @@ async def responder_node(state: AgentState):
                     ltm_context += f"- [{mem.memory_type}]: {mem.content}\n"
                 ltm_context += "Use these memories to inform your response deeply.\n\n"
 
-        kb_context = kb_loader.get_phase_context(current_phase)
+        micro_phase = state.get("micro_phase")
+        kb_context = kb_loader.get_phase_context(current_phase, micro_phase=micro_phase)
+        
+        # Fetch relevant rules/questions from the Vector DB (RAG)
+        if db and user_input:
+            rag_result = await db.execute(
+                select(KnowledgeBaseChunk)
+                .order_by(KnowledgeBaseChunk.embedding.cosine_distance(query_embedding))
+                .limit(2)
+            )
+            rag_chunks = rag_result.scalars().all()
+            if rag_chunks:
+                kb_context += "\n=== DYNAMIC KNOWLEDGE BASE RULES & QUESTIONS ===\n"
+                kb_context += "The following specific rules and questions have been dynamically retrieved based on the user's message. Use them if relevant:\n"
+                for chunk in rag_chunks:
+                    kb_context += f"[{chunk.source_file}]:\n{chunk.content}\n\n"
         
         base_prompt = (
-            "You are Sahayam, the AI agent for the Baagupadu project. "
-            "Your goal is to guide the user holistically based on the non-linear "
-            "rules defined in the knowledge base.\n\n"
+            "<system_instructions>\n"
+            "You are Sahayam, the conversational AI agent for the Baagupadu project. "
+            "You are NOT a meta-agent or a programmer. You are the coach. "
+            "Your goal is to guide the user holistically based on the rules defined below.\n\n"
             f"{ltm_context}"
             "=== KNOWLEDGE BASE START ===\n"
             f"{kb_context}\n"
@@ -102,7 +175,12 @@ async def responder_node(state: AgentState):
             "  [PHASE:synthesis]   — emit this when you have collected enough data across all life stages and are ready to build the persona.\n"
             "  [PHASE:guidance]    — emit this when persona synthesis is complete and you want to deliver the career roadmap.\n"
             "  [END_CHAT]          — emit this when guidance is fully delivered and the conversation is complete.\n"
-            "Only append ONE tag per message. Do not explain the tag. Do not show it to the user.\n\n"
+            "CRITICAL OUTPUT CONSTRAINT:\n"
+            "1. ONLY output your conversational response to the user as Sahayam.\n"
+            "2. NEVER explain your internal logic, phases, or arcs. Do not break character.\n"
+            "3. NEVER use meta-notes like '(Note: ...)' or '(OOC: ...)'.\n"
+            "4. NEVER output any tags like [GROUNDING] or [PHASE...] UNLESS it is one of the EXACT 4 phase tags listed above, and ONLY append it silently at the very end.\n\n"
+            "</system_instructions>\n\n"
         )
         
         if alerts:
@@ -140,28 +218,11 @@ async def responder_node(state: AgentState):
             content = content.replace('[END_CHAT]', '').strip()
             print("✅ End-of-conversation signal detected.")
             
-        # Parse JSON blocks
-        try:
-            start_idx = content.find('{')
-            end_idx = content.rfind('}')
+        # Clean up any hallucinated meta-notes or fake tags from the 8B model
+        content = re.sub(r'\(Note:.*?\)', '', content, flags=re.IGNORECASE | re.DOTALL)
+        content = re.sub(r'\[[A-Z_]+\]', '', content)
+        content = content.strip()
             
-            if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
-                json_str = content[start_idx:end_idx+1]
-                extracted_data = json.loads(json_str)
-                
-                content = content[:start_idx].strip()
-                content = re.sub(r'```(?:json)?\s*$', '', content, flags=re.MULTILINE).strip()
-                
-                if "quality_signals" in extracted_data:
-                    if "guidance" not in profile: profile["guidance"] = {}
-                    profile["guidance"]["quality_signals"] = extracted_data.get("quality_signals")
-                    profile["guidance"]["final_summary"] = extracted_data.get("final_summary")
-                elif current_phase == "synthesis":
-                    profile["persona"] = extracted_data
-                elif current_phase == "guidance":
-                    profile.setdefault("guidance", {})["roadmap"] = extracted_data
-        except Exception as e:
-            errors.append(f"JSON Parse Error in responder_node: {str(e)}")
             
         return {
             "messages": [AIMessage(content=content)],
@@ -201,6 +262,63 @@ async def profile_updater_node(state: AgentState):
 
         if len(messages) >= 2:
             user_msg = next((m.content for m in reversed(messages) if isinstance(m, HumanMessage)), "")
+            ai_msg = next((m.content for m in reversed(messages) if isinstance(m, AIMessage)), "")
+            
+            # --- EVALUATOR ARCHITECTURE: QWEN 2.5 METRICS ---
+            if user_msg and ai_msg:
+                try:
+                    evaluator_prompt = (
+                        "You are a strict Psychological Evaluator. Read the following exchange between a user and a career coach.\n"
+                        "Output ONLY a JSON block containing quality metrics and any newly uncovered traits. Format exactly as:\n"
+                        "```json\n"
+                        "{\n"
+                        "  \"quality_signals\": {\n"
+                        "    \"empathy_score\": \"XX%\",\n"
+                        "    \"user_resonance\": \"High/Medium/Low\",\n"
+                        "    \"routine_adherence\": \"String\",\n"
+                        "    \"clarity\": \"String\"\n"
+                        "  },\n"
+                        "  \"traits_uncovered\": [\"Trait 1\", \"Trait 2\"]\n"
+                        "}\n"
+                        "```\n"
+                        f"User: {user_msg}\n"
+                        f"Coach: {ai_msg}\n"
+                    )
+                    
+                    logic_llm = get_llm(purpose="logic")
+                    eval_response = await logic_llm.ainvoke([SystemMessage(content=evaluator_prompt)])
+                    eval_content = eval_response.content
+                    
+                    start_idx = eval_content.find('{')
+                    end_idx = eval_content.rfind('}')
+                    if start_idx != -1 and end_idx != -1:
+                        eval_json = json.loads(eval_content[start_idx:end_idx+1])
+                        
+                        if "quality_signals" in eval_json:
+                            profile.setdefault("guidance", {})["quality_signals"] = eval_json["quality_signals"]
+                        
+                        # Merge traits safely with deduplication
+                        new_traits = eval_json.get("traits_uncovered", [])
+                        if new_traits and isinstance(new_traits, list):
+                            existing_traits = profile.setdefault("persona", {}).setdefault("traits_uncovered", [])
+                            for t in new_traits:
+                                t_clean = t.strip()
+                                if not t_clean:
+                                    continue
+                                # Fuzzy deduplication: don't add if it's highly similar to an existing trait
+                                is_duplicate = False
+                                for ext in existing_traits:
+                                    if t_clean.lower() in ext.lower() or ext.lower() in t_clean.lower():
+                                        is_duplicate = True
+                                        break
+                                if not is_duplicate:
+                                    existing_traits.append(t_clean)
+                            
+                            # Keep only the last 20 traits to prevent context bloat
+                            profile["persona"]["traits_uncovered"] = existing_traits[-20:]
+                                    
+                except Exception as eval_e:
+                    print(f"Metrics Evaluator Error: {eval_e}")
             
             # Simple heuristic Insight Extraction for LTM
             if db and user_msg:

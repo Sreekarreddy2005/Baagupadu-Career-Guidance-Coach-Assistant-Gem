@@ -10,6 +10,7 @@ class AgentState(TypedDict):
     alerts: Annotated[Sequence[str], operator.add]  # Track safety and routing alerts
     errors: Annotated[Sequence[str], operator.add]  # Track system errors for graceful handling
     new_phase: Optional[str]        # Phase the LLM signaled to transition to
+    micro_phase: Optional[str]      # Dynamically determined sub-phase (e.g. childhood, teenage, adult)
     chat_ended: bool                # Whether the LLM signaled [END_CHAT]
     db_session: Optional[object]    # AsyncSession injected from API layer for pgvector querying
     user_input: Optional[str]       # The latest user string (used for querying vectors)

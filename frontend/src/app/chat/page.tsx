@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
@@ -18,16 +18,19 @@ import { HealthWidget } from '@/components/chat/HealthWidget';
 import { LedgerWidget } from '@/components/chat/LedgerWidget';
 import { AccountabilityTracker } from '@/components/chat/AccountabilityTracker';
 import { SankalpamWidget } from '@/components/chat/SankalpamWidget';
+import { QualitySignalBoard } from '@/components/chat/QualitySignalBoard';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useAuth, UserButton } from '@clerk/nextjs';
 import { resetSahayamChat } from '@/lib/api';
 import RollingBanner from '@/components/ui/RollingBanner';
+import ProfileEditModal from '@/components/chat/ProfileEditModal';
 
 export default function ChatPage() {
   const { currentPhase, showVisualization, agentState, activeSessionId, setActiveSessionId, clearMessages, setMessages } = useChatStore();
   const { profile, loadProfile, isLoading } = useUserProfileStore();
   const { getToken } = useAuth();
   const router = useRouter();
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   
   const phaseConfig = PHASES.find((p) => p.id === currentPhase) ?? PHASES[0];
 
@@ -72,6 +75,11 @@ export default function ChatPage() {
   return (
     <>
       <AnimatedBackground />
+      
+      <ProfileEditModal 
+        isOpen={isProfileModalOpen} 
+        onClose={() => setIsProfileModalOpen(false)} 
+      />
 
       {/* Persona modal */}
       <AnimatePresence>
@@ -114,15 +122,30 @@ export default function ChatPage() {
             {/* Navigation Menu */}
             <nav className="w-full space-y-1">
               {[
-                { icon: <LayoutDashboard size={18} />, label: 'Dashboard', active: false, href: '#' },
-                { icon: <MessageSquare size={18} />, label: 'Chat', active: true, href: '/chat' },
-                { icon: <Wrench size={18} />, label: 'Skills', active: false, href: '#' },
-                { icon: <MapIcon size={18} />, label: 'Roadmap', active: false, href: '#' },
-                { icon: <Settings size={18} />, label: 'Settings', active: false, href: '/settings' },
-              ].map((item) => (
+                { icon: <LayoutDashboard size={18} />, label: 'Dashboard', active: false, action: null },
+                { icon: <MessageSquare size={18} />, label: 'Chat', active: true, action: null },
+                { icon: <Wrench size={18} />, label: 'Skills', active: false, action: null },
+                { icon: <MapIcon size={18} />, label: 'Roadmap', active: false, action: null },
+                { icon: <Settings size={18} />, label: 'Settings', active: false, action: () => setIsProfileModalOpen(true) },
+              ].map((item) => {
+                if (item.action) {
+                  return (
+                    <button
+                      key={item.label}
+                      onClick={item.action}
+                      className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all font-medium text-sm text-[var(--color-text-muted)] hover:bg-black/5 hover:text-[var(--color-text)]`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {item.icon}
+                        <span>{item.label}</span>
+                      </div>
+                    </button>
+                  );
+                }
+                return (
                 <Link
                   key={item.label}
-                  href={item.href}
+                  href={'#'}
                   className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all font-medium text-sm ${
                     item.active
                       ? 'bg-[var(--color-secondary)] text-white shadow-md'
@@ -139,7 +162,8 @@ export default function ChatPage() {
                     </span>
                   )}
                 </Link>
-              ))}
+                );
+              })}
             </nav>
             
             {/* Recent Sessions (Real Data) */}
@@ -224,6 +248,7 @@ export default function ChatPage() {
           <div className="w-full h-px bg-black/5 my-2"></div>
           
           <SankalpamWidget />
+          <QualitySignalBoard />
           <LedgerWidget />
           <AccountabilityTracker />
           <HealthWidget metrics={healthMetrics} />

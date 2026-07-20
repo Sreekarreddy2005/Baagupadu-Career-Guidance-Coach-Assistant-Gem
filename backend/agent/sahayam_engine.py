@@ -1,7 +1,7 @@
 from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import HumanMessage, AIMessage
 from backend.agent.state import AgentState
-from backend.agent.nodes import router_node, responder_node, profile_updater_node, should_update_profile
+from backend.agent.nodes import router_node, responder_node, profile_updater_node, should_update_profile, context_router_node
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from backend.models import Message
@@ -10,11 +10,13 @@ class SahayamAgent:
     def __init__(self):
         workflow = StateGraph(AgentState)
         
+        workflow.add_node("context_router", context_router_node)
         workflow.add_node("router", router_node)
         workflow.add_node("responder", responder_node)
         workflow.add_node("profile_updater", profile_updater_node)
         
-        workflow.add_edge(START, "router")
+        workflow.add_edge(START, "context_router")
+        workflow.add_edge("context_router", "router")
         workflow.add_edge("router", "responder")
         
         workflow.add_conditional_edges(
@@ -35,14 +37,14 @@ class SahayamAgent:
         """
         conversation_id = profile.get("conversation_id")
         
-        # 1. Fetch short-term memory (last 10 messages) from relational DB
+        # 1. Fetch short-term memory (last 4 messages) from relational DB
         chat_history = []
         if conversation_id:
             result = await db.execute(
                 select(Message)
                 .where(Message.conversation_id == conversation_id)
                 .order_by(Message.timestamp.desc())
-                .limit(10)
+                .limit(4)
             )
             raw_messages = result.scalars().all()
             # Reverse to chronological order
@@ -70,6 +72,7 @@ class SahayamAgent:
             "alerts": [],
             "errors": [],
             "new_phase": None,
+            "micro_phase": None,
             "chat_ended": False,
             "db_session": db, # Pass db session to graph nodes
             "user_input": user_input # specifically for embedding generation

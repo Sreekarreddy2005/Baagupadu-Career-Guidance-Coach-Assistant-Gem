@@ -79,3 +79,20 @@ class LongTermMemory(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User", back_populates="long_term_memories")
+
+
+class KnowledgeBaseChunk(Base):
+    """
+    Stores embedded chunks of the Markdown rules and JSON question banks for RAG.
+    """
+    __tablename__ = "knowledge_base_chunks"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    source_file = Column(String(255), index=True) # e.g., 'router.md', 'childhood_questions.json'
+    chunk_index = Column(Integer)
+    content = Column(Text)
+    
+    # all-MiniLM-L6-v2 produces 384-dimensional embeddings
+    embedding = Column(Vector(384))
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

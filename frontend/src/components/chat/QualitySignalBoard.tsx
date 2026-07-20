@@ -8,7 +8,14 @@ export const QualitySignalBoard: React.FC = () => {
   const { profile } = useUserProfileStore();
   const signals = profile?.guidance?.quality_signals;
 
-  if (!signals || Object.keys(signals).length === 0) return null;
+  const displaySignals = signals && Object.keys(signals).length > 0 
+    ? signals 
+    : {
+        empathy_score: "Calibrating...",
+        user_resonance: "Pending",
+        routine_adherence: "Pending",
+        clarity: "Pending"
+      };
 
   const renderIcon = (key: string) => {
     switch(key.toLowerCase()) {
@@ -21,16 +28,20 @@ export const QualitySignalBoard: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-white rounded-2xl p-5 border border-slate-100 shadow-sm mb-6">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-          <Activity size={16} className="text-indigo-500" />
-          Session Quality Signals
-        </h3>
+    <div className="w-full bg-[#f8f9fa] rounded-2xl p-6 border border-black/5 shadow-sm mb-6">
+      <div className="flex justify-between items-start mb-6">
+        <div className="flex flex-col gap-1">
+          <span className="text-[10px] font-bold tracking-widest text-indigo-500 uppercase flex items-center gap-2">
+            <Activity size={12} /> Live Tracking
+          </span>
+          <h2 className="text-xl font-serif font-bold text-slate-800">
+            Quality Signals
+          </h2>
+        </div>
       </div>
       
       <div className="grid grid-cols-2 gap-3">
-        {Object.entries(signals).map(([key, value], idx) => (
+        {Object.entries(displaySignals).map(([key, value], idx) => (
           <div key={idx} className="bg-slate-50 rounded-xl p-3 flex flex-col gap-1 border border-slate-100">
             <div className="flex items-center gap-2">
               {renderIcon(key)}
