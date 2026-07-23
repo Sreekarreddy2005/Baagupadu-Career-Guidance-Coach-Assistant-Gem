@@ -81,12 +81,34 @@ pip install -r requirements.txt
 ```bash
 cp .env.example .env
 ```
-4. Open the `.env` file and add your AI Provider keys (e.g., AWS Bedrock, OpenAI) and your PostgreSQL Database URL.
+4. Open the `.env` file and configure your database and AI provider.
+
+**Setting up PostgreSQL (`pgvector`) locally:**
+If you are running PostgreSQL locally (e.g. via Postgres.app on Mac or Docker), ensure you have installed the `pgvector` extension.
+```sql
+-- Run this in your psql terminal to enable vectors
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+Then set your `DATABASE_URL` in `.env`:
 ```env
-LLM_PROVIDER=bedrock
-DATABASE_URL=postgresql+asyncpg://user:password@localhost/baagupadu
+DATABASE_URL=postgresql+asyncpg://your_db_user:your_db_password@localhost/your_db_name
 ```
 
+**Setting up Local LLMs (Ollama) for 100% Offline AI:**
+If you prefer not to use AWS Bedrock or OpenAI, you can run the AI locally using [Ollama](https://ollama.com/).
+1. Install Ollama and start the application.
+2. Pull the required models in your terminal:
+   ```bash
+   ollama run llama3.1:8b  # Used for the empathetic Chat Executor
+   ollama run qwen2.5:7b   # Used for the strict Logic Evaluator/Planner
+   ```
+3. Update your `.env` to point to Ollama:
+   ```env
+   LLM_PROVIDER=ollama
+   OLLAMA_BASE_URL=http://localhost:11434
+   OLLAMA_CHAT_MODEL=llama3.1:8b
+   OLLAMA_LOGIC_MODEL=qwen2.5:7b
+   ```
 5. **Initialize the Database & Knowledge Base:**
 Because of the pgvector implementation, you must first create the tables and embed the psychological rules:
 ```bash
