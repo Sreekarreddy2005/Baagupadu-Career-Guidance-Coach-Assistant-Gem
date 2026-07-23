@@ -54,87 +54,103 @@ The database uses `pgvector` in PostgreSQL for both **Rules RAG** (fetching the 
 
 ## 🚀 Installation & Local Setup
 
-Want to run Baagupadu locally? Follow these steps.
+Want to run Baagupadu locally? Follow this step-by-step guide for both **Mac** and **Windows**.
 
 ### Prerequisites
-- Node.js (v18+)
-- Python (v3.10+)
-- PostgreSQL (with `pgvector` extension installed)
-- AWS Account with Bedrock Access (or OpenAI/Gemini keys)
+Before you start, ensure you have the following installed on your machine:
+- **Node.js (v18+)**: [Download Here](https://nodejs.org/)
+- **Python (v3.10+)**: [Download Here](https://www.python.org/downloads/)
+- **Ollama**: [Download Here](https://ollama.com/download) (Required for 100% local, offline AI)
+- **PostgreSQL**: 
+  - **Mac:** Recommend using [Postgres.app](https://postgresapp.com/) or Homebrew (`brew install postgresql`).
+  - **Windows:** Recommend downloading the official installer from [EnterpriseDB](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads).
+
+---
 
 ### Step 1: Clone the Repository
+Open your terminal (Mac) or Command Prompt / PowerShell (Windows) and run:
 ```bash
 git clone https://github.com/Sreekarreddy2005/Baagupadu-Career-Guidance-Coach-Assistant-Gem.git
 cd Baagupadu-Career-Guidance-Coach-Assistant-Gem
 ```
 
-### Step 2: Backend Setup (FastAPI & AI)
-1. Open the `backend/` directory.
-2. Create a virtual environment and install dependencies:
+### Step 2: Set up Local AI Models (Ollama)
+Open a new terminal window and pull the required models. Note: This will download several gigabytes of data.
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-pip install -r requirements.txt
+ollama run llama3.1:8b  # The empathetic conversational agent
+ollama run qwen2.5:7b   # The strict logic and planning agent
 ```
-3. Copy the example environment variables file and configure it:
-```bash
-cp .env.example .env
-```
-4. Open the `.env` file and configure your database and AI provider.
+*Leave the Ollama application running in the background.*
 
-**Setting up PostgreSQL (`pgvector`) locally:**
-If you are running PostgreSQL locally (e.g. via Postgres.app on Mac or Docker), ensure you have installed the `pgvector` extension.
-```sql
--- Run this in your psql terminal to enable vectors
-CREATE EXTENSION IF NOT EXISTS vector;
-```
-Then set your `DATABASE_URL` in `.env`:
-```env
-DATABASE_URL=postgresql+asyncpg://your_db_user:your_db_password@localhost/your_db_name
-```
+### Step 3: Set up PostgreSQL with `pgvector`
+We use `pgvector` for Semantic RAG. You must enable it in your database.
 
-**Setting up Local LLMs (Ollama) for 100% Offline AI:**
-If you prefer not to use AWS Bedrock or OpenAI, you can run the AI locally using [Ollama](https://ollama.com/).
-1. Install Ollama and start the application.
-2. Pull the required models in your terminal:
+**For Mac (using Postgres.app or Homebrew):**
+1. Ensure your Postgres server is running.
+2. Open your terminal and log into postgres: `psql postgres`
+3. Create a database: `CREATE DATABASE baagupadu;`
+4. Connect to it: `\c baagupadu`
+5. Enable the extension: `CREATE EXTENSION IF NOT EXISTS vector;`
+
+**For Windows:**
+1. Open the **SQL Shell (psql)** program that came with your PostgreSQL installation.
+2. Press Enter to accept default server/port until it asks for your password. Enter the password you created during installation.
+3. Create a database: `CREATE DATABASE baagupadu;`
+4. Connect to it: `\c baagupadu`
+5. Enable the extension: `CREATE EXTENSION IF NOT EXISTS vector;`
+
+### Step 4: Backend Setup (FastAPI)
+1. Open your terminal and navigate to the backend directory:
    ```bash
-   ollama run llama3.1:8b  # Used for the empathetic Chat Executor
-   ollama run qwen2.5:7b   # Used for the strict Logic Evaluator/Planner
+   cd backend
    ```
-3. Update your `.env` to point to Ollama:
+2. Create and activate a virtual environment:
+   - **Mac:**
+     ```bash
+     python3 -m venv venv
+     source venv/bin/activate
+     ```
+   - **Windows:**
+     ```cmd
+     python -m venv venv
+     venv\Scripts\activate
+     ```
+3. Install the required Python packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Copy the environment variables file:
+   - **Mac:** `cp .env.example .env`
+   - **Windows:** `copy .env.example .env`
+5. Open the `.env` file in a text editor and set your database URL using the password you set up earlier:
    ```env
    LLM_PROVIDER=ollama
-   OLLAMA_BASE_URL=http://localhost:11434
-   OLLAMA_CHAT_MODEL=llama3.1:8b
-   OLLAMA_LOGIC_MODEL=qwen2.5:7b
+   DATABASE_URL=postgresql+asyncpg://postgres:YOUR_PASSWORD@localhost/baagupadu
    ```
-5. **Initialize the Database & Knowledge Base:**
-Because of the pgvector implementation, you must first create the tables and embed the psychological rules:
-```bash
-# This creates the tables in Postgres
-python scripts/migrate_db.py
+6. **CRITICAL: Initialize the Database & Knowledge Base:**
+   Run these scripts to create the tables and embed the psychological rules into vector space:
+   ```bash
+   python scripts/migrate_db.py
+   python scripts/ingest_knowledge_base.py
+   ```
+7. Start the backend server:
+   ```bash
+   uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+   ```
 
-# This reads gems/nenu_evaru/prompts/ and embeds them into pgvector
-python scripts/ingest_knowledge_base.py
-```
-
-6. Start the backend server:
-```bash
-uvicorn api:app --host 0.0.0.0 --port 8000 --reload
-```
-
-### Step 3: Frontend Setup (Next.js)
-1. Open a new terminal and navigate to the `frontend/` directory.
-2. Install dependencies:
-```bash
-cd frontend
-npm install
-```
+### Step 5: Frontend Setup (Next.js)
+1. Open a **new terminal window** (leave the backend running) and navigate to the frontend:
+   ```bash
+   cd frontend
+   ```
+2. Install the Node modules:
+   ```bash
+   npm install
+   ```
 3. Start the UI:
-```bash
-npm run dev
-```
+   ```bash
+   npm run dev
+   ```
 4. Open your browser to `http://localhost:3000` and start discovering who you truly are!
 
 ---
