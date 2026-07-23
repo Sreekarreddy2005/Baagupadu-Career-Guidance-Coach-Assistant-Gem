@@ -2,10 +2,8 @@
 
 export type Phase =
   | 'idle'
-  | 'trust'
-  | 'childhood'
-  | 'teenage'
-  | 'adult'
+  | 'discovery'
+  | 'exploration'
   | 'synthesis'
   | 'guidance';
 
@@ -30,6 +28,15 @@ export interface ChatMessage {
   timestamp: number;
   phase?: Phase;
   isPhaseTransition?: boolean;
+}
+
+export interface HealthMetrics {
+  overall_score: number;
+  depth_score: number;
+  vulnerability_score: number;
+  self_awareness_score: number;
+  consistency_score: number;
+  last_calculated_at: string;
 }
 
 export type AgentState =
@@ -72,9 +79,22 @@ export const PHASES: PhaseConfig[] = [
   },
   {
     id: 'trust',
-    label: 'Trust Building',
+    label: 'Building Trust',
     shortLabel: 'Trust',
     index: 1,
+    agentMood: 'Getting to know you',
+    agentEmoji: '🤝',
+    moodColor: '#4ADE80',
+    particleColors: ['#4ADE80', '#FFB84D', '#74B9FF'],
+    gradient: ['#14532D', '#4ADE80', '#74B9FF'],
+    bgDescription: 'Forest Light',
+    chatMood: 'friendly & relaxed',
+  },
+  {
+    id: 'discovery',
+    label: 'Initial Discovery',
+    shortLabel: 'Discovery',
+    index: 2,
     agentMood: 'Getting to know you',
     agentEmoji: '👂',
     moodColor: '#FF6B8A',
@@ -84,49 +104,23 @@ export const PHASES: PhaseConfig[] = [
     chatMood: 'warm & friendly',
   },
   {
-    id: 'childhood',
-    label: 'Childhood',
-    shortLabel: 'Childhood',
-    index: 2,
-    agentMood: 'Exploring Childhood...',
+    id: 'exploration',
+    label: 'Dynamic Exploration',
+    shortLabel: 'Exploration',
+    index: 3,
+    agentMood: 'Exploring your journey...',
     agentEmoji: '✨',
     moodColor: '#74B9FF',
     particleColors: ['#74B9FF', '#FDCB6E', '#FF6B8A'],
     gradient: ['#74B9FF', '#FDCB6E', '#FF6B8A'],
     bgDescription: 'Dreamy Day',
-    chatMood: 'soft & nostalgic',
-  },
-  {
-    id: 'teenage',
-    label: 'Teenage Years',
-    shortLabel: 'Teenage',
-    index: 3,
-    agentMood: 'Reliving your spark...',
-    agentEmoji: '⚡',
-    moodColor: '#6C3CE1',
-    particleColors: ['#6C3CE1', '#00CEC9', '#FF6B8A'],
-    gradient: ['#2D1B69', '#6C3CE1', '#00CEC9'],
-    bgDescription: 'Vibrant Night',
-    chatMood: 'energetic & curious',
-  },
-  {
-    id: 'adult',
-    label: 'Adult Life',
-    shortLabel: 'Adult',
-    index: 4,
-    agentMood: 'Understanding you today...',
-    agentEmoji: '🌿',
-    moodColor: '#00B894',
-    particleColors: ['#00B894', '#0984E3', '#6C3CE1'],
-    gradient: ['#00B894', '#0984E3', '#2D1B69'],
-    bgDescription: 'Grounded Present',
-    chatMood: 'clear & focused',
+    chatMood: 'curious & open',
   },
   {
     id: 'synthesis',
     label: 'Synthesis',
     shortLabel: 'Synthesis',
-    index: 5,
+    index: 4,
     agentMood: 'Reflecting...',
     agentEmoji: '💭',
     moodColor: '#FDCB6E',
@@ -139,7 +133,7 @@ export const PHASES: PhaseConfig[] = [
     id: 'guidance',
     label: 'Guidance',
     shortLabel: 'Guidance',
-    index: 6,
+    index: 5,
     agentMood: 'Finding Your Path...',
     agentEmoji: '🎯',
     moodColor: '#FFB84D',

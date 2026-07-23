@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.5.17",
     "@react-spring/three": "^10.1.2",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
@@ -16,15 +17,19 @@
     "@types/canvas-confetti": "^1.9.0",
     "@types/three": "^0.185.0",
     "@xyflow/react": "^12.11.1",
+    "axios": "^1.18.1",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^12.42.0",
+    "idb-keyval": "^6.3.0",
     "lottie-react": "^2.4.1",
     "lucide-react": "^1.22.0",
     "next": "16.2.9",
     "next-themes": "^0.4.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-markdown": "^10.1.0",
     "recharts": "^3.9.0",
+    "remark-gfm": "^4.0.1",
     "three": "^0.185.0",
     "zustand": "^5.0.14"
   },

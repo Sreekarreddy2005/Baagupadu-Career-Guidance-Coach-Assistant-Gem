@@ -9,9 +9,12 @@ interface ChatStore {
   completedPhases: Phase[];
   isOpen: boolean;
   personaResult: PersonaResult | null;
+  activeSessionId: string | null;
   showVisualization: boolean;
 
   // Actions
+  setActiveSessionId: (id: string | null) => void;
+  setMessages: (messages: ChatMessage[]) => void;
   addMessage: (msg: Omit<ChatMessage, 'id' | 'timestamp'>) => void;
   setAgentState: (state: AgentState) => void;
   setPhase: (phase: Phase) => void;
@@ -34,11 +37,16 @@ export const useChatStore = create<ChatStore>()(
     (set) => ({
       messages: [INITIAL_MESSAGE],
       agentState: 'idle',
-      currentPhase: 'trust',
+      currentPhase: 'discovery',
       completedPhases: [],
       isOpen: true,
       personaResult: null,
+      activeSessionId: null,
       showVisualization: false,
+
+      setActiveSessionId: (id) => set({ activeSessionId: id }),
+      
+      setMessages: (messages) => set({ messages }),
 
       addMessage: (msg) =>
         set((state) => ({
@@ -69,16 +77,18 @@ export const useChatStore = create<ChatStore>()(
 
       clearMessages: () => set({ 
         messages: [INITIAL_MESSAGE], 
-        currentPhase: 'trust', 
+        currentPhase: 'discovery', 
         completedPhases: [],
         agentState: 'idle',
         showVisualization: false,
         personaResult: null,
+        activeSessionId: null,
       }),
     }),
     {
       name: 'baagupadu-chat-session',
       partialize: (state) => ({
+        activeSessionId: state.activeSessionId,
         messages: state.messages,
         currentPhase: state.currentPhase,
         completedPhases: state.completedPhases,

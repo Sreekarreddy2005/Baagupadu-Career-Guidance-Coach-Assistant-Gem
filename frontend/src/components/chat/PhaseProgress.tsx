@@ -23,7 +23,7 @@ export default function PhaseProgress() {
     <div className="w-full pt-4 pb-8">
       <div className="flex items-center relative max-w-4xl mx-auto px-4">
         {ACTIVE_PHASES.map((phase, idx) => {
-          const isDone = idx < currentIdx || completedPhases.includes(phase.id);
+          const isDone = completedPhases.includes(phase.id);
           const isCurrent = phase.id === currentPhase;
           
           const nodeBg = isCurrent ? 'var(--color-secondary)' : isDone ? '#4ADE80' : 'white';
