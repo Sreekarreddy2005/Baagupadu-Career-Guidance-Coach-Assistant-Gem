@@ -5,7 +5,7 @@
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![AWS Bedrock](https://img.shields.io/badge/AWS_Bedrock-Llama_3_70B-FF9900?style=for-the-badge&logo=amazonaws)](https://aws.amazon.com/bedrock/)
+[![Ollama](https://img.shields.io/badge/Local_AI-Ollama-FF9900?style=for-the-badge&logo=ollama)](https://ollama.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pgvector-336791?style=for-the-badge&logo=postgresql)](https://postgresql.org/)
 [![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)](https://react.dev/)
 
@@ -31,11 +31,11 @@ Baagupadu is powered by a **Multi-Agent Directed Acyclic Graph (LangGraph)**. Ra
 This ensures Sahayam is an empathetic psychological coach, while complex logic runs invisibly in the background.
 
 ### 1. The 5-Agent LangGraph Node System
-- **Planner Agent:** Analyzes the conversation history against our rules (the `router.md`). It dictates the goal for the turn (e.g. "Pivot to teenage years to explore fears of failure"). It strictly enforces the psychological coaching frame.
-- **Evaluator Agent:** Acts as the strict gatekeeper. It reviews the Planner's proposed plan against our psychological `guardrails.md`. If the plan is unsafe or tone-deaf, it is rejected and replanned.
-- **Executor Agent (Sahayam):** The empathetic Chat LLM. It receives the approved plan, the active phase rules via RAG, and Long-Term Memory context. It focuses entirely on talking human-to-human with the user.
-- **Synthesizer Agent:** Analyzes the Executor's outgoing response to determine if the user has naturally advanced to a new psychological phase (e.g., transitioning from *Trust Building* to *Childhood Exploration*).
-- **Extractor Agent:** Extracts structured JSON traits (e.g., `resilience`, `autonomy`) from the conversation and updates the user's Psychological Profile in real-time.
+- **Planner Agent (Logic/Qwen):** Analyzes the conversation history against our rules (the `router.md`). It dictates the goal for the turn (e.g. "Pivot to teenage years to explore fears of failure"). It strictly enforces the psychological coaching frame.
+- **Evaluator Agent (Logic/Qwen):** Acts as the strict gatekeeper. It reviews the Planner's proposed plan against our psychological `guardrails.md`. If the plan is unsafe or tone-deaf, it is rejected and replanned.
+- **Executor Agent (Chat/Llama):** The empathetic Chat LLM. It receives the approved plan, the active phase rules via RAG, and Long-Term Memory context. It focuses entirely on talking human-to-human with the user.
+- **Synthesizer Agent (Logic/Qwen):** Analyzes the Executor's outgoing response to determine if the user has naturally advanced to a new psychological phase (e.g., transitioning from *Trust Building* to *Childhood Exploration*).
+- **Extractor Agent (Logic/Qwen):** Extracts structured JSON traits (e.g., `resilience`, `autonomy`) from the conversation and updates the user's Psychological Profile in real-time.
 
 ### 2. Session-Scoped Memory & Vector Database
 The database uses `pgvector` in PostgreSQL for both **Rules RAG** (fetching the correct coaching methodology based on the phase) and **Long-Term Memory** (semantic search of past user messages).
@@ -48,7 +48,7 @@ The database uses `pgvector` in PostgreSQL for both **Rules RAG** (fetching the 
 
 - **Frontend:** Next.js 16 (App Router), React 19, Zustand, Tailwind CSS v4, Framer Motion, React Three Fiber.
 - **Backend:** FastAPI, Uvicorn, LangGraph, SQLAlchemy (Async), PostgreSQL (`pgvector`).
-- **AI / LLM Providers Supported:** AWS Bedrock (Primary: `us.meta.llama3-1-70b-instruct-v1:0`), OpenAI, Google Gemini, Anthropic, Ollama.
+- **AI / LLM:** 100% Local AI via Ollama (Llama 3.1 8B for Chatting, Qwen 2.5 7B for Logic & Planning). (AWS Bedrock, OpenAI, and Gemini are also supported via fallback config).
 
 ---
 
