@@ -25,12 +25,24 @@ interface UserProfile {
 interface UserProfileState {
   profile: UserProfile | null;
   isLoading: boolean;
+  completedTasks: Record<string, boolean>;
+  toggleTask: (taskId: string) => void;
   loadProfile: (token: string) => Promise<void>;
 }
 
 export const useUserProfileStore = create<UserProfileState>((setStore) => ({
   profile: null,
   isLoading: true,
+  completedTasks: {},
+  
+  toggleTask: (taskId: string) => {
+    setStore((state) => ({
+      completedTasks: {
+        ...state.completedTasks,
+        [taskId]: !state.completedTasks[taskId]
+      }
+    }));
+  },
 
   loadProfile: async (token: string) => {
     setStore({ isLoading: true });

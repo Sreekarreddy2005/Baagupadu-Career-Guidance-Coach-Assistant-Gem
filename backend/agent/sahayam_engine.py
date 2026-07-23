@@ -1,7 +1,12 @@
 from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import HumanMessage, AIMessage
 from backend.agent.state import AgentState
-from backend.agent.nodes import router_node, responder_node, profile_updater_node, should_update_profile, context_router_node
+from backend.agent.agents.planner_agent import planner_node
+from backend.agent.agents.evaluator_agent import evaluator_node
+from backend.agent.agents.executor_agent import executor_node
+from backend.agent.agents.extractor_agent import extraction_node
+from backend.agent.agents.synthesizer_agent import synthesis_node
+from backend.agent.utils import should_execute, should_synthesize
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from backend.models import Message
@@ -10,34 +15,44 @@ class SahayamAgent:
     def __init__(self):
         workflow = StateGraph(AgentState)
         
-        workflow.add_node("context_router", context_router_node)
-        workflow.add_node("router", router_node)
-        workflow.add_node("responder", responder_node)
-        workflow.add_node("profile_updater", profile_updater_node)
+        # Add Nodes
+        workflow.add_node("planner", planner_node)
+        workflow.add_node("evaluator", evaluator_node)
+        workflow.add_node("executor", executor_node)
+        workflow.add_node("extraction", extraction_node)
+        workflow.add_node("synthesis", synthesis_node)
         
-        workflow.add_edge(START, "context_router")
-        workflow.add_edge("context_router", "router")
-        workflow.add_edge("router", "responder")
-        
+        # 1. Routing & Evaluation Loop
+        workflow.add_edge(START, "planner")
+        workflow.add_edge("planner", "evaluator")
         workflow.add_conditional_edges(
-            "responder",
-            should_update_profile,
+            "evaluator",
+            should_execute,
             {
-                "update_profile": "profile_updater"
+                "execute": "executor",
+                "replan": "planner"
             }
         )
         
-        workflow.add_edge("profile_updater", END)
+        # 2. Execution & Extraction
+        workflow.add_edge("executor", "extraction")
+        
+        # 3. Final Synthesis Check
+        workflow.add_conditional_edges(
+            "extraction",
+            should_synthesize,
+            {
+                "synthesize": "synthesis",
+                "end": END
+            }
+        )
+        workflow.add_edge("synthesis", END)
+        
         self.app = workflow.compile()
 
     async def chat_async(self, user_input: str, profile: dict, session_id: str, db: AsyncSession) -> str:
-        """
-        Asynchronous chat that fetches recent messages from relational DB
-        and passes the DB session to nodes for pgvector queries.
-        """
         conversation_id = profile.get("conversation_id")
         
-        # 1. Fetch short-term memory (last 4 messages) from relational DB
         chat_history = []
         if conversation_id:
             result = await db.execute(
@@ -47,38 +62,36 @@ class SahayamAgent:
                 .limit(4)
             )
             raw_messages = result.scalars().all()
-            # Reverse to chronological order
             raw_messages.reverse()
             
             for msg in raw_messages:
-                # Don't duplicate the user_input that was just saved by api.py
-                # Actually, api.py saves it BEFORE calling this, so it's already in the DB.
                 if msg.content == user_input and msg.role == "user" and msg == raw_messages[-1]:
-                    pass # We will append it manually below to keep LangChain state clean
+                    pass
                 elif msg.role == "user":
                     chat_history.append(HumanMessage(content=msg.content))
                 elif msg.role == "ai":
                     chat_history.append(AIMessage(content=msg.content))
 
-        # Append the new human message (even if api.py saved it, it's easier to explicitly add here for state)
         chat_history.append(HumanMessage(content=user_input))
 
-        # Initialize State
         state = {
             "messages": chat_history,
             "profile": profile,
-            "current_phase": profile.get("session_progress", {}).get("current_phase", "discovery"),
+            "current_phase": profile.get("session_progress", {}).get("current_phase", "trust"),
             "inferences_made": False,
             "alerts": [],
             "errors": [],
             "new_phase": None,
-            "micro_phase": None,
+            "micro_phase": profile.get("session_progress", {}).get("micro_phase", None),
             "chat_ended": False,
-            "db_session": db, # Pass db session to graph nodes
-            "user_input": user_input # specifically for embedding generation
+            "db_session": db,
+            "user_input": user_input,
+            "proposed_plan": None,
+            "is_approved": None,
+            "evaluator_feedback": None,
+            "extracted_traits": {"traits_uncovered": profile.get("persona", {}).get("traits_uncovered", [])}
         }
 
-        # Invoke the Graph Asynchronously
         result = await self.app.ainvoke(state)
         
         updated_messages = result.get("messages", [])
@@ -91,5 +104,11 @@ class SahayamAgent:
                 
         if "profile" in result:
             profile.update(result["profile"])
+            
+        # Update progress phase based on graph result
+        if result.get("new_phase"):
+            profile.setdefault("session_progress", {})["current_phase"] = result.get("new_phase")
+        if result.get("micro_phase"):
+            profile.setdefault("session_progress", {})["micro_phase"] = result.get("micro_phase")
 
         return ai_response

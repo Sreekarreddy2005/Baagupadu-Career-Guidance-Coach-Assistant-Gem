@@ -14,3 +14,7 @@ class AgentState(TypedDict):
     chat_ended: bool                # Whether the LLM signaled [END_CHAT]
     db_session: Optional[object]    # AsyncSession injected from API layer for pgvector querying
     user_input: Optional[str]       # The latest user string (used for querying vectors)
+    proposed_plan: Optional[str]    # Plan proposed by the planner node
+    is_approved: Optional[bool]     # Evaluator's approval of the plan
+    evaluator_feedback: Optional[str] # Evaluator's feedback if rejected
+    extracted_traits: dict          # Incrementally extracted traits

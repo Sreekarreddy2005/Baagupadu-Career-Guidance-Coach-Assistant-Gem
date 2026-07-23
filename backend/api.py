@@ -1,36 +1,33 @@
-import sys
 import os
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-import uvicorn
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from sqlalchemy import func
-
+import sys
+import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from backend.agent.sahayam_engine import SahayamAgent
-from backend.auth import verify_token
-from backend.database import engine, get_db, Base, init_db
-from backend.models import User, ProfileState, Conversation, Message, LongTermMemory
-from backend.core.report_generator import create_persona_docx
+from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from sqlalchemy import desc
 from sqlalchemy.orm.attributes import flag_modified
+from sqlalchemy.sql import func
 
-app = FastAPI(title="Sahayam Backend API")
+from backend.core.config import config
+from backend.database import get_db, init_db
+from backend.models import User, ProfileState, Conversation, Message, LongTermMemory
+from backend.agent.sahayam_engine import SahayamAgent
 
+
+app = FastAPI(title="Baagupadu AI Coach API")
+
+# Setup CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-class ChatRequest(BaseModel):
-    message: str
-    session_id: str
 
 agent = None
 
@@ -45,32 +42,50 @@ async def startup_event():
     except Exception as e:
         print(f"❌ Failed to initialize: {e}")
 
+from backend.auth import verify_token
+
+# ----- ENDPOINTS -----
+
 @app.get("/api/profile")
 async def get_profile(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(ProfileState).where(ProfileState.user_id == user_id))
-    profile = result.scalars().first()
+    # Ensure user exists
+    user_result = await db.execute(select(User).where(User.id == user_id))
+    user = user_result.scalars().first()
+    if not user:
+        user = User(id=user_id)
+        db.add(user)
+        await db.commit()
 
+    # Get active or create conversation
+    conv_result = await db.execute(
+        select(Conversation).where(Conversation.user_id == user_id).order_by(Conversation.start_time.desc()).limit(1)
+    )
+    conversation = conv_result.scalars().first()
+
+    if not conversation:
+        conversation = Conversation(user_id=user_id)
+        db.add(conversation)
+        await db.commit()
+        await db.refresh(conversation)
+
+    # Get or create profile state for this conversation
+    result = await db.execute(select(ProfileState).where(ProfileState.conversation_id == conversation.id))
+    profile = result.scalars().first()
+    
     if not profile:
-        # Ensure user exists
-        user_result = await db.execute(select(User).where(User.id == user_id))
-        user = user_result.scalars().first()
-        if not user:
-            user = User(id=user_id)
-            db.add(user)
-        
-        profile = ProfileState(user_id=user_id)
+        profile = ProfileState(conversation_id=conversation.id)
         db.add(profile)
         await db.commit()
         await db.refresh(profile)
 
     # Fetch recent conversations for the sidebar
-    conv_result = await db.execute(
+    conv_history_result = await db.execute(
         select(Conversation)
         .where(Conversation.user_id == user_id)
         .order_by(Conversation.start_time.desc())
         .limit(10)
     )
-    conversations = conv_result.scalars().all()
+    conversations = conv_history_result.scalars().all()
     
     sessions_dict = {}
     for conv in conversations:
@@ -87,7 +102,8 @@ async def get_profile(user_id: str = Depends(verify_token), db: AsyncSession = D
         }
 
     return {
-        "user_id": profile.user_id,
+        "user_id": user_id,
+        "conversation_id": conversation.id,
         "session_progress": profile.session_progress,
         "life_stage_data": profile.life_stage_data,
         "persona": profile.persona,
@@ -97,28 +113,35 @@ async def get_profile(user_id: str = Depends(verify_token), db: AsyncSession = D
         }
     }
 
+class ChatRequest(BaseModel):
+    message: str
+    session_id: str = "default"
+
 @app.post("/api/chat")
 async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
     global agent
     if not agent:
         return {"response": "Error: Agent not initialized properly."}
 
-    # 1. Fetch short-term state
-    result = await db.execute(select(ProfileState).where(ProfileState.user_id == user_id))
-    db_profile = result.scalars().first()
-    if not db_profile:
-        raise HTTPException(status_code=404, detail="Profile not found.")
-
-    # 2. Get active conversation or create one
+    # 1. Get active conversation
     conv_result = await db.execute(
         select(Conversation).where(Conversation.user_id == user_id).order_by(Conversation.start_time.desc()).limit(1)
     )
     conversation = conv_result.scalars().first()
-    if not conversation or conversation.end_time:
+    if not conversation:
         conversation = Conversation(user_id=user_id)
         db.add(conversation)
         await db.commit()
         await db.refresh(conversation)
+
+    # 2. Fetch short-term state tied to conversation
+    result = await db.execute(select(ProfileState).where(ProfileState.conversation_id == conversation.id))
+    db_profile = result.scalars().first()
+    if not db_profile:
+        db_profile = ProfileState(conversation_id=conversation.id)
+        db.add(db_profile)
+        await db.commit()
+        await db.refresh(db_profile)
 
     # 3. Save User Message
     user_msg = Message(conversation_id=conversation.id, role="user", content=request.message)
@@ -127,7 +150,7 @@ async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: A
 
     # Pass dict state to agent
     profile_dict = {
-        "user_id": db_profile.user_id,
+        "user_id": user_id, # Still needed for some fallback if any
         "conversation_id": conversation.id,
         "session_progress": db_profile.session_progress or {},
         "life_stage_data": db_profile.life_stage_data or {},
@@ -139,7 +162,7 @@ async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: A
         # The agent internally fetches context via pgvector and saves new insights
         response = await agent.chat_async(request.message, profile_dict, request.session_id, db)
         
-        current_phase = profile_dict.get("session_progress", {}).get("current_phase", "discovery")
+        current_phase = profile_dict.get("session_progress", {}).get("current_phase", "trust")
         chat_completed = profile_dict.get("session_progress", {}).get("completed", False)
 
         # 4. Update short-term profile state
@@ -164,40 +187,10 @@ async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: A
             "chat_completed": chat_completed,
         }
     except Exception as e:
-        print(f"Chat Error: {e}")
-        return {"response": f"Error processing request"}
-
-@app.post("/api/reset")
-async def reset_chat(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(ProfileState).where(ProfileState.user_id == user_id))
-    db_profile = result.scalars().first()
-    
-    if db_profile:
-        demographics = db_profile.life_stage_data.get("demographics") if db_profile.life_stage_data else None
-        db_profile.session_progress = {}
-        db_profile.life_stage_data = {"demographics": demographics} if demographics else {}
-        db_profile.persona = {}
-        db_profile.guidance = {}
-        
-        flag_modified(db_profile, "session_progress")
-        flag_modified(db_profile, "life_stage_data")
-        flag_modified(db_profile, "persona")
-        flag_modified(db_profile, "guidance")
-        
-        db.add(db_profile)
-        
-    # Close any active conversation for this user
-    conv_result = await db.execute(
-        select(Conversation).where(Conversation.user_id == user_id, Conversation.end_time.is_(None))
-    )
-    active_conversations = conv_result.scalars().all()
-    for conv in active_conversations:
-        conv.end_time = func.now()
-        db.add(conv)
-        
-    await db.commit()
-        
-    return {"status": "success"}
+        import traceback
+        err = traceback.format_exc()
+        print(f"Chat Error: {err}")
+        return {"response": f"Error processing request: {str(e)}"}
 
 class DemographicsRequest(BaseModel):
     full_name: str
@@ -209,11 +202,23 @@ class DemographicsRequest(BaseModel):
 
 @app.post("/api/profile/demographics")
 async def update_demographics(request: DemographicsRequest, user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(ProfileState).where(ProfileState.user_id == user_id))
+    conv_result = await db.execute(
+        select(Conversation).where(Conversation.user_id == user_id).order_by(Conversation.start_time.desc()).limit(1)
+    )
+    conversation = conv_result.scalars().first()
+    if not conversation:
+        conversation = Conversation(user_id=user_id)
+        db.add(conversation)
+        await db.commit()
+        await db.refresh(conversation)
+
+    result = await db.execute(select(ProfileState).where(ProfileState.conversation_id == conversation.id))
     db_profile = result.scalars().first()
-    
     if not db_profile:
-        raise HTTPException(status_code=404, detail="Profile not found.")
+        db_profile = ProfileState(conversation_id=conversation.id)
+        db.add(db_profile)
+        await db.commit()
+        await db.refresh(db_profile)
         
     life_stage_data = dict(db_profile.life_stage_data or {})
     life_stage_data["demographics"] = {
@@ -232,47 +237,66 @@ async def update_demographics(request: DemographicsRequest, user_id: str = Depen
     
     return {"status": "success", "demographics": life_stage_data["demographics"]}
 
-@app.get("/api/generate-report")
-async def generate_report(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(ProfileState).where(ProfileState.user_id == user_id))
-    db_profile = result.scalars().first()
-    
-    if not db_profile:
-        raise HTTPException(status_code=404, detail="Profile not found.")
-        
-    profile_dict = {
-        "life_stage_data": db_profile.life_stage_data or {},
-        "persona": db_profile.persona or {},
-        "guidance": db_profile.guidance or {},
-    }
-    
-    file_stream = create_persona_docx(profile_dict)
-    
-    headers = {
-        'Content-Disposition': 'attachment; filename="baagupadu_report.docx"'
-    }
-    
-    return StreamingResponse(
-        iter([file_stream.getvalue()]), 
-        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        headers=headers
+@app.post("/api/reset")
+async def reset_chat(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
+    # Close any active conversation for this user
+    conv_result = await db.execute(
+        select(Conversation).where(Conversation.user_id == user_id, Conversation.end_time.is_(None))
     )
-
-@app.delete("/api/user")
-async def delete_user_account(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
-    """
-    Deletes the user and cascades to all related data (conversations, messages, LTM, profile).
-    """
-    result = await db.execute(select(User).where(User.id == user_id))
-    user = result.scalars().first()
-    
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    active_conversations = conv_result.scalars().all()
+    for conv in active_conversations:
+        conv.end_time = func.now()
+        db.add(conv)
         
-    await db.delete(user)
+    # Create new conversation
+    new_conv = Conversation(user_id=user_id)
+    db.add(new_conv)
     await db.commit()
+    await db.refresh(new_conv)
     
-    return {"status": "success", "message": "User and all associated data permanently deleted"}
+    # Create new profile state for this new conversation
+    new_profile = ProfileState(conversation_id=new_conv.id)
+    db.add(new_profile)
+    await db.commit()
+        
+    return {"status": "success", "message": "Conversation context cleared and restarted"}
 
-if __name__ == "__main__":
-    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
+@app.get("/api/roadmap")
+async def get_roadmap(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
+    conv_result = await db.execute(
+        select(Conversation).where(Conversation.user_id == user_id).order_by(Conversation.start_time.desc()).limit(1)
+    )
+    conversation = conv_result.scalars().first()
+    if not conversation:
+        return {"roadmap": {}}
+        
+    result = await db.execute(select(ProfileState).where(ProfileState.conversation_id == conversation.id))
+    profile = result.scalars().first()
+    
+    if not profile or not profile.guidance:
+        return {"roadmap": {}}
+    return {"roadmap": profile.guidance.get("roadmap", {})}
+
+@app.get("/api/dashboard")
+async def get_dashboard(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
+    conv_result = await db.execute(
+        select(Conversation).where(Conversation.user_id == user_id).order_by(Conversation.start_time.desc()).limit(1)
+    )
+    conversation = conv_result.scalars().first()
+    if not conversation:
+        return {"metrics": {}}
+        
+    result = await db.execute(select(ProfileState).where(ProfileState.conversation_id == conversation.id))
+    profile = result.scalars().first()
+    
+    if not profile:
+        return {"metrics": {}}
+        
+    # Calculate some dynamic metrics for the UI based on session_progress
+    progress = profile.session_progress or {}
+    metrics = {
+        "trust_score": progress.get("trust_score", 0),
+        "empathy_alignment": progress.get("empathy_alignment", 85), 
+        "clarity_index": len(profile.persona.get("traits_uncovered", [])) * 10
+    }
+    return {"metrics": metrics}

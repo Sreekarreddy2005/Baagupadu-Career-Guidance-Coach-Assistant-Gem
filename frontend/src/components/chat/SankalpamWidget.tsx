@@ -5,7 +5,7 @@ import { Flame, Star, Award } from 'lucide-react';
 import { useUserProfileStore } from '@/stores/userProfileStore';
 
 export const SankalpamWidget: React.FC = () => {
-  const { profile } = useUserProfileStore();
+  const { profile, completedTasks } = useUserProfileStore();
   
   // Base points for starting
   let points = 50;
@@ -18,7 +18,21 @@ export const SankalpamWidget: React.FC = () => {
   if (currentPhase === 'completed') points += 1000;
   
   // Extra points if they have a persona
-  if (profile?.persona?.archetype) points += 200;
+  if (profile?.persona?.core_identity) points += 200;
+
+  // Add points from completed accountability tasks
+  const roadmap = profile?.guidance?.roadmap;
+  if (roadmap?.action_plan) {
+    roadmap.action_plan.forEach((period: any) => {
+      if (period.tasks) {
+        period.tasks.forEach((task: any) => {
+          if (completedTasks[task.action]) {
+            points += (task.points || 100);
+          }
+        });
+      }
+    });
+  }
 
   return (
     <div className="w-full bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-6 border border-orange-100 shadow-sm mt-6 relative overflow-hidden">

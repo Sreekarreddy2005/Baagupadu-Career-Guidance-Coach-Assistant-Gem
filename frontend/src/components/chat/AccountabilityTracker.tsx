@@ -7,15 +7,15 @@ import { useDemoChat } from '@/hooks/useChat';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const AccountabilityTracker: React.FC = () => {
-  const { profile } = useUserProfileStore();
+  const { profile, completedTasks, toggleTask } = useUserProfileStore();
   const { sendMessage } = useDemoChat();
   const roadmap = profile?.guidance?.roadmap;
   
   const [expandedTimeframes, setExpandedTimeframes] = useState<Record<string, boolean>>({
-    'This Week': true, // Default open
+    'Immediate': true, // Default open
   });
   
-  const [completedTasks, setCompletedTasks] = useState<Record<string, boolean>>({});
+  const [expandedDetails, setExpandedDetails] = useState<Record<string, boolean>>({});
 
   if (!roadmap || !roadmap.action_plan || roadmap.action_plan.length === 0) return null;
 
@@ -23,8 +23,8 @@ export const AccountabilityTracker: React.FC = () => {
     setExpandedTimeframes(prev => ({ ...prev, [timeframe]: !prev[timeframe] }));
   };
 
-  const toggleTask = (taskId: string) => {
-    setCompletedTasks(prev => ({ ...prev, [taskId]: !prev[taskId] }));
+  const toggleDetails = (taskId: string) => {
+    setExpandedDetails(prev => ({ ...prev, [taskId]: !prev[taskId] }));
   };
 
   const handleStruggling = (taskAction: string) => {
@@ -96,36 +96,62 @@ export const AccountabilityTracker: React.FC = () => {
                     className="flex flex-col"
                   >
                     {tasks.map((task: any, tIdx: number) => {
-                      const isDone = completedTasks[task.id];
+                      const isDone = completedTasks[task.action];
                       
                       return (
                         <div key={task.id || tIdx} className="p-4 border-t border-slate-100 flex items-start gap-3 transition-colors hover:bg-slate-50">
                           <button 
-                            onClick={() => toggleTask(task.id)}
+                            onClick={() => toggleTask(task.action)}
                             className={`mt-0.5 flex-shrink-0 transition-colors ${isDone ? 'text-emerald-500' : 'text-slate-300 hover:text-emerald-400'}`}
                           >
                             {isDone ? <CheckCircle2 size={20} /> : <Circle size={20} />}
                           </button>
                           
                           <div className="flex flex-col w-full">
-                            <span className={`text-sm mb-1 ${isDone ? 'text-emerald-900 line-through opacity-70' : 'text-slate-700'}`}>
+                            <span 
+                              onClick={() => task.details && toggleDetails(task.action)}
+                              className={`text-sm mb-1 ${task.details ? 'cursor-pointer hover:text-blue-600' : ''} ${isDone ? 'text-emerald-900 line-through opacity-70' : 'text-slate-700'}`}
+                            >
                               {task.action}
                             </span>
+                            
+                            <AnimatePresence>
+                              {expandedDetails[task.action] && task.details && (
+                                <motion.div 
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  className="text-xs text-slate-500 mt-2 mb-3 bg-white p-3 rounded-lg border border-slate-100"
+                                >
+                                  {task.details}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
                             
                             <div className="flex justify-between items-center mt-2">
                               <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
                                 +{task.points || 100} SP
                               </span>
                               
-                              {!isDone && (
-                                <button 
-                                  onClick={() => handleStruggling(task.action)}
-                                  className="text-[10px] flex items-center gap-1 font-semibold text-slate-400 hover:text-blue-500 transition-colors"
-                                >
-                                  <HelpCircle size={12} />
-                                  Struggling?
-                                </button>
-                              )}
+                              <div className="flex items-center gap-4">
+                                {task.details && (
+                                  <button 
+                                    onClick={() => toggleDetails(task.action)}
+                                    className="text-[10px] font-semibold text-slate-400 hover:text-slate-600"
+                                  >
+                                    {expandedDetails[task.action] ? 'Hide Details' : 'View Details'}
+                                  </button>
+                                )}
+                                {!isDone && (
+                                  <button 
+                                    onClick={() => handleStruggling(task.action)}
+                                    className="text-[10px] flex items-center gap-1 font-semibold text-slate-400 hover:text-blue-500 transition-colors"
+                                  >
+                                    <HelpCircle size={12} />
+                                    Struggling?
+                                  </button>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>

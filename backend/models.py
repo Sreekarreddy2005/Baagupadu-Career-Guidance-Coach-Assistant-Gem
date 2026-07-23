@@ -13,9 +13,7 @@ class User(Base):
     last_login = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationships
-    profile_state = relationship("ProfileState", back_populates="user", uselist=False, cascade="all, delete-orphan")
     conversations = relationship("Conversation", back_populates="user", cascade="all, delete-orphan")
-    long_term_memories = relationship("LongTermMemory", back_populates="user", cascade="all, delete-orphan")
 
 
 class Conversation(Base):
@@ -28,6 +26,8 @@ class Conversation(Base):
     
     user = relationship("User", back_populates="conversations")
     messages = relationship("Message", back_populates="conversation", cascade="all, delete-orphan", order_by="Message.timestamp")
+    profile_state = relationship("ProfileState", back_populates="conversation", uselist=False, cascade="all, delete-orphan")
+    long_term_memories = relationship("LongTermMemory", back_populates="conversation", cascade="all, delete-orphan")
 
 
 class Message(Base):
@@ -49,7 +49,7 @@ class ProfileState(Base):
     """
     __tablename__ = "profile_state"
 
-    user_id = Column(String(255), ForeignKey("users.id"), primary_key=True)
+    conversation_id = Column(Integer, ForeignKey("conversations.id"), primary_key=True)
     
     session_progress = Column(JSON, default=dict)
     life_stage_data = Column(JSON, default=dict)
@@ -58,7 +58,7 @@ class ProfileState(Base):
     
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    user = relationship("User", back_populates="profile_state")
+    conversation = relationship("Conversation", back_populates="profile_state")
 
 
 class LongTermMemory(Base):
@@ -68,7 +68,7 @@ class LongTermMemory(Base):
     __tablename__ = "long_term_memory"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(String(255), ForeignKey("users.id"), index=True)
+    conversation_id = Column(Integer, ForeignKey("conversations.id"), index=True)
     
     memory_type = Column(String(100)) # e.g., 'childhood_insight', 'career_pattern', 'user_preference'
     content = Column(Text) # The actual insight text
@@ -78,7 +78,7 @@ class LongTermMemory(Base):
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    user = relationship("User", back_populates="long_term_memories")
+    conversation = relationship("Conversation", back_populates="long_term_memories")
 
 
 class KnowledgeBaseChunk(Base):

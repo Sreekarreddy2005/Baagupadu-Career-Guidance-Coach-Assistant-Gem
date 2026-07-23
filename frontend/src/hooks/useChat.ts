@@ -60,12 +60,6 @@ export function useDemoChat() {
             setShowVisualization(true);
           }
           
-          addMessage({
-            sender: 'system',
-            text: `Moving to ${backendPhase.charAt(0).toUpperCase() + backendPhase.slice(1)} phase...`,
-            isPhaseTransition: true,
-            phase: backendPhase,
-          });
         }
         
         // Check if the AI indicated the chat should end
