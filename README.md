@@ -11,7 +11,7 @@
 
 *Baagupadu ("To Prosper & Better Oneself" in Telugu) is a highly interactive, AI-powered mentoring ecosystem designed to help you think independently, make better career decisions, and take control of your life.*
 
-[Architecture](#architecture--ai-engine) • [Branching Strategy](#branching-strategy) • [Tech Stack](#tech-stack) • [Installation & Setup](#installation--local-setup)
+[Architecture](#architecture--multi-agent-engine) • [Tech Stack](#tech-stack) • [Installation & Setup](#installation--local-setup)
 
 </div>
 
@@ -20,72 +20,55 @@
 ## 📖 The Vision
 The internet gave us unlimited access to knowledge, but it created an **"Information Paradox"**—confusion, lack of direction, and shallow learning. Baagupadu cuts through the noise by starting with the most important subject: **You.** 
 
-Instead of boring surveys, you engage in a deep, empathetic conversation with **Sahayam**, your personal AI mentor. Sahayam explores your childhood, teenage years, and adulthood to generate a comprehensive synthesis of your personality and an actionable career roadmap.
+Instead of boring surveys, you engage in a deep, empathetic conversation with **Sahayam**, your personal psychological AI mentor. Sahayam explores your childhood, teenage years, and adulthood to generate a comprehensive synthesis of your personality and an actionable career roadmap.
 
 ---
 
-## 🧠 Architecture & AI Engine
+## 🧠 Architecture & Multi-Agent Engine
 
-Baagupadu is not a simple chatbot. It is a highly complex, multi-agent AI system designed to simulate a real human psychologist and career coach.
+Baagupadu is powered by a **Multi-Agent Directed Acyclic Graph (LangGraph)**. Rather than a single monolithic prompt, we distribute the cognitive load across specialized agents running sequentially per conversation turn.
 
-### 1. The Evaluator-Actor Model
-To ensure Sahayam remains empathetic while still gathering psychological data, the system is split into two background roles powered by **AWS Bedrock (Meta Llama 3.1 70B Instruct)**:
-- **The Actor:** Focuses entirely on having a warm, empathetic, and fast-paced conversation with the user (70% Best Friend, 30% Fast-Moving Guide).
-- **The Evaluator:** Runs silently in the background, analyzing every message the user sends to extract psychological traits, quality signals, and career motivations.
+This ensures Sahayam is an empathetic psychological coach, while complex logic runs invisibly in the background.
 
-### 2. Semantic RAG & Context Management
-The core "rules" and question banks for Sahayam contain over **220,000 tokens** of text. Feeding this to an AI directly would cause "Context Window Collapse". 
-To solve this, we implemented **Semantic RAG (Retrieval-Augmented Generation)** using `pgvector` in PostgreSQL:
-- The backend mathematically searches the database for the exact rules needed for the current conversation phase.
-- It injects a strictly limited number of chunks (max 2) into the AI's context.
-- **Fuzzy Deduplication:** The Evaluator intelligently merges similar traits to keep the AI's memory clean and lightning-fast.
+### 1. The 5-Agent LangGraph Node System
+- **Planner Agent:** Analyzes the conversation history against our rules (the `router.md`). It dictates the goal for the turn (e.g. "Pivot to teenage years to explore fears of failure"). It strictly enforces the psychological coaching frame.
+- **Evaluator Agent:** Acts as the strict gatekeeper. It reviews the Planner's proposed plan against our psychological `guardrails.md`. If the plan is unsafe or tone-deaf, it is rejected and replanned.
+- **Executor Agent (Sahayam):** The empathetic Chat LLM. It receives the approved plan, the active phase rules via RAG, and Long-Term Memory context. It focuses entirely on talking human-to-human with the user.
+- **Synthesizer Agent:** Analyzes the Executor's outgoing response to determine if the user has naturally advanced to a new psychological phase (e.g., transitioning from *Trust Building* to *Childhood Exploration*).
+- **Extractor Agent:** Extracts structured JSON traits (e.g., `resilience`, `autonomy`) from the conversation and updates the user's Psychological Profile in real-time.
 
----
-
-## 🌿 Branching Strategy (The Dual-Core System)
-
-Because of the project's scale, development is strictly split across two Git branches. This ensures that the "Brain" (psychology rules) and the "Body" (infrastructure) are developed safely.
-
-### 1. `main` Branch (The Brain)
-The `main` branch is entirely dedicated to the psychological frameworks, AI prompts, and conversation rules. 
-- **What lives here:** The `gems/nenu_evaru/` directory.
-- **Why:** This isolates the prompt engineering. Any changes to Sahayam's personality, how it extracts traits, or what questions it asks are safely version-controlled here.
-
-### 2. `sreekar-expansion-branch` (The Body)
-This is the active development branch for the full-stack infrastructure.
-- **What lives here:** The `frontend/` (Next.js UI), `backend/` (FastAPI, pgvector, LangChain, AWS integration), and `requirements.txt`.
-- **Why:** This is where the heavy lifting happens. We recently used this branch to migrate from local, unstable 8B models (which suffered from instruction leakage) to **AWS Bedrock (Llama 70B)**, completely overhauling the RAG logic and API routes.
-
-*(Note: To run the full application, you must be on the `sreekar-expansion-branch`).*
+### 2. Session-Scoped Memory & Vector Database
+The database uses `pgvector` in PostgreSQL for both **Rules RAG** (fetching the correct coaching methodology based on the phase) and **Long-Term Memory** (semantic search of past user messages).
+- **100% Session Isolation:** The `Conversation`, `ProfileState`, and `LongTermMemory` models are tied exclusively to the active Session ID.
+- **Total Amnesia:** Starting a "New Chat" spins up a completely blank psychological profile and an empty vector memory bank. Your past sessions are saved, but they do not bleed into your new isolated sessions.
 
 ---
 
 ## 🛠️ Tech Stack
 
 - **Frontend:** Next.js 16 (App Router), React 19, Zustand, Tailwind CSS v4, Framer Motion, React Three Fiber.
-- **Backend:** FastAPI, Uvicorn, SQLAlchemy (Async), PostgreSQL (`pgvector`).
-- **AI / LLM:** AWS Bedrock (`us.meta.llama3-1-70b-instruct-v1:0`), LangChain, Boto3, SentenceTransformers.
+- **Backend:** FastAPI, Uvicorn, LangGraph, SQLAlchemy (Async), PostgreSQL (`pgvector`).
+- **AI / LLM Providers Supported:** AWS Bedrock (Primary: `us.meta.llama3-1-70b-instruct-v1:0`), OpenAI, Google Gemini, Anthropic, Ollama.
 
 ---
 
 ## 🚀 Installation & Local Setup
 
-Want to run Baagupadu locally? Follow these steps from the **`sreekar-expansion-branch`**.
+Want to run Baagupadu locally? Follow these steps.
 
 ### Prerequisites
 - Node.js (v18+)
 - Python (v3.10+)
 - PostgreSQL (with `pgvector` extension installed)
-- AWS Account with Bedrock Access
+- AWS Account with Bedrock Access (or OpenAI/Gemini keys)
 
 ### Step 1: Clone the Repository
 ```bash
 git clone https://github.com/Sreekarreddy2005/Baagupadu-Career-Guidance-Coach-Assistant-Gem.git
 cd Baagupadu-Career-Guidance-Coach-Assistant-Gem
-git checkout sreekar-expansion-branch
 ```
 
-### Step 2: Backend Setup (FastAPI & AWS)
+### Step 2: Backend Setup (FastAPI & AI)
 1. Open the `backend/` directory.
 2. Create a virtual environment and install dependencies:
 ```bash
@@ -94,18 +77,27 @@ python -m venv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 pip install -r requirements.txt
 ```
-3. Create a `.env` file inside the `backend/` folder and add your AWS credentials and Database URL:
-```env
-# LLM Configuration
-LLM_PROVIDER="bedrock"
-AWS_ACCESS_KEY_ID="your_access_key_here"
-AWS_SECRET_ACCESS_KEY="your_secret_key_here"
-AWS_REGION="us-east-1"
-
-# Database
-DATABASE_URL="postgresql+asyncpg://user:password@localhost/baagupadu"
+3. Copy the example environment variables file and configure it:
+```bash
+cp .env.example .env
 ```
-4. Start the backend server:
+4. Open the `.env` file and add your AI Provider keys (e.g., AWS Bedrock, OpenAI) and your PostgreSQL Database URL.
+```env
+LLM_PROVIDER=bedrock
+DATABASE_URL=postgresql+asyncpg://user:password@localhost/baagupadu
+```
+
+5. **Initialize the Database & Knowledge Base:**
+Because of the pgvector implementation, you must first create the tables and embed the psychological rules:
+```bash
+# This creates the tables in Postgres
+python scripts/migrate_db.py
+
+# This reads gems/nenu_evaru/prompts/ and embeds them into pgvector
+python scripts/ingest_knowledge_base.py
+```
+
+6. Start the backend server:
 ```bash
 uvicorn api:app --host 0.0.0.0 --port 8000 --reload
 ```
