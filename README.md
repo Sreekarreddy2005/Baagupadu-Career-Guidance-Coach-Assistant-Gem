@@ -155,6 +155,30 @@ We use `pgvector` for Semantic RAG. You must enable it in your database.
 
 ---
 
+## 🏢 Enterprise Server Deployment (Docker)
+If you want to deploy Baagupadu to an office server so that your entire team can access it 24/7 without running it on your personal laptop, use the included Docker configuration.
+
+**Prerequisite:** Ensure [Docker](https://docs.docker.com/get-docker/) and Docker Compose are installed on your server.
+
+1. Clone the repository on your server:
+   ```bash
+   git clone https://github.com/Sreekarreddy2005/Baagupadu-Career-Guidance-Coach-Assistant-Gem.git
+   cd Baagupadu-Career-Guidance-Coach-Assistant-Gem
+   ```
+2. Start the entire ecosystem (Frontend, Backend, Database, and Ollama AI):
+   ```bash
+   docker-compose up -d
+   ```
+3. Wait about 3-5 minutes for the first boot. The system will automatically:
+   - Create a PostgreSQL database with `pgvector`.
+   - Download the `llama3.1:8b` and `qwen2.5:7b` AI models.
+   - Run backend database migrations and ingest the psychological rules into vector space.
+4. Your team can now access the app at `http://<your-server-ip>:3000`.
+
+*Note: If your server has an NVIDIA GPU, edit `docker-compose.yml` and uncomment the `deploy` section under the `ollama` service to enable GPU acceleration.*
+
+---
+
 <div align="center">
   <i>"The moment a person realizes that the world is shaped by people no smarter than them, everything changes."</i>
 </div>
