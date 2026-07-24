@@ -37,7 +37,7 @@ export const LedgerWidget: React.FC = () => {
     
     try {
       const token = await window.Clerk?.session?.getToken();
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const apiUrl = '';
       const response = await fetch(`${apiUrl}/api/generate-report`, {
         headers: {
           'Authorization': `Bearer ${token}`
