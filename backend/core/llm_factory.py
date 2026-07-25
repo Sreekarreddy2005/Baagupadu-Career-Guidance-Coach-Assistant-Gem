@@ -19,7 +19,7 @@ def get_llm(purpose: str = "chat") -> BaseChatModel:
             raise ValueError("OPENAI_API_KEY is not set in environment.")
         return ChatOpenAI(
             model="gpt-4o",
-            temperature=0.7,
+            temperature=0.7 if purpose == "chat" else 0.1,
             api_key=config.OPENAI_API_KEY
         )
     elif provider == "gemini":
@@ -28,7 +28,7 @@ def get_llm(purpose: str = "chat") -> BaseChatModel:
             raise ValueError("GEMINI_API_KEY is not set in environment.")
         return ChatGoogleGenerativeAI(
             model="gemini-3.5-flash",
-            temperature=0.7,
+            temperature=0.7 if purpose == "chat" else 0.1,
             api_key=config.GEMINI_API_KEY
         )
     elif provider == "anthropic":
@@ -37,7 +37,7 @@ def get_llm(purpose: str = "chat") -> BaseChatModel:
             raise ValueError("ANTHROPIC_API_KEY is not set in environment.")
         return ChatAnthropic(
             model="claude-3-5-sonnet-20240620",
-            temperature=0.7,
+            temperature=0.7 if purpose == "chat" else 0.1,
             api_key=config.ANTHROPIC_API_KEY
         )
     elif provider == "bedrock":
