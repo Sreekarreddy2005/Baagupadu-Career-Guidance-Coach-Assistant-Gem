@@ -1,7 +1,54 @@
-import json_repair
+from typing import List, Optional
+from pydantic import BaseModel, Field
 from langchain_core.messages import SystemMessage
 from backend.core.llm_factory import get_llm
 from backend.agent.state import AgentState
+
+# Pydantic Models for Persona
+class CoreIdentity(BaseModel):
+    archetype_name: str
+    tagline: str
+    description: str
+    description_for_user: str
+
+class Strength(BaseModel):
+    trait: str
+    evidence: str
+
+class GrowthArea(BaseModel):
+    area: str
+    compassionate_framing: str
+
+class PersonaProfile(BaseModel):
+    core_identity: CoreIdentity
+    strengths: List[Strength]
+    growth_areas: List[GrowthArea]
+
+# Pydantic Models for Roadmap
+class CareerPath(BaseModel):
+    title: str
+    why: str
+
+class TechnicalPathItem(BaseModel):
+    skill: str
+    description: str
+    next_skill: str
+
+class ActionTask(BaseModel):
+    action: str
+    points: int
+    details: str
+
+class ActionStage(BaseModel):
+    timeframe: str
+    tasks: List[ActionTask]
+
+class CareerRoadmap(BaseModel):
+    primary_career_path: CareerPath
+    technical_path: List[TechnicalPathItem]
+    action_plan: List[ActionStage]
+    skill_gaps: List[str]
+
 
 async def synthesis_node(state: AgentState):
     """
@@ -17,23 +64,15 @@ async def synthesis_node(state: AgentState):
         prompt = (
             "You are the Backend AI Evaluator.\n"
             "Based on these extracted user traits, generate a deep Persona Profile.\n"
-            "Output ONLY valid JSON matching this structure exactly:\n"
-            "{\n"
-            '  "core_identity": {"archetype_name": "...", "tagline": "...", "description": "...", "description_for_user": "..."},\n'
-            '  "strengths": [{"trait": "...", "evidence": "..."}],\n'
-            '  "growth_areas": [{"area": "...", "compassionate_framing": "..."}]\n'
-            "}\n\n"
             f"EXTRACTED TRAITS: {extracted_traits}"
         )
         logic_llm = get_llm(purpose="logic")
+        structured_llm = logic_llm.with_structured_output(PersonaProfile)
         try:
-            res = await logic_llm.ainvoke([SystemMessage(content=prompt)])
-            s_idx = res.content.find('{')
-            e_idx = res.content.rfind('}')
-            if s_idx != -1 and e_idx != -1:
-                persona_json = json_repair.loads(res.content[s_idx:e_idx+1])
-                persona_json["traits_uncovered"] = extracted_traits
-                profile["persona"] = persona_json
+            res: PersonaProfile = await structured_llm.ainvoke([SystemMessage(content=prompt)])
+            persona_dict = res.model_dump()
+            persona_dict["traits_uncovered"] = extracted_traits
+            profile["persona"] = persona_dict
         except Exception as e:
             print(f"Synthesis Node Persona Error: {e}")
             
@@ -41,25 +80,13 @@ async def synthesis_node(state: AgentState):
         prompt = (
             "You are the Backend AI Evaluator.\n"
             "Based on these traits, generate a detailed 3-stage Career Roadmap.\n"
-            "Output ONLY valid JSON matching this structure exactly:\n"
-            "{\n"
-            '  "primary_career_path": {"title": "...", "why": "..."},\n'
-            '  "technical_path": [{"skill": "...", "description": "...", "next_skill": "..."}],\n'
-            '  "action_plan": [\n'
-            '    {"timeframe": "Immediate", "tasks": [{"action": "...", "points": 10, "details": "..."}]}\n'
-            '  ],\n'
-            '  "skill_gaps": ["...", "..."]\n'
-            "}\n\n"
             f"EXTRACTED TRAITS: {extracted_traits}"
         )
         logic_llm = get_llm(purpose="logic")
+        structured_llm = logic_llm.with_structured_output(CareerRoadmap)
         try:
-            res = await logic_llm.ainvoke([SystemMessage(content=prompt)])
-            s_idx = res.content.find('{')
-            e_idx = res.content.rfind('}')
-            if s_idx != -1 and e_idx != -1:
-                roadmap_json = json_repair.loads(res.content[s_idx:e_idx+1])
-                profile.setdefault("guidance", {})["roadmap"] = roadmap_json
+            res: CareerRoadmap = await structured_llm.ainvoke([SystemMessage(content=prompt)])
+            profile.setdefault("guidance", {})["roadmap"] = res.model_dump()
         except Exception as e:
             print(f"Synthesis Node Roadmap Error: {e}")
 

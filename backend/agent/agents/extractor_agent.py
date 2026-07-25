@@ -1,7 +1,11 @@
-import json_repair
+from typing import List
+from pydantic import BaseModel, Field
 from langchain_core.messages import SystemMessage, AIMessage, HumanMessage
 from backend.core.llm_factory import get_llm
 from backend.agent.state import AgentState
+
+class ExtractorOutput(BaseModel):
+    traits: List[str] = Field(description="A list of 1-3 new core psychological traits demonstrated by the user. If none, an empty list.")
 
 async def extraction_node(state: AgentState):
     """
@@ -19,26 +23,21 @@ async def extraction_node(state: AgentState):
         
         prompt = (
             "You are a background psychological extractor.\n"
-            "Read this exchange and output a JSON list of 1-3 new core psychological traits demonstrated by the user. If none, output [].\n"
-            "Format EXACTLY as:\n"
-            "```json\n"
-            "[\"Trait 1\", \"Trait 2\"]\n"
-            "```\n"
+            "Read this exchange and output a list of 1-3 new core psychological traits demonstrated by the user. If none, output an empty list.\n"
             f"User: {user_msg}\n"
             f"Coach: {ai_msg}\n"
         )
         
         logic_llm = get_llm(purpose="logic")
+        structured_llm = logic_llm.with_structured_output(ExtractorOutput)
+        
         try:
-            res = await logic_llm.ainvoke([SystemMessage(content=prompt)])
-            s_idx = res.content.find('[')
-            e_idx = res.content.rfind(']')
-            if s_idx != -1 and e_idx != -1:
-                new_traits = json_repair.loads(res.content[s_idx:e_idx+1])
-                for t in new_traits:
-                    if t not in extracted_traits["traits_uncovered"]:
-                        extracted_traits["traits_uncovered"].append(t)
-        except Exception:
+            res: ExtractorOutput = await structured_llm.ainvoke([SystemMessage(content=prompt)])
+            for t in res.traits:
+                if t not in extracted_traits["traits_uncovered"]:
+                    extracted_traits["traits_uncovered"].append(t)
+        except Exception as e:
+            print(f"Extraction Node Error: {e}")
             pass
             
     return {"extracted_traits": extracted_traits}

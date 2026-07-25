@@ -1,8 +1,15 @@
 import json
 from pathlib import Path
+from typing import Optional
+from pydantic import BaseModel, Field
 from langchain_core.messages import SystemMessage, HumanMessage
 from backend.core.llm_factory import get_llm
 from backend.agent.state import AgentState
+
+class PlannerOutput(BaseModel):
+    proposed_plan: str = Field(description="A detailed 2-3 sentence directive on what the Execution Agent must do and how it should sound")
+    new_phase: str = Field(description="The new phase to transition to, or 'none' if staying in the current phase")
+    micro_phase: Optional[str] = Field(description="The micro-phase to transition to ('childhood', 'teenage', 'adult', or 'none')")
 
 async def planner_node(state: AgentState):
     """
@@ -41,33 +48,19 @@ async def planner_node(state: AgentState):
         "3. Psychological Pivot: If the user talks about a surface-level technical goal (e.g. 'I want to be an AI developer'), DO NOT plan to ask about tech stacks or datasets. Plan to pivot to their psychological motivations (e.g. 'Why this path? What early life experiences or emotions drove this?').\n"
         "4. Determine the Goal & Micro-Phase: If trust is built and it's time to explore, decide which specific life stage (childhood, teenage, adult) provides the best context based on router.md.\n"
         "5. Formulate the Plan: Write a highly precise, actionable directive for the Execution Agent (e.g., 'Ask a warm, open-ended question to build trust' or 'Pivot to childhood to explore early influences').\n"
-        "6. Phase Transition: Only transition to 'exploration', 'synthesis' or 'guidance' if the router conditions are fully met.\n\n"
-        "Format EXACTLY as:\n"
-        "PLAN: <a detailed 2-3 sentence directive on what the Execution Agent must do and how it should sound>\n"
-        "PHASE_OVERRIDE: <new_phase or 'none'>\n"
-        "MICRO_PHASE_OVERRIDE: <childhood, teenage, adult, or none>"
+        "6. Phase Transition: Only transition to 'exploration', 'synthesis' or 'guidance' if the router conditions are fully met.\n"
     )
     
     logic_llm = get_llm(purpose="logic")
+    structured_llm = logic_llm.with_structured_output(PlannerOutput)
+    
     try:
-        res = await logic_llm.ainvoke([SystemMessage(content=prompt)])
-        plan = ""
-        phase = current_phase
-        micro_phase = None
+        res: PlannerOutput = await structured_llm.ainvoke([SystemMessage(content=prompt)])
         
-        if res and res.content:
-            for line in res.content.split('\n'):
-                if line.startswith("PLAN:"):
-                    plan = line.replace("PLAN:", "").strip()
-                elif line.startswith("PHASE_OVERRIDE:"):
-                    override = line.replace("PHASE_OVERRIDE:", "").strip()
-                    if override.lower() != "none":
-                        phase = override
-                elif line.startswith("MICRO_PHASE_OVERRIDE:"):
-                    m_override = line.replace("MICRO_PHASE_OVERRIDE:", "").strip().lower()
-                    if m_override in ["childhood", "teenage", "adult"]:
-                        micro_phase = m_override
-                        
+        plan = res.proposed_plan
+        phase = res.new_phase if res.new_phase and res.new_phase.lower() != "none" else current_phase
+        micro_phase = res.micro_phase.lower() if res.micro_phase and res.micro_phase.lower() in ["childhood", "teenage", "adult"] else None
+        
         if not plan:
             return {"proposed_plan": "Continue exploration gracefully.", "new_phase": current_phase, "micro_phase": None}
             
