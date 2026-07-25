@@ -22,10 +22,12 @@ async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
 
+from sqlalchemy import text
+
 async def init_db():
     """
     Initializes the database by creating all tables defined in models.py.
-    The pgvector extension is already created manually, but SQLAlchemy needs to register the vector types.
     """
     async with engine.begin() as conn:
+        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
         await conn.run_sync(Base.metadata.create_all)
