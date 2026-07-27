@@ -1,93 +1,43 @@
-from typing import List, Optional
+from typing import Dict, Any
 from pydantic import BaseModel, Field
 from langchain_core.messages import SystemMessage
-from backend.core.llm_factory import get_llm
 from backend.agent.state import AgentState
+from backend.agent.agents.base_agent import BaseAgent
 
-# Pydantic Models for Persona
-class CoreIdentity(BaseModel):
-    archetype_name: str
-    tagline: str
-    description: str
-    description_for_user: str
+class SynthesisOutput(BaseModel):
+    is_synthesized: bool = Field(description="Always true")
+    summary: str = Field(description="The synthesized summary of the user's psychological profile")
 
-class Strength(BaseModel):
-    trait: str
-    evidence: str
-
-class GrowthArea(BaseModel):
-    area: str
-    compassionate_framing: str
-
-class PersonaProfile(BaseModel):
-    core_identity: CoreIdentity
-    strengths: List[Strength]
-    growth_areas: List[GrowthArea]
-
-# Pydantic Models for Roadmap
-class CareerPath(BaseModel):
-    title: str
-    why: str
-
-class TechnicalPathItem(BaseModel):
-    skill: str
-    description: str
-    next_skill: str
-
-class ActionTask(BaseModel):
-    action: str
-    points: int
-    details: str
-
-class ActionStage(BaseModel):
-    timeframe: str
-    tasks: List[ActionTask]
-
-class CareerRoadmap(BaseModel):
-    primary_career_path: CareerPath
-    technical_path: List[TechnicalPathItem]
-    action_plan: List[ActionStage]
-    skill_gaps: List[str]
-
-
-async def synthesis_node(state: AgentState):
-    """
-    5. Synthesis Node: Evaluator LLM (Qwen).
-    Generates the final Persona/Roadmap JSON based ONLY on extracted_traits.
-    Triggered only when transitioning to synthesis or guidance.
-    """
-    current_phase = state.get("current_phase", "trust")
-    extracted_traits = state.get("extracted_traits", {}).get("traits_uncovered", [])
-    profile = state.get("profile", {})
-    
-    if current_phase == "synthesis" and "persona" not in profile:
+class SynthesizerAgent(BaseAgent):
+    def __init__(self):
+        super().__init__(purpose="logic", structured_output_model=SynthesisOutput)
+        
+    async def invoke(self, state: AgentState) -> Dict[str, Any]:
+        """
+        5. Synthesis Node: Final summary using Qwen (Logic).
+        Triggered only when transitioning to Phase 5.
+        """
+        extracted_traits = state.get("extracted_traits", {}).get("traits_uncovered", [])
+        messages = state.get("messages", [])
+        
+        # We might need a longer history for synthesis, but keeping it bounded for now
+        history_text = self.get_recent_history(messages, k=20)
+        traits_text = "\n- ".join(extracted_traits) if extracted_traits else "None recorded yet."
+        
         prompt = (
-            "You are the Backend AI Evaluator.\n"
-            "Based on these extracted user traits, generate a deep Persona Profile.\n"
-            f"EXTRACTED TRAITS: {extracted_traits}"
+            "You are the Synthesis Agent for Sahayam, a psychological career coach.\n"
+            "The user has reached the end of the exploration phase.\n"
+            "Your job is to read their extracted traits and recent conversation history, and generate a cohesive psychological profile summary.\n\n"
+            "EXTRACTED TRAITS:\n"
+            f"- {traits_text}\n\n"
+            f"CONVERSATION HISTORY:\n{history_text}\n\n"
+            "INSTRUCTIONS:\n"
+            "Write a 1-paragraph summary that connects their childhood/teenage/adult experiences to their core motivations and career desires. Be highly analytical but empathetic."
         )
-        logic_llm = get_llm(purpose="logic")
-        structured_llm = logic_llm.with_structured_output(PersonaProfile)
+        
         try:
-            res: PersonaProfile = await structured_llm.ainvoke([SystemMessage(content=prompt)])
-            persona_dict = res.model_dump()
-            persona_dict["traits_uncovered"] = extracted_traits
-            profile["persona"] = persona_dict
+            res: SynthesisOutput = await self.structured_llm.ainvoke([SystemMessage(content=prompt)])
+            return {"profile": {"synthesis_summary": res.summary}}
         except Exception as e:
-            print(f"Synthesis Node Persona Error: {e}")
-            
-    elif current_phase == "guidance" and "roadmap" not in profile.get("guidance", {}):
-        prompt = (
-            "You are the Backend AI Evaluator.\n"
-            "Based on these traits, generate a detailed 3-stage Career Roadmap.\n"
-            f"EXTRACTED TRAITS: {extracted_traits}"
-        )
-        logic_llm = get_llm(purpose="logic")
-        structured_llm = logic_llm.with_structured_output(CareerRoadmap)
-        try:
-            res: CareerRoadmap = await structured_llm.ainvoke([SystemMessage(content=prompt)])
-            profile.setdefault("guidance", {})["roadmap"] = res.model_dump()
-        except Exception as e:
-            print(f"Synthesis Node Roadmap Error: {e}")
-
-    return {"profile": profile}
+            print(f"Synthesizer Agent Error: {e}")
+            return {"profile": {"synthesis_summary": "Error generating synthesis."}}

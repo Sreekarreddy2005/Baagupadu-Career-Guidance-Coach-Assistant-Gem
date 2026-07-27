@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "agent": "./backend/agent/sahayam_engine.py:graph"
+  },
+  "env": "./backend/.env"
+}

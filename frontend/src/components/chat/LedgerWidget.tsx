@@ -84,10 +84,10 @@ export const LedgerWidget: React.FC = () => {
         {/* Structured Report */}
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="w-full flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200 hover:border-blue-300 hover:shadow-sm transition-all group"
+          className="w-full flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200 hover:border-indigo-300 hover:shadow-sm transition-all group"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-blue-100 transition-colors">
+            <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100 transition-colors">
               <FileText size={16} />
             </div>
             <div className="flex flex-col items-start">
@@ -95,7 +95,7 @@ export const LedgerWidget: React.FC = () => {
               <span className="text-[10px] text-slate-500 font-medium">Detailed session summary</span>
             </div>
           </div>
-          <BookOpen size={14} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
+          <BookOpen size={14} className="text-slate-400 group-hover:text-indigo-500 transition-colors" />
         </button>
 
         {/* User Persona Download */}

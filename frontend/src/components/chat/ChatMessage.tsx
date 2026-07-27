@@ -69,11 +69,13 @@ export default function ChatMessage({ message }: Props) {
       {/* Agent avatar */}
       {isAgent && (
         <div
-          className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mb-1 text-white text-xs font-bold shadow-lg"
+          className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mb-1 text-[var(--color-primary-dark)] text-xs font-bold shadow-sm"
           aria-hidden="true"
           style={{
-            background: 'linear-gradient(135deg, var(--color-secondary), #818CF8)',
-            boxShadow: '0 0 12px rgba(99,102,241,0.2)',
+            background: 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid var(--glass-border)',
+            boxShadow: '0 0 15px rgba(255, 253, 208, 0.5)',
           }}
         >
           S
@@ -82,17 +84,18 @@ export default function ChatMessage({ message }: Props) {
 
       <div className={`flex flex-col gap-1 max-w-[78%] ${isAgent ? 'items-start' : 'items-end'}`}>
         <div
-          className={`px-6 py-4 rounded-2xl text-[16px] leading-relaxed font-[450] ${isAgent ? 'rounded-tl-sm' : 'rounded-tr-sm'}`}
+          className={`px-6 py-4 rounded-3xl text-[15.5px] leading-relaxed font-[450] ${isAgent ? 'rounded-tl-sm' : 'rounded-tr-sm'}`}
           style={isAgent ? {
-            background: '#FFFFFF',
-            border: '1px solid rgba(0,0,0,0.05)',
+            background: 'var(--glass-strong-bg)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid var(--glass-strong-border)',
             color: 'var(--color-text)',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
           } : {
-            background: '#EEF2FF',
-            border: '1px solid rgba(99,102,241,0.15)',
-            color: 'var(--color-text)',
-            boxShadow: '0 8px 16px rgba(99,102,241,0.1)',
+            background: 'linear-gradient(135deg, var(--color-secondary), #818CF8)',
+            borderBottomRightRadius: 4,
+            boxShadow: '0 4px 16px rgba(99,102,241,0.4)',
+            border: 'none',
           }}
         >
           {isAgent ? (
@@ -134,11 +137,11 @@ export default function ChatMessage({ message }: Props) {
       {/* User avatar — real initials/image from Clerk */}
       {!isAgent && (
         <div
-          className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mb-1 text-xs font-bold overflow-hidden"
+          className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mb-1 text-xs font-bold overflow-hidden shadow-sm"
           aria-hidden="true"
           style={{
-            background: userImage ? 'transparent' : 'var(--color-secondary)',
-            border: '1px solid rgba(99,102,241,0.2)',
+            background: userImage ? 'transparent' : 'linear-gradient(135deg, var(--color-secondary), #818CF8)',
+            border: '2px solid rgba(255,255,255,0.5)',
             color: 'white',
           }}
         >

@@ -2,62 +2,62 @@
 @import "tailwindcss";
 
 :root {
-  --bg-color: #FDFBF7;
-  --surface-color: #F4F1E9;
+  --bg-color: #FFFFFF;
+  --surface-color: rgba(255, 255, 255, 0.5);
   --text-color: #1E293B;
-  --text-muted-color: #475569;
+  --text-muted-color: #64748B;
   
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(0, 0, 0, 0.05);
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.6);
   
-  --glass-strong-bg: rgba(255, 255, 255, 0.9);
-  --glass-strong-border: rgba(0, 0, 0, 0.08);
+  --glass-strong-bg: rgba(255, 255, 255, 0.7);
+  --glass-strong-border: rgba(255, 255, 255, 0.8);
   
-  --glass-card-bg: rgba(255, 255, 255, 0.6);
-  --glass-card-border: rgba(0, 0, 0, 0.04);
-  --glass-card-shadow: rgba(0, 0, 0, 0.05);
+  --glass-card-bg: rgba(255, 255, 255, 0.35);
+  --glass-card-border: rgba(255, 255, 255, 0.5);
+  --glass-card-shadow: rgba(99, 102, 241, 0.15);
 
-  --btn-ghost-bg: rgba(0, 0, 0, 0.03);
-  --btn-ghost-border: rgba(0, 0, 0, 0.06);
-  --btn-ghost-hover: rgba(0, 0, 0, 0.06);
+  --btn-ghost-bg: rgba(255, 255, 255, 0.3);
+  --btn-ghost-border: rgba(255, 255, 255, 0.5);
+  --btn-ghost-hover: rgba(255, 255, 255, 0.6);
 
-  --separator-border: rgba(0, 0, 0, 0.05);
-  --separator-bg-start: rgba(0, 0, 0, 0.02);
+  --separator-border: rgba(255, 255, 255, 0.4);
+  --separator-bg-start: rgba(255, 255, 255, 0.2);
 }
 
 .dark {
   --bg-color: #0F172A;
-  --surface-color: #1E293B;
+  --surface-color: rgba(30, 41, 59, 0.5);
   --text-color: #F8FAFC;
   --text-muted-color: #94A3B8;
 
-  --glass-bg: rgba(15, 23, 42, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(15, 23, 42, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.15);
   
-  --glass-strong-bg: rgba(15, 23, 42, 0.9);
-  --glass-strong-border: rgba(255, 255, 255, 0.15);
+  --glass-strong-bg: rgba(15, 23, 42, 0.6);
+  --glass-strong-border: rgba(255, 255, 255, 0.2);
   
-  --glass-card-bg: rgba(30, 41, 59, 0.6);
+  --glass-card-bg: rgba(30, 41, 59, 0.4);
   --glass-card-border: rgba(255, 255, 255, 0.1);
-  --glass-card-shadow: rgba(0, 0, 0, 0.3);
+  --glass-card-shadow: rgba(0, 0, 0, 0.2);
 
   --btn-ghost-bg: rgba(255, 255, 255, 0.05);
   --btn-ghost-border: rgba(255, 255, 255, 0.1);
-  --btn-ghost-hover: rgba(255, 255, 255, 0.1);
+  --btn-ghost-hover: rgba(255, 255, 255, 0.15);
 
-  --separator-border: rgba(255, 255, 255, 0.05);
-  --separator-bg-start: rgba(255, 255, 255, 0.02);
+  --separator-border: rgba(255, 255, 255, 0.1);
+  --separator-bg-start: rgba(255, 255, 255, 0.05);
 }
 
 @theme inline {
   --color-background:       var(--bg-color);
   --color-surface:          var(--surface-color);
-  --color-primary:          #4B5563; /* Soft Slate */
-  --color-primary-dark:     #334155;
-  --color-secondary:        #6366F1; /* Soft Indigo */
-  --color-accent:           #E27D60; /* Terracotta */
-  --color-warm:             #FFB84D; /* Warm Cream/Gold */
-  --color-mint:             #86A789; /* Sage Green */
+  --color-primary:          #FF6B8A;
+  --color-primary-dark:     #E11D48;
+  --color-secondary:        #6366F1;
+  --color-accent:           #00CEC9;
+  --color-warm:             #FFB84D;
+  --color-mint:             #6DD5B8;
   --color-success:          #10B981;
   --color-text:             var(--text-color);
   --color-text-muted:       var(--text-muted-color);
@@ -76,36 +76,35 @@ html, body {
   min-height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
   line-height: 1.65;
 }
 
 /* ── Scrollbars ── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.4); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.6); }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-thin { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
+.scrollbar-thin { scrollbar-width: thin; scrollbar-color: rgba(99,102,241,0.4) transparent; }
 
 /* ── Glassmorphism ── */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
 }
 .glass-strong {
   background: var(--glass-strong-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
   border: 1px solid var(--glass-strong-border);
 }
 .glass-card {
   background: var(--glass-card-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-card-border);
   border-radius: 1.5rem;
   box-shadow: 0 12px 40px -8px var(--glass-card-shadow);

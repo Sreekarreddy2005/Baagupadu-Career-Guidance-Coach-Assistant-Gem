@@ -1,8 +1,8 @@
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables from .env file, overriding any existing terminal exports
+load_dotenv(override=True)
 
 class Config:
     # Default to 'openai' but can be changed via environment variable

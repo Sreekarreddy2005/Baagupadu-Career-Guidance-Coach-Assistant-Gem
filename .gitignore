@@ -39,3 +39,6 @@ MANIFEST
 ehthumbs.db
 Thumbs.db
 *.db
+
+# LangGraph API
+.langgraph_api

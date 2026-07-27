@@ -1,0 +1,303 @@
+{
+  "name": "Baagupadu Agentic Workflow Demo",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "User Clicks 'Chat' (Start Demo)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 1000));\nreturn [{ json: { embedding: \"[0.12, 0.55, 0.93...]\" } }];"
+      },
+      "id": "3",
+      "name": "Generate Vector Embeddings",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [360, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 1500));\nreturn [{ json: { ltm_rag: \"Retrieved Past Conversation Memory\" } }];"
+      },
+      "id": "4",
+      "name": "pgvector Database (RAG Search)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [620, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 2500));\nreturn [{ json: { current_phase: \"trust_building\", plan: \"Ask about ambitions\" } }];"
+      },
+      "id": "5",
+      "name": "1. Planner Agent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 1000));\nreturn [{ json: { routed_to: \"Appropriate Phase Markdown\" } }];"
+      },
+      "id": "router_switch",
+      "name": "Determine User Situation (Router)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1140, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 500));\nreturn [{ json: { context: \"trust_building.md loaded\" } }];"
+      },
+      "id": "md_trust",
+      "name": "Load trust_building.md",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1400, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 500));\nreturn [{ json: { context: \"career_discovery.md loaded\" } }];"
+      },
+      "id": "md_discovery",
+      "name": "Load career_discovery.md",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1400, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 500));\nreturn [{ json: { context: \"action_plan.md loaded\" } }];"
+      },
+      "id": "md_action",
+      "name": "Load action_plan.md",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1400, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 2000));\nreturn [{ json: { approved: true, empathy_score: 95 } }];"
+      },
+      "id": "6",
+      "name": "2. Evaluator Agent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1700, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 3000));\nreturn [{ json: { response: \"Tell me more...\" } }];"
+      },
+      "id": "7",
+      "name": "3. Executor Agent (Llama 3.1)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1960, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 2500));\nreturn [{ json: { traits: [\"high empathy\"] } }];"
+      },
+      "id": "8",
+      "name": "4. Extractor Agent (Background)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1960, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 2000));\nreturn [{ json: { profile_ready: true } }];"
+      },
+      "id": "9",
+      "name": "5. Synthesizer Agent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2220, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 2500));\nreturn [{ json: { roadmap: \"Generated\" } }];"
+      },
+      "id": "10",
+      "name": "Career Roadmap Module",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2480, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "await new Promise(resolve => setTimeout(resolve, 1500));\nreturn [{ json: { accountability: \"Active\" } }];"
+      },
+      "id": "11",
+      "name": "Accountability Engine",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2480, 600]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "User Clicks 'Chat' (Start Demo)": {
+      "main": [
+        [
+          {
+            "node": "Generate Vector Embeddings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Vector Embeddings": {
+      "main": [
+        [
+          {
+            "node": "pgvector Database (RAG Search)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pgvector Database (RAG Search)": {
+      "main": [
+        [
+          {
+            "node": "1. Planner Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1. Planner Agent": {
+      "main": [
+        [
+          {
+            "node": "Determine User Situation (Router)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Determine User Situation (Router)": {
+      "main": [
+        [
+          {
+            "node": "Load trust_building.md",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Load career_discovery.md",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Load action_plan.md",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load trust_building.md": {
+      "main": [
+        [
+          {
+            "node": "2. Evaluator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load career_discovery.md": {
+      "main": [
+        [
+          {
+            "node": "2. Evaluator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load action_plan.md": {
+      "main": [
+        [
+          {
+            "node": "2. Evaluator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Evaluator Agent": {
+      "main": [
+        [
+          {
+            "node": "3. Executor Agent (Llama 3.1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. Executor Agent (Llama 3.1)": {
+      "main": [
+        [
+          {
+            "node": "4. Extractor Agent (Background)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4. Extractor Agent (Background)": {
+      "main": [
+        [
+          {
+            "node": "5. Synthesizer Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5. Synthesizer Agent": {
+      "main": [
+        [
+          {
+            "node": "Career Roadmap Module",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Accountability Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f7df43e9-a09c-4903-b0f3-8f0dc4e0b0e5",
+  "meta": {
+    "instanceId": "dummy-instance-id"
+  },
+  "id": "qR8r9H9v9S9s9J9x",
+  "tags": []
+}

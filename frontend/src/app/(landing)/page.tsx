@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight, Brain, Heart, Map, Target } from 'lucide-react';
-import AnimatedBackground from '@/components/ui/AnimatedBackground';
 import { containerVariants, slideUpVariants } from '@/lib/utils/animations';
 import SahayamCharacter from '@/components/agent/SahayamCharacter';
 import AuraOverlay from '@/components/agent/AuraOverlay';
@@ -12,7 +11,7 @@ import Hero3DAvatar from '@/components/agent/Hero3DAvatar';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import SahayamPersonalityWheel from '@/components/visualization/SahayamPersonalityWheel';
 import { useAuth, UserButton } from '@clerk/nextjs';
-import RollingBanner from '@/components/ui/RollingBanner';
+import ScrollytellingSection from '@/components/landing/ScrollytellingSection';
 
 const FEATURES = [
   { icon: <Brain className="w-8 h-8 text-[#FF6B8A]" />, title: 'Dynamic Self-Discovery', desc: 'We explore your foundational years dynamically, uncovering your core emotional blueprint and mapping your identity and values non-linearly.' },
@@ -51,9 +50,9 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <>
-      <AnimatedBackground />
-      <main className="min-h-screen flex flex-col items-center justify-start text-center overflow-x-hidden relative pt-6 pb-20">
+    <div className="relative w-full h-full">
+      <main className="min-h-screen flex flex-col items-center justify-start text-center relative pt-6 pb-20">
+        
         <motion.div
           className="w-full max-w-6xl relative z-30 px-4"
           variants={containerVariants}
@@ -106,16 +105,6 @@ export default function LandingPage() {
           </motion.nav>
         </motion.div>
 
-        {/* Full-width edge-to-edge Rolling Banner below Navbar */}
-        <motion.div 
-          className="w-full mb-8 shadow-sm border-y border-[var(--color-secondary)]/20 relative z-20"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <RollingBanner message="🚀 Special Offer: Upgrade to Pro and unlock 1-on-1 mentorship sessions!" />
-        </motion.div>
-
         <motion.div
           className="w-full max-w-6xl relative z-10 px-4 mt-4"
           variants={containerVariants}
@@ -126,7 +115,7 @@ export default function LandingPage() {
             <div className="flex-1 max-w-xl">
               <motion.div
                 variants={slideUpVariants}
-                className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-md border border-[var(--color-secondary)]/20 shadow-[0_4px_20px_rgba(99,102,241,0.08)] hover:shadow-[0_4px_25px_rgba(99,102,241,0.15)] transition-all duration-300 cursor-default group mb-8"
+                className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-strong border border-[var(--color-secondary)]/20 shadow-[0_4px_20px_rgba(99,102,241,0.15)] hover:shadow-[0_4px_25px_rgba(99,102,241,0.25)] transition-all duration-300 cursor-default group mb-8"
               >
                 <div className="w-6 h-6 rounded-full bg-[var(--color-secondary)]/10 flex items-center justify-center">
                   <Sparkles className="w-3.5 h-3.5 text-[var(--color-secondary)] group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
@@ -157,7 +146,7 @@ export default function LandingPage() {
 
               {/* Interactive Preview Element */}
               <motion.div variants={slideUpVariants} className="w-full max-w-lg mb-10">
-                <div className="relative flex items-center bg-white/80 backdrop-blur-md rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-[var(--glass-border)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all duration-300 group">
+                <div className="relative flex items-center glass-strong rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.04)] border border-[var(--glass-border)] hover:shadow-[0_8px_24px_rgba(99,102,241,0.15)] transition-all duration-300 group">
                   <input
                     type="text"
                     placeholder="Ask Sahayam anything..."
@@ -201,7 +190,21 @@ export default function LandingPage() {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-[var(--color-secondary)] to-[#E27D60] rounded-full blur-[100px] opacity-[0.08] -z-10" />
             </div>
           </div>
+        </motion.div>
 
+        {/* ═══════════════════════════════════════════════════════════
+            SCROLLYTELLING SECTION (Replika-Inspired)
+        ═══════════════════════════════════════════════════════════ */}
+        <div className="w-full relative z-20 bg-transparent -mt-20">
+          <ScrollytellingSection />
+        </div>
+
+        <motion.div
+          className="w-full max-w-6xl relative z-10 px-4 mt-20"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {/* ═══════════════════════════════════════════════════════════
               Meet Sahayam — Theme-Matched Redesign
           ═══════════════════════════════════════════════════════════ */}
@@ -256,7 +259,7 @@ export default function LandingPage() {
                       variants={slideUpVariants}
                       whileHover={{ x: 4, scale: 1.02 }}
                       transition={{ type: 'spring', stiffness: 300 }}
-                      className={`flex items-start gap-3 p-4 rounded-2xl border backdrop-blur-sm cursor-default bg-white/70 border-[var(--glass-border)] shadow-sm hover:shadow-md transition-shadow`}
+                      className={`flex items-start gap-3 p-4 glass-card cursor-default shadow-sm hover:shadow-md transition-shadow`}
                     >
                       <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${color}18` }}>
                         <Icon size={17} style={{ color }} />
@@ -336,7 +339,7 @@ export default function LandingPage() {
                           opacity: isActive ? 1 : 0.45,
                           scale: isActive ? 1.08 : 1,
                         }}
-                        className={`absolute ${positions[idx]} flex items-center gap-1.5 bg-white/85 backdrop-blur-md shadow-md rounded-full pl-1.5 pr-3 py-1.5 z-20 transition-all duration-500`}
+                        className={`absolute ${positions[idx]} flex items-center gap-1.5 glass-strong shadow-md rounded-full pl-1.5 pr-3 py-1.5 z-20 transition-all duration-500`}
                         style={{
                           animation: floatAnims[idx],
                           border: isActive ? `1.5px solid ${m.color}` : '1px solid rgba(0,0,0,0.06)',
@@ -369,7 +372,7 @@ export default function LandingPage() {
                       variants={slideUpVariants}
                       whileHover={{ x: -4, scale: 1.02 }}
                       transition={{ type: 'spring', stiffness: 300 }}
-                      className="flex items-start gap-3 p-4 rounded-2xl border backdrop-blur-sm cursor-default bg-white/70 border-[var(--glass-border)] shadow-sm hover:shadow-md transition-shadow"
+                      className="flex items-start gap-3 p-4 glass-card cursor-default shadow-sm hover:shadow-md transition-shadow"
                     >
                       <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${color}18` }}>
                         <Icon size={17} style={{ color }} />
@@ -386,7 +389,7 @@ export default function LandingPage() {
               {/* ── Bottom: Personality Wheel + Description ── */}
               <motion.div
                 variants={slideUpVariants}
-                className="flex flex-col lg:flex-row items-center gap-10 bg-white/60 backdrop-blur-md border border-[var(--glass-border)] rounded-3xl p-8 md:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.04)]"
+                className="flex flex-col lg:flex-row items-center gap-10 glass-card p-8 md:p-10"
               >
                 {/* Left: Description + mode pills */}
                 <div className="w-full lg:w-1/2">
@@ -409,7 +412,7 @@ export default function LandingPage() {
                       { label: 'Coach', pct: '10%', color: '#FFB84D' },
                       { label: 'Storyteller', pct: '5%', color: '#6DD5B8' },
                     ].map(({ label, pct, color }) => (
-                      <div key={label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[var(--glass-border)] bg-white/80">
+                      <div key={label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-strong">
                         <div className="w-2 h-2 rounded-full" style={{ background: color }} />
                         <span className="text-[var(--color-text)] text-xs font-bold">{label}</span>
                         <span className="text-[var(--color-text-muted)] text-xs">{pct}</span>
@@ -458,7 +461,7 @@ export default function LandingPage() {
                   key={f.title}
                   variants={slideUpVariants}
                   whileHover={{ y: -6, scale: 1.01 }}
-                  className="text-left p-10 rounded-[2rem] cursor-default transition-all duration-300 border group relative overflow-hidden bg-white/70 hover:bg-white shadow-sm hover:shadow-xl border-[var(--color-surface)]"
+                  className="text-left p-10 cursor-default transition-all duration-300 group relative overflow-hidden glass-card hover:bg-white/60"
                 >
                   <div className="mb-6 p-4 rounded-2xl w-fit relative z-10 transition-transform duration-500 group-hover:scale-110 bg-[var(--color-surface)] shadow-sm">
                     {f.icon}
@@ -497,7 +500,7 @@ export default function LandingPage() {
                 { name: "Sarah Jenkins", role: "Software Engineer", quote: "Unlike normal AI that just outputs text, this felt like a real conversation with a mentor who actually remembered my past and cared about my emotional growth." },
                 { name: "David M.", role: "Startup Founder", quote: "The career roadmap generated after the dynamic exploration journey was incredibly precise. It didn't just give me roles; it gave me the exact psychological reasons why I would excel in them." }
               ].map((t, i) => (
-                <motion.div key={i} variants={slideUpVariants} whileHover={{ y: -5 }} className="p-8 rounded-[2rem] bg-gradient-to-br from-white to-white/60 backdrop-blur-sm border border-[var(--glass-border)] shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden group">
+                <motion.div key={i} variants={slideUpVariants} whileHover={{ y: -5 }} className="p-8 glass-card transition-all duration-300 relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-secondary)]/5 rounded-full blur-2xl group-hover:bg-[var(--color-secondary)]/10 transition-colors" />
                   <div className="flex text-yellow-400 mb-6 relative z-10">{'★'.repeat(5)}</div>
                   <p className="text-[var(--color-text)] font-medium mb-8 leading-relaxed text-[15px] italic relative z-10">"{t.quote}"</p>
@@ -537,10 +540,10 @@ export default function LandingPage() {
                 { phase: 'Guidance', icon: '🧭', duration: 'Ongoing', outcome: 'Actionable career roadmap' }
               ].map((step, i) => (
                 <motion.div key={step.phase} variants={slideUpVariants} className="relative pl-12 pb-16 group">
-                  <div className="absolute -left-[20px] top-0 w-11 h-11 rounded-full bg-white border-4 border-[var(--color-surface)] group-hover:border-[var(--color-secondary)] group-hover:scale-110 shadow-sm flex items-center justify-center text-lg transition-all duration-300 z-10">
+                  <div className="absolute -left-[20px] top-0 w-11 h-11 rounded-full glass-strong border-[3px] border-white group-hover:border-[var(--color-secondary)] group-hover:scale-110 shadow-sm flex items-center justify-center text-lg transition-all duration-300 z-10">
                     {step.icon}
                   </div>
-                  <div className="bg-white/50 hover:bg-white rounded-2xl p-6 border border-transparent hover:border-[var(--glass-border)] hover:shadow-lg transition-all duration-300 -mt-2 cursor-default">
+                  <div className="glass-card p-6 hover:bg-white/60 transition-all duration-300 -mt-2 cursor-default">
                     <h3 className="text-[22px] font-bold text-[var(--color-text)] mb-2 group-hover:text-[var(--color-secondary)] transition-colors">{step.phase}</h3>
                     <div className="flex gap-4 text-[14px] font-semibold text-[var(--color-text-muted)]">
                       <span className="bg-[var(--color-surface)] px-3 py-1 rounded-full text-[var(--color-text)]">{step.duration}</span>
@@ -582,9 +585,9 @@ export default function LandingPage() {
                   key={step.title}
                   variants={slideUpVariants}
                   whileHover={{ y: -5 }}
-                  className={`flex flex-col items-center bg-white p-6 rounded-2xl border w-full md:w-[22%] text-center transition-all duration-300 ${step.active
-                    ? 'shadow-xl border-[var(--color-secondary)] ring-4 ring-[var(--color-secondary)]/10'
-                    : 'shadow-sm border-[var(--glass-border)] opacity-80 hover:opacity-100 hover:shadow-md'
+                  className={`flex flex-col items-center glass-card p-6 w-full md:w-[22%] text-center transition-all duration-300 ${step.active
+                    ? 'border-[var(--color-secondary)] ring-2 ring-[var(--color-secondary)]/10'
+                    : 'opacity-80 hover:opacity-100'
                     }`}
                 >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold mb-4 ${step.active ? 'bg-[var(--color-secondary)] text-white' : 'bg-[var(--color-surface)] text-[var(--color-text-muted)]'}`}>
@@ -646,6 +649,6 @@ export default function LandingPage() {
           </div>
         </footer>
       </main>
-    </>
+    </div>
   );
 }

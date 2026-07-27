@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import AmbientBackground from '@/components/AmbientBackground';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -22,12 +23,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider>
       <html
         lang="en"
-        className={`${inter.variable} h-full antialiased`}
+        className={`${inter.variable} min-h-screen antialiased`}
         suppressHydrationWarning
       >
-        <body className="h-full bg-background text-text font-sans transition-colors duration-300">
+        <body className="min-h-screen bg-transparent text-text font-sans transition-colors duration-300 ">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
+            <div className="relative z-10 min-h-screen">
+              {children}
+            </div>
           </ThemeProvider>
         </body>
       </html>

@@ -109,17 +109,17 @@ export default function ChatContainer() {
       </div>
 
       {/* ── Input area ── */}
-      <div className="flex-shrink-0 p-4 border-t border-black/5 bg-[var(--color-surface)]/30 backdrop-blur-md flex justify-center pb-6">
+      <div className="flex-shrink-0 p-4 border-t border-[var(--glass-border)] bg-transparent flex justify-center pb-8 pt-6">
         <motion.div
-          className="relative w-full max-w-3xl flex items-end gap-3 rounded-2xl p-2 bg-white border border-black/10 shadow-sm"
+          className="relative w-full max-w-3xl flex items-end gap-3 rounded-[2rem] p-3 glass-strong shadow-lg"
           animate={isFocused ? {
             borderColor: 'var(--color-secondary)',
-            boxShadow: '0 0 0 2px rgba(99,102,241,0.15)',
+            boxShadow: '0 0 0 2px rgba(99,102,241,0.2), 0 10px 30px -10px rgba(99,102,241,0.3)',
           } : {
-            borderColor: 'rgba(0,0,0,0.1)',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+            borderColor: 'var(--glass-strong-border)',
+            boxShadow: '0 8px 32px -8px rgba(0,0,0,0.05)',
           }}
-          transition={{ duration: 0.15 }}
+          transition={{ duration: 0.2 }}
         >
           {/* Textarea */}
           <textarea
@@ -133,8 +133,8 @@ export default function ChatContainer() {
             rows={1}
             aria-label="Message Sahayam"
             aria-multiline="true"
-            className="flex-1 bg-transparent text-[var(--color-text)] placeholder-[var(--color-text-muted)]/60 text-sm resize-none focus:outline-none leading-relaxed py-2 px-3 scrollbar-hide"
-            style={{ minHeight: '40px', maxHeight: '110px' }}
+            className="flex-1 bg-transparent text-[var(--color-text)] placeholder-[var(--color-text-muted)]/70 text-[15px] resize-none focus:outline-none leading-relaxed py-2.5 px-4 scrollbar-hide"
+            style={{ minHeight: '44px', maxHeight: '120px' }}
           />
 
           {/* Voice button */}
@@ -142,29 +142,28 @@ export default function ChatContainer() {
             onClick={() => setIsRecording((p) => !p)}
             aria-label={isRecording ? 'Stop recording' : 'Start voice input'}
             aria-pressed={isRecording}
-            className={`flex-shrink-0 p-2 rounded-lg transition-colors ${
+            className={`flex-shrink-0 p-3 rounded-full transition-all ${
               isRecording
-                ? 'text-red-500 bg-red-50'
-                : 'text-[var(--color-text-muted)] hover:text-[var(--color-secondary)] hover:bg-[var(--color-secondary)]/5'
+                ? 'text-red-500 bg-red-50 shadow-inner'
+                : 'text-[var(--color-text-muted)] hover:text-[var(--color-secondary)] hover:bg-[var(--color-secondary)]/10'
             }`}
           >
             {isRecording ? <MicOff className="w-5 h-5" aria-hidden="true" /> : <Mic className="w-5 h-5" aria-hidden="true" />}
           </button>
 
-          {/* Send button — Fix #2: use brand color, not blue-500 */}
+          {/* Send button */}
           <button
             onClick={handleSend}
             disabled={!hasInput || isBusy}
             aria-label="Send message"
-            className="flex-shrink-0 flex items-center gap-2 bg-[var(--color-secondary)] hover:bg-[#5658d6] active:scale-95 text-white font-semibold text-sm px-4 py-2.5 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm shadow-[var(--color-secondary)]/20"
+            className="flex-shrink-0 flex items-center justify-center w-12 h-12 bg-gradient-to-r from-[var(--color-secondary)] to-[#818CF8] hover:from-[#5c5ee6] hover:to-[#6d7ae8] active:scale-95 text-white rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_12px_rgba(99,102,241,0.4)]"
           >
-            <Send className="w-4 h-4" aria-hidden="true" />
-            <span>Send</span>
+            <Send className="w-5 h-5 ml-1" aria-hidden="true" />
           </button>
         </motion.div>
 
         {/* Hint */}
-        <p className="absolute bottom-2 text-center text-[var(--color-text-muted)] opacity-50 text-[11px]">
+        <p className="absolute bottom-2 text-center text-[var(--color-text-muted)] opacity-60 text-[11px] font-medium tracking-wide">
           Enter to send · Shift+Enter for new line
         </p>
       </div>

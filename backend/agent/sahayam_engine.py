@@ -1,11 +1,11 @@
 from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import HumanMessage, AIMessage
 from backend.agent.state import AgentState
-from backend.agent.agents.planner_agent import planner_node
-from backend.agent.agents.evaluator_agent import evaluator_node
-from backend.agent.agents.executor_agent import executor_node
-from backend.agent.agents.extractor_agent import extraction_node
-from backend.agent.agents.synthesizer_agent import synthesis_node
+from backend.agent.agents.planner_agent import PlannerAgent
+from backend.agent.agents.evaluator_agent import EvaluatorAgent
+from backend.agent.agents.executor_agent import ExecutorAgent
+from backend.agent.agents.extractor_agent import ExtractorAgent
+from backend.agent.agents.synthesizer_agent import SynthesizerAgent
 from backend.agent.utils import should_execute, should_synthesize
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -15,12 +15,19 @@ class SahayamAgent:
     def __init__(self):
         workflow = StateGraph(AgentState)
         
+        # Instantiate Agents
+        planner = PlannerAgent()
+        evaluator = EvaluatorAgent()
+        executor = ExecutorAgent()
+        extractor = ExtractorAgent()
+        synthesizer = SynthesizerAgent()
+        
         # Add Nodes
-        workflow.add_node("planner", planner_node)
-        workflow.add_node("evaluator", evaluator_node)
-        workflow.add_node("executor", executor_node)
-        workflow.add_node("extraction", extraction_node)
-        workflow.add_node("synthesis", synthesis_node)
+        workflow.add_node("planner", planner.invoke)
+        workflow.add_node("evaluator", evaluator.invoke)
+        workflow.add_node("executor", executor.invoke)
+        workflow.add_node("extraction", extractor.invoke)
+        workflow.add_node("synthesis", synthesizer.invoke)
         
         # 1. Routing & Evaluation Loop
         workflow.add_edge(START, "planner")
@@ -112,3 +119,6 @@ class SahayamAgent:
             profile.setdefault("session_progress", {})["micro_phase"] = result.get("micro_phase")
 
         return ai_response
+
+# Expose the compiled graph for LangGraph Studio visualization
+graph = SahayamAgent().app
