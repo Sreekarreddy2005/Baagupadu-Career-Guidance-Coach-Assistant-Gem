@@ -1,4 +1,5 @@
 import re
+import asyncio
 from typing import Dict, Any
 from langchain_core.messages import SystemMessage, AIMessage
 from backend.agent.state import AgentState
@@ -49,7 +50,8 @@ class ExecutorAgent(BaseAgent):
         kb_context = ""
         if db and user_input:
             try:
-                query_embedding = embedder.encode(user_input).tolist()
+                query_embedding = await asyncio.to_thread(embedder.encode, user_input)
+                query_embedding = query_embedding.tolist()
                 # LTM
                 result = await db.execute(select(LongTermMemory).where(LongTermMemory.conversation_id == profile.get("conversation_id")).order_by(LongTermMemory.embedding.cosine_distance(query_embedding)).limit(3))
                 memories = result.scalars().all()
@@ -66,24 +68,25 @@ class ExecutorAgent(BaseAgent):
                 
         micro_phase = state.get("micro_phase")
         
-        # Context (Phase rules + Semantic matching)
-        phase_context = kb_loader.get_phase_context(current_phase, micro_phase=micro_phase)
+        # We rely solely on the semantic RAG chunks (`kb_context`) to guide the phase
+        # rather than dumping 150KB of markdown into the context.
         
         system_prompt = (
             "<system_instructions>\n"
-            "You are Sahayam, a highly empathetic PSYCHOLOGICAL career coach. You are NOT a technical peer, mentor, or recruiter.\n"
-            "CRITICAL RULE: Do NOT dive into technical jargon, tools, or industry specifics (e.g. asking about Kaggle, ML, or specific frameworks). "
-            "Your ONLY goal is to uncover the user's deep psychological drivers, fears, past experiences (childhood/teenage), and emotional motivations.\n\n"
-            f"CURRENT PHASE RULES:\n{phase_context}\n\n"
+            "You are Sahayam, a highly empathetic psychological career coach.\n"
+            "CRITICAL RULES:\n"
+            "1. NO INTERROGATION: You must ask a MAXIMUM of ONE short question per response. Never stack questions.\n"
+            "2. NO META-GUESSING: Never use phrases like 'I'm noticing that you're someone who...' or 'Am I right?'. Just naturally converse.\n"
+            "3. NO FORCED EMPATHY: Do not constantly say 'That's beautiful' or 'I want to acknowledge'. Be grounded, authentic, and professional.\n"
+            "4. NO REPETITION: Do not summarize or repeat what the user just said back to them. Add new value to the conversation.\n"
+            "5. NO TECHNICAL JARGON: You explore deep psychological drivers, not tech stacks.\n"
+            "6. NON-JUDGMENTAL SAFE SPACE: Make it clear you are a safe, completely non-judgmental AI companion here solely to listen to their story.\n"
+            "7. KEEP IT LIGHT & MOVING: Do not drill down too deeply into one topic if it's unnecessary. Keep the conversation easy to understand, avoid heavy/difficult probing, and organically move to the next topic once you have enough traits.\n\n"
             f"APPROVED PLAN FOR THIS TURN:\n{proposed_plan}\n\n"
             f"{ltm_context}{kb_context}"
             f"{_get_profile_context(profile)}"
             "INSTRUCTIONS:\n"
-            "1. Write your conversational response directly to the user.\n"
-            "2. Keep it warm, human, and relatively short.\n"
-            "3. CRITICAL: NEVER ask multiple questions at once. If the plan contains multiple questions (e.g., 4 questions), DO NOT ask them in a rigid, linear list.\n"
-            "4. Non-Linear Flow: If questions 1 and 3 are connected, and 2 and 4 are connected, pick ONE path to explore first based on the user's immediate context. Ask a single, cohesive question and wait for the user's response to organically transition to the next connected thought.\n"
-            "5. Do NOT output internal logic or meta-notes.\n"
+            "Write your conversational response directly to the user. Keep it warm, brief, and highly natural. Ask ONE short, focused question based on the plan to keep the flow organic.\n"
             "</system_instructions>"
         )
         

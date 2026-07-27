@@ -9,6 +9,8 @@ def should_execute(state: AgentState):
 def should_synthesize(state: AgentState):
     """Conditional Edge from Extraction"""
     phase = state.get("new_phase") or state.get("current_phase")
-    if phase in ["synthesis", "guidance"]:
+    if phase == "synthesis":
         return "synthesize"
+    elif phase == "guidance":
+        return "roadmap"
     return "end"

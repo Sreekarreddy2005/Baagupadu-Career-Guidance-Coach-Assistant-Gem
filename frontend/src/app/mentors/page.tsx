@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Sparkles, ArrowRight, Heart, Brain, Compass, Target, BookOpen, ChevronRight } from 'lucide-react';
 import AnimatedBackground from '@/components/ui/AnimatedBackground';
+import Navbar from '@/components/ui/Navbar';
 import { containerVariants, slideUpVariants } from '@/lib/utils/animations';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
@@ -28,8 +29,8 @@ export default function MentorsPage() {
 
   return (
     <>
-      <AnimatedBackground />
-      <main className="min-h-screen flex flex-col items-center justify-start px-4 py-10 overflow-x-hidden relative">
+      <Navbar />
+      <main className="min-h-screen flex flex-col items-center justify-start px-4 py-24 overflow-x-hidden relative">
         <motion.div
           className="w-full max-w-6xl relative z-10"
           variants={containerVariants}
@@ -37,39 +38,8 @@ export default function MentorsPage() {
           animate="visible"
           style={{ y: yOffset }}
         >
-          {/* Navbar */}
-          <motion.nav 
-            variants={slideUpVariants}
-            className="flex items-center justify-between w-full py-6 px-4 md:px-8 mb-16 glass-card rounded-full"
-          >
-            <Link href="/" className="flex items-center gap-3 group cursor-pointer relative">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--color-secondary)] to-[#818CF8] shadow-md group-hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] transition-all duration-300">
-                <Sparkles className="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-300" />
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-black text-2xl tracking-tighter text-[var(--color-text)] group-hover:text-[var(--color-secondary)] transition-colors duration-300">Baagupadu</span>
-                <span className="font-medium text-[1.1rem] text-[var(--color-text-muted)] opacity-80 group-hover:text-[#818CF8] transition-colors duration-300">బాగుపడు</span>
-              </div>
-            </Link>
-            
-            <div className="hidden md:flex items-center gap-8 text-[var(--color-text-muted)] font-medium text-sm">
-              <Link href="/how-it-works" className="hover:text-[var(--color-text)] transition-colors">How It Works</Link>
-              <Link href="/mentors" className="text-[var(--color-secondary)] transition-colors">Mentors</Link>
-              <Link href="#" className="hover:text-[var(--color-text)] transition-colors">Pricing</Link>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <ThemeToggle />
-              <Link href="/chat">
-                <button className="px-5 py-2 rounded-full bg-[var(--color-secondary)] text-white font-medium text-sm hover:bg-[#4f51c7] transition-colors shadow-lg">
-                  Start Now
-                </button>
-              </Link>
-            </div>
-          </motion.nav>
-
           {/* Hero Section */}
-          <div className="text-center max-w-4xl mx-auto mb-24 px-4">
+          <div className="text-center max-w-4xl mx-auto mb-24 px-4 mt-8">
             <motion.h1 variants={slideUpVariants} className="text-5xl md:text-7xl font-extrabold text-[var(--color-text)] mb-6 tracking-tight leading-[1.1]">
               Meet <span className="gradient-text">Sahayam.</span>
             </motion.h1>

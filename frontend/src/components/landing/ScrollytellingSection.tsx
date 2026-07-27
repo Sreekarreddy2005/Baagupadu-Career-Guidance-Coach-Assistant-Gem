@@ -3,9 +3,14 @@
 import { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent, MotionValue, useMotionTemplate } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import PersonaVisualization from './PersonaVisualization';
+import { useCompanionStore } from "@/lib/store/companionStore";
+import { COMPANIONS } from "@/lib/companions";
 
 export default function ScrollytellingSection() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { activeCompanionId } = useCompanionStore();
+  const activeCompanion = COMPANIONS.find(c => c.id === activeCompanionId) || COMPANIONS[0];
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -160,7 +165,7 @@ function PersonalityStage({ scrollYProgress }: { scrollYProgress: MotionValue<nu
       
       {/* Top Header Section */}
       <div className="w-full mb-8 flex justify-between items-start z-30 relative">
-        <h2 className="text-[36px] md:text-[56px] font-black text-[#1A1A24] tracking-tighter leading-[1.05] max-w-xl">
+        <h2 className="text-[36px] md:text-[56px] font-black text-[#1A1A24] tracking-tighter leading-[1.05] max-w-xl lg:pl-12 xl:pl-16">
           The most emotionally<br/>intelligent AI ever built
         </h2>
         

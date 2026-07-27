@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import AnimatedBackground from '@/components/ui/AnimatedBackground';
-import AgentAvatar from '@/components/agent/AgentAvatar';
 import ChatContainer from '@/components/chat/ChatContainer';
 import PersonaVisualization from '@/components/visualization/PersonaVisualization';
 import { useChatStore } from '@/lib/store/chatStore';
@@ -24,6 +23,8 @@ import { useAuth, UserButton } from '@clerk/nextjs';
 import { resetSahayamChat } from '@/lib/api';
 import RollingBanner from '@/components/ui/RollingBanner';
 import ProfileEditModal from '@/components/chat/ProfileEditModal';
+import { useCompanionStore } from '@/lib/store/companionStore';
+import { COMPANIONS } from '@/lib/companions';
 
 export default function ChatPage() {
   const { currentPhase, showVisualization, agentState, activeSessionId, setActiveSessionId, clearMessages, setMessages } = useChatStore();
@@ -31,6 +32,10 @@ export default function ChatPage() {
   const { getToken } = useAuth();
   const router = useRouter();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  
+  const { activeCompanionId } = useCompanionStore();
+  const activeCompanion = COMPANIONS.find(c => c.id === activeCompanionId) || COMPANIONS[0];
   
   const phaseConfig = PHASES.find((p) => p.id === currentPhase) ?? PHASES[0];
 
@@ -42,6 +47,7 @@ export default function ChatPage() {
       }
     }
     initProfile();
+    setMounted(true);
   }, [getToken, loadProfile]);
 
   useEffect(() => {
@@ -105,18 +111,19 @@ export default function ChatPage() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto scrollbar-hide flex flex-col items-center">
-            {/* Agent Sidebar visual */}
+          <div className="flex-1 overflow-y-auto scrollbar-hide flex flex-col items-center pt-4">
+            
+            {/* Restored Avatar in Sidebar */}
             <div className="w-full relative mb-4">
                <Sidebar3DAvatar agentState={agentState} />
             </div>
-            
+
             <div className="text-center mb-8">
-              <h2 className="text-[var(--color-text)] font-semibold text-lg flex items-center justify-center gap-2">
-                Sahayam
+              <h2 className="text-[var(--color-text)] font-semibold text-xl flex items-center justify-center gap-2">
+                {mounted ? activeCompanion.name : "..."}
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
               </h2>
-              <p className="text-[var(--color-text-muted)] text-sm">Career Guide</p>
+              <p className="text-[var(--color-text-muted)] text-sm">{mounted ? activeCompanion.description : "..."}</p>
             </div>
 
             {/* Navigation Menu */}

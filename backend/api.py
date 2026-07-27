@@ -119,9 +119,20 @@ class ChatRequest(BaseModel):
 
 @app.post("/api/chat")
 async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
+    print("ENTERED /api/chat", flush=True)
     global agent
     if not agent:
+        print("Agent not initialized!", flush=True)
         return {"response": "Error: Agent not initialized properly."}
+
+    # Ensure user exists to prevent IntegrityError
+    print("Fetching user...", flush=True)
+    user_result = await db.execute(select(User).where(User.id == user_id))
+    user = user_result.scalars().first()
+    if not user:
+        user = User(id=user_id)
+        db.add(user)
+        await db.commit()
 
     # 1. Get active conversation
     conv_result = await db.execute(
@@ -159,6 +170,7 @@ async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: A
     }
 
     try:
+        print("Invoking agent.chat_async...", flush=True)
         # The agent internally fetches context via pgvector and saves new insights
         response = await agent.chat_async(request.message, profile_dict, request.session_id, db)
         
@@ -166,6 +178,7 @@ async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: A
         chat_completed = profile_dict.get("session_progress", {}).get("completed", False)
 
         # 4. Update short-term profile state
+        print("Updating profile state...", flush=True)
         db_profile.session_progress = dict(profile_dict.get("session_progress", {}))
         db_profile.persona = dict(profile_dict.get("persona", {}))
         db_profile.guidance = dict(profile_dict.get("guidance", {}))
@@ -178,9 +191,11 @@ async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: A
         ai_msg = Message(conversation_id=conversation.id, role="ai", content=response)
         db.add(ai_msg)
         
+        print("Agent finished, committing DB...", flush=True)
         db.add(db_profile)
         await db.commit()
 
+        print("Returning response...", flush=True)
         return {
             "response": response,
             "current_phase": current_phase,
@@ -239,6 +254,14 @@ async def update_demographics(request: DemographicsRequest, user_id: str = Depen
 
 @app.post("/api/reset")
 async def reset_chat(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
+    # Ensure user exists to prevent IntegrityError
+    user_result = await db.execute(select(User).where(User.id == user_id))
+    user = user_result.scalars().first()
+    if not user:
+        user = User(id=user_id)
+        db.add(user)
+        await db.commit()
+
     # Close any active conversation for this user
     conv_result = await db.execute(
         select(Conversation).where(Conversation.user_id == user_id, Conversation.end_time.is_(None))

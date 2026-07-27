@@ -5,13 +5,15 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight, Brain, Heart, Map, Target } from 'lucide-react';
 import { containerVariants, slideUpVariants } from '@/lib/utils/animations';
-import SahayamCharacter from '@/components/agent/SahayamCharacter';
+import { useCompanionStore } from '@/lib/store/companionStore';
+import { COMPANIONS } from '@/lib/companions';
 import AuraOverlay from '@/components/agent/AuraOverlay';
-import Hero3DAvatar from '@/components/agent/Hero3DAvatar';
+import CompanionSelector from '@/components/landing/CompanionSelector';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import SahayamPersonalityWheel from '@/components/visualization/SahayamPersonalityWheel';
 import { useAuth, UserButton } from '@clerk/nextjs';
 import ScrollytellingSection from '@/components/landing/ScrollytellingSection';
+import Navbar from '@/components/ui/Navbar';
 
 const FEATURES = [
   { icon: <Brain className="w-8 h-8 text-[#FF6B8A]" />, title: 'Dynamic Self-Discovery', desc: 'We explore your foundational years dynamically, uncovering your core emotional blueprint and mapping your identity and values non-linearly.' },
@@ -39,6 +41,8 @@ export default function LandingPage() {
   const { scrollYProgress } = useScroll();
   const yOffset = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const { isSignedIn, isLoaded } = useAuth();
+  const { activeCompanionId } = useCompanionStore();
+  const activeCompanion = COMPANIONS.find(c => c.id === activeCompanionId) || COMPANIONS[0];
   const [activeModeIdx, setActiveModeIdx] = useState(0);
   const activeMode = MODES[activeModeIdx];
 
@@ -51,59 +55,8 @@ export default function LandingPage() {
 
   return (
     <div className="relative w-full h-full">
-      <main className="min-h-screen flex flex-col items-center justify-start text-center relative pt-6 pb-20">
-        
-        <motion.div
-          className="w-full max-w-6xl relative z-30 px-4"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* Navbar */}
-          <motion.nav
-            variants={slideUpVariants}
-            className="flex items-center justify-between w-full py-6 px-4 md:px-8 mb-4"
-          >
-            <Link href="/" className="flex items-center gap-3 group cursor-pointer relative">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-gradient-to-br from-[var(--color-secondary)] to-[#818CF8] shadow-md group-hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] transition-all duration-300">
-                <Sparkles className="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-300" />
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-black text-2xl tracking-tighter text-[var(--color-text)] group-hover:text-[var(--color-secondary)] transition-colors duration-300">Baagupadu</span>
-                <span className="font-medium text-[1.1rem] text-[var(--color-text-muted)] opacity-80 group-hover:text-[#818CF8] transition-colors duration-300">బాగుపడు</span>
-              </div>
-            </Link>
-
-            <div className="hidden md:flex items-center gap-8 text-[var(--color-text-muted)] font-medium text-sm">
-              <Link href="/how-it-works" className="hover:text-[var(--color-text)] transition-colors">How It Works</Link>
-              <Link href="/mentors" className="hover:text-[var(--color-text)] transition-colors">Mentors</Link>
-              <Link href="#" className="hover:text-[var(--color-text)] transition-colors">Pricing</Link>
-              <Link href="#" className="hover:text-[var(--color-text)] transition-colors">Resources</Link>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <ThemeToggle />
-
-              {isLoaded && !isSignedIn && (
-                <>
-                  <Link href="/login" className="hidden sm:block text-[var(--color-text-muted)] font-medium text-sm hover:text-[var(--color-text)] transition-colors">Login</Link>
-                  <Link href="/login">
-                    <button className="px-5 py-2 rounded-full border border-[var(--color-secondary)] text-[var(--color-secondary)] font-medium text-sm hover:bg-[var(--color-secondary)] hover:text-white transition-colors">
-                      Sign Up Free
-                    </button>
-                  </Link>
-                </>
-              )}
-
-              {isLoaded && isSignedIn && (
-                <>
-                  <Link href="/chat" className="hidden sm:block text-[var(--color-text-muted)] font-medium text-sm hover:text-[var(--color-text)] transition-colors">Go to Chat</Link>
-                  <UserButton afterSignOutUrl="/" />
-                </>
-              )}
-            </div>
-          </motion.nav>
-        </motion.div>
+      <Navbar />
+      <main className="min-h-screen flex flex-col items-center justify-start text-center relative pt-24 pb-20">
 
         <motion.div
           className="w-full max-w-6xl relative z-10 px-4 mt-4"
@@ -111,7 +64,7 @@ export default function LandingPage() {
           initial="hidden"
           animate="visible"
         >
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-12 mb-32 px-4 md:px-8 text-left">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12 mb-32 px-4 md:px-8 text-left mt-8">
             <div className="flex-1 max-w-xl">
               <motion.div
                 variants={slideUpVariants}
@@ -129,6 +82,7 @@ export default function LandingPage() {
                   </span>
                 </div>
               </motion.div>
+              
               <motion.h1
                 variants={slideUpVariants}
                 className="text-[48px] md:text-[64px] lg:text-[72px] text-[var(--color-text)] font-extrabold mb-6 tracking-tight leading-[1.1]"
@@ -158,7 +112,7 @@ export default function LandingPage() {
                   </button>
                 </div>
               </motion.div>
-
+              
               <motion.div variants={slideUpVariants} className="flex flex-col sm:flex-row gap-4 items-center">
                 <Link href="/chat">
                   <motion.button
@@ -182,9 +136,9 @@ export default function LandingPage() {
               </motion.div>
             </div>
 
-            <div className="flex-1 w-full flex justify-center lg:justify-end relative lg:translate-x-12">
-              <motion.div variants={slideUpVariants} className="w-full max-w-[500px] aspect-square relative z-10">
-                <Hero3DAvatar />
+            <div className="flex-1 w-full flex justify-center lg:justify-end relative lg:translate-x-12 h-full min-h-[500px]">
+              <motion.div variants={slideUpVariants} className="w-full max-w-[500px] relative z-20">
+                <CompanionSelector />
               </motion.div>
               {/* Decorative background glow for 3D area */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-[var(--color-secondary)] to-[#E27D60] rounded-full blur-[100px] opacity-[0.08] -z-10" />
@@ -293,9 +247,19 @@ export default function LandingPage() {
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[370px] h-[370px] border border-[var(--color-accent)]/10 rounded-full animate-[spin_40s_linear_infinite_reverse]" />
 
                   {/* Avatar canvas — AuraOverlay reacts to active mode color */}
-                  <div className="relative w-[320px] h-[320px] md:w-[370px] md:h-[370px]">
+                  <div className="relative w-[320px] h-[320px] md:w-[370px] md:h-[370px] flex justify-center items-end">
                     <AuraOverlay mode="dashboard" auraColor={activeMode.color} />
-                    <SahayamCharacter mode="dashboard" />
+                    <motion.div
+                      className="w-full h-[90%] z-20 flex justify-center items-end"
+                      animate={activeCompanion.animation}
+                    >
+                      <img
+                        src={activeCompanion.image}
+                        alt={activeCompanion.name}
+                        className="w-auto h-full object-contain select-none object-bottom drop-shadow-2xl"
+                        draggable={false}
+                      />
+                    </motion.div>
                   </div>
 
                   {/* Active mode label — floats below avatar, transitions smoothly */}

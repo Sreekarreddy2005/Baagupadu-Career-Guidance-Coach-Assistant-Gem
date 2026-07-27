@@ -6,6 +6,7 @@ from backend.agent.agents.evaluator_agent import EvaluatorAgent
 from backend.agent.agents.executor_agent import ExecutorAgent
 from backend.agent.agents.extractor_agent import ExtractorAgent
 from backend.agent.agents.synthesizer_agent import SynthesizerAgent
+from backend.agent.agents.roadmap_agent import RoadmapAgent
 from backend.agent.utils import should_execute, should_synthesize
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -21,6 +22,7 @@ class SahayamAgent:
         executor = ExecutorAgent()
         extractor = ExtractorAgent()
         synthesizer = SynthesizerAgent()
+        roadmap = RoadmapAgent()
         
         # Add Nodes
         workflow.add_node("planner", planner.invoke)
@@ -28,6 +30,7 @@ class SahayamAgent:
         workflow.add_node("executor", executor.invoke)
         workflow.add_node("extraction", extractor.invoke)
         workflow.add_node("synthesis", synthesizer.invoke)
+        workflow.add_node("roadmap", roadmap.invoke)
         
         # 1. Routing & Evaluation Loop
         workflow.add_edge(START, "planner")
@@ -50,10 +53,12 @@ class SahayamAgent:
             should_synthesize,
             {
                 "synthesize": "synthesis",
+                "roadmap": "roadmap",
                 "end": END
             }
         )
         workflow.add_edge("synthesis", END)
+        workflow.add_edge("roadmap", END)
         
         self.app = workflow.compile()
 
