@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { fetchProfile } from '@/lib/api';
+import type { HealthMetrics } from '@/types';
 
 interface UserProfile {
   user_id?: string;
@@ -8,6 +9,7 @@ interface UserProfile {
     current_sub_phase: string | null;
     phase_completed: string[];
     phase_progress: Record<string, number>;
+    health_metrics?: HealthMetrics;
   };
   life_stage_data: Record<string, any>;
   inferences: Record<string, any>;
@@ -19,6 +21,14 @@ interface UserProfile {
     phase_summaries: Record<string, string>;
     blocked_topics: string[];
     unresolved_topics: any[];
+    sessions?: Record<string, {
+      title: string;
+      messages: Array<{
+        role: 'user' | 'ai' | 'system';
+        content: string;
+        timestamp: string;
+      }>;
+    }>;
   };
 }
 

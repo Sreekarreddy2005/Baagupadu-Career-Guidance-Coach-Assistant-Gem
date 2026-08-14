@@ -26,14 +26,18 @@ services:
 
   n8n:
     image: docker.n8n.io/n8nio/n8n
+    restart: always
     ports:
       - "5678:5678"
     environment:
       - N8N_HOST=localhost
       - N8N_PORT=5678
       - N8N_PROTOCOL=http
+      - N8N_SECURE_COOKIE=false
       - NODE_ENV=production
       - WEBHOOK_URL=http://localhost:5678/
+    volumes:
+      - n8n_data:/home/node/.n8n
 
   ollama:
     image: ollama/ollama:latest
@@ -62,6 +66,8 @@ services:
         curl -X POST http://ollama:11434/api/pull -d '{\"name\": \"llama3.1:8b\"}';
         echo 'Pulling Qwen 2.5 7B...';
         curl -X POST http://ollama:11434/api/pull -d '{\"name\": \"qwen2.5:7b\"}';
+        echo 'Pulling Phi-3 Mini (Judge)...';
+        curl -X POST http://ollama:11434/api/pull -d '{\"name\": \"phi3:mini\"}';
         echo 'Models pulled successfully!';
       "
 
@@ -76,6 +82,7 @@ services:
       - OLLAMA_BASE_URL=http://ollama:11434
       - OLLAMA_CHAT_MODEL=llama3.1:8b
       - OLLAMA_LOGIC_MODEL=qwen2.5:7b
+      - OLLAMA_JUDGE_MODEL=phi3:mini
       - DATABASE_URL=postgresql+asyncpg://postgres:password@db/baagupadu
     depends_on:
       db:
@@ -104,3 +111,4 @@ services:
 volumes:
   postgres_data:
   ollama_data:
+  n8n_data:

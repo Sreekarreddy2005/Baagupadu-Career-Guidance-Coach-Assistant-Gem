@@ -3,7 +3,7 @@ import sys
 import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi import FastAPI, Depends, HTTPException, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,11 +11,14 @@ from sqlalchemy.future import select
 from sqlalchemy import desc
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.sql import func
+from langchain_core.messages import HumanMessage, AIMessage
 
 from backend.core.config import config
-from backend.database import get_db, init_db
+from backend.database import get_db, init_db, AsyncSessionLocal
 from backend.models import User, ProfileState, Conversation, Message, LongTermMemory
 from backend.agent.sahayam_engine import SahayamAgent
+from backend.agent.agents.extractor_agent import ExtractorAgent
+from backend.agent.agents.evaluator_agent import EvaluatorAgent
 
 
 app = FastAPI(title="Baagupadu AI Coach API")
@@ -58,7 +61,10 @@ async def get_profile(user_id: str = Depends(verify_token), db: AsyncSession = D
 
     # Get active or create conversation
     conv_result = await db.execute(
-        select(Conversation).where(Conversation.user_id == user_id).order_by(Conversation.start_time.desc()).limit(1)
+        select(Conversation)
+        .where(Conversation.user_id == user_id, Conversation.end_time.is_(None))
+        .order_by(Conversation.start_time.desc())
+        .limit(1)
     )
     conversation = conv_result.scalars().first()
 
@@ -116,16 +122,82 @@ async def get_profile(user_id: str = Depends(verify_token), db: AsyncSession = D
 class ChatRequest(BaseModel):
     message: str
     session_id: str = "default"
+    is_voice_session: bool = False
+
+async def run_extraction_background(user_msg: str, ai_msg: str, conversation_id: str):
+    try:
+        print("Starting background Brain Persona extraction...", flush=True)
+        async with AsyncSessionLocal() as db:
+            result = await db.execute(select(ProfileState).where(ProfileState.conversation_id == conversation_id))
+            db_profile = result.scalars().first()
+            if not db_profile:
+                return
+                
+            persona_dict = db_profile.persona or {}
+            
+            state = {
+                "messages": [HumanMessage(content=user_msg), AIMessage(content=ai_msg)],
+                "extracted_traits": dict(persona_dict),
+                "profile": {"conversation_id": conversation_id},
+                "db_session": db
+            }
+            
+            extractor = ExtractorAgent()
+            res = await extractor.invoke(state)
+            
+            db_profile.persona = dict(res.get("extracted_traits", {}))
+            flag_modified(db_profile, "persona")
+            await db.commit()
+            print("Background Brain Persona extraction completed successfully.", flush=True)
+    except Exception as e:
+        print(f"Background Extraction Error: {e}", flush=True)
+
+async def run_evaluation_background(user_msg: str, ai_msg: str, conversation_id: int):
+    try:
+        print("Starting background evaluation...", flush=True)
+        evaluator = EvaluatorAgent()
+        result = await evaluator.evaluate(user_msg, ai_msg)
+        
+        async with AsyncSessionLocal() as db:
+            db_profile = await db.scalar(select(ProfileState).where(ProfileState.conversation_id == conversation_id))
+            if db_profile:
+                if db_profile.guidance is None:
+                    db_profile.guidance = {}
+                db_profile.guidance["quality_signals"] = result
+                flag_modified(db_profile, "guidance")
+                await db.commit()
+                print("Background Evaluation completed successfully.", flush=True)
+    except Exception as e:
+        print(f"Background Evaluation Error: {e}", flush=True)
 
 @app.post("/api/chat")
-async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
+async def chat_endpoint(
+    request: ChatRequest, 
+    background_tasks: BackgroundTasks,
+    user_id: str = Depends(verify_token), 
+    db: AsyncSession = Depends(get_db)
+):
+    print("ENTERED /api/chat", flush=True)
     global agent
     if not agent:
+        print("Agent not initialized!", flush=True)
         return {"response": "Error: Agent not initialized properly."}
+
+    # Ensure user exists to prevent IntegrityError
+    print("Fetching user...", flush=True)
+    user_result = await db.execute(select(User).where(User.id == user_id))
+    user = user_result.scalars().first()
+    if not user:
+        user = User(id=user_id)
+        db.add(user)
+        await db.commit()
 
     # 1. Get active conversation
     conv_result = await db.execute(
-        select(Conversation).where(Conversation.user_id == user_id).order_by(Conversation.start_time.desc()).limit(1)
+        select(Conversation)
+        .where(Conversation.user_id == user_id, Conversation.end_time.is_(None))
+        .order_by(Conversation.start_time.desc())
+        .limit(1)
     )
     conversation = conv_result.scalars().first()
     if not conversation:
@@ -156,9 +228,11 @@ async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: A
         "life_stage_data": db_profile.life_stage_data or {},
         "persona": db_profile.persona or {},
         "guidance": db_profile.guidance or {},
+        "_voice_mode": request.is_voice_session,
     }
 
     try:
+        print("Invoking agent.chat_async...", flush=True)
         # The agent internally fetches context via pgvector and saves new insights
         response = await agent.chat_async(request.message, profile_dict, request.session_id, db)
         
@@ -166,6 +240,7 @@ async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: A
         chat_completed = profile_dict.get("session_progress", {}).get("completed", False)
 
         # 4. Update short-term profile state
+        print("Updating profile state...", flush=True)
         db_profile.session_progress = dict(profile_dict.get("session_progress", {}))
         db_profile.persona = dict(profile_dict.get("persona", {}))
         db_profile.guidance = dict(profile_dict.get("guidance", {}))
@@ -178,9 +253,13 @@ async def chat(request: ChatRequest, user_id: str = Depends(verify_token), db: A
         ai_msg = Message(conversation_id=conversation.id, role="ai", content=response)
         db.add(ai_msg)
         
+        print("Agent finished, committing DB...", flush=True)
         db.add(db_profile)
         await db.commit()
 
+        print("Returning response...", flush=True)
+        background_tasks.add_task(run_extraction_background, request.message, response, conversation.id)
+        background_tasks.add_task(run_evaluation_background, request.message, response, conversation.id)
         return {
             "response": response,
             "current_phase": current_phase,
@@ -203,7 +282,10 @@ class DemographicsRequest(BaseModel):
 @app.post("/api/profile/demographics")
 async def update_demographics(request: DemographicsRequest, user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
     conv_result = await db.execute(
-        select(Conversation).where(Conversation.user_id == user_id).order_by(Conversation.start_time.desc()).limit(1)
+        select(Conversation)
+        .where(Conversation.user_id == user_id, Conversation.end_time.is_(None))
+        .order_by(Conversation.start_time.desc())
+        .limit(1)
     )
     conversation = conv_result.scalars().first()
     if not conversation:
@@ -239,6 +321,14 @@ async def update_demographics(request: DemographicsRequest, user_id: str = Depen
 
 @app.post("/api/reset")
 async def reset_chat(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
+    # Ensure user exists to prevent IntegrityError
+    user_result = await db.execute(select(User).where(User.id == user_id))
+    user = user_result.scalars().first()
+    if not user:
+        user = User(id=user_id)
+        db.add(user)
+        await db.commit()
+
     # Close any active conversation for this user
     conv_result = await db.execute(
         select(Conversation).where(Conversation.user_id == user_id, Conversation.end_time.is_(None))
@@ -264,7 +354,10 @@ async def reset_chat(user_id: str = Depends(verify_token), db: AsyncSession = De
 @app.get("/api/roadmap")
 async def get_roadmap(user_id: str = Depends(verify_token), db: AsyncSession = Depends(get_db)):
     conv_result = await db.execute(
-        select(Conversation).where(Conversation.user_id == user_id).order_by(Conversation.start_time.desc()).limit(1)
+        select(Conversation)
+        .where(Conversation.user_id == user_id, Conversation.end_time.is_(None))
+        .order_by(Conversation.start_time.desc())
+        .limit(1)
     )
     conversation = conv_result.scalars().first()
     if not conversation:

@@ -37,8 +37,8 @@ export const useChatStore = create<ChatStore>()(
     (set) => ({
       messages: [INITIAL_MESSAGE],
       agentState: 'idle',
-      currentPhase: 'discovery',
-      completedPhases: [],
+      currentPhase: 'trust',
+      completedPhases: ['discovery'],
       isOpen: true,
       personaResult: null,
       activeSessionId: null,
@@ -77,8 +77,8 @@ export const useChatStore = create<ChatStore>()(
 
       clearMessages: () => set({ 
         messages: [INITIAL_MESSAGE], 
-        currentPhase: 'discovery', 
-        completedPhases: [],
+        currentPhase: 'trust', 
+        completedPhases: ['discovery'],
         agentState: 'idle',
         showVisualization: false,
         personaResult: null,

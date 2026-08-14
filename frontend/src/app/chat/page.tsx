@@ -5,12 +5,11 @@ import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import AnimatedBackground from '@/components/ui/AnimatedBackground';
-import AgentAvatar from '@/components/agent/AgentAvatar';
 import ChatContainer from '@/components/chat/ChatContainer';
 import PersonaVisualization from '@/components/visualization/PersonaVisualization';
 import { useChatStore } from '@/lib/store/chatStore';
 import { useUserProfileStore } from '@/stores/userProfileStore';
-import { PHASES } from '@/types';
+import { PHASES, type ChatMessage } from '@/types';
 import { Sparkles, LayoutDashboard, MessageSquare, Wrench, Map as MapIcon, Settings, RefreshCw, Plus, MoreHorizontal } from 'lucide-react';
 import Sidebar3DAvatar from '@/components/agent/Sidebar3DAvatar';
 import CareerRoadmap from '@/components/visualization/CareerRoadmap';
@@ -24,6 +23,8 @@ import { useAuth, UserButton } from '@clerk/nextjs';
 import { resetSahayamChat } from '@/lib/api';
 import RollingBanner from '@/components/ui/RollingBanner';
 import ProfileEditModal from '@/components/chat/ProfileEditModal';
+import { useCompanionStore } from '@/lib/store/companionStore';
+import { COMPANIONS } from '@/lib/companions';
 
 export default function ChatPage() {
   const { currentPhase, showVisualization, agentState, activeSessionId, setActiveSessionId, clearMessages, setMessages } = useChatStore();
@@ -31,6 +32,10 @@ export default function ChatPage() {
   const { getToken } = useAuth();
   const router = useRouter();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  
+  const { activeCompanionId } = useCompanionStore();
+  const activeCompanion = COMPANIONS.find(c => c.id === activeCompanionId) || COMPANIONS[0];
   
   const phaseConfig = PHASES.find((p) => p.id === currentPhase) ?? PHASES[0];
 
@@ -42,6 +47,7 @@ export default function ChatPage() {
       }
     }
     initProfile();
+    setMounted(true);
   }, [getToken, loadProfile]);
 
   useEffect(() => {
@@ -101,22 +107,23 @@ export default function ChatPage() {
             </Link>
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <UserButton afterSignOutUrl="/" />
+              <UserButton />
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto scrollbar-hide flex flex-col items-center">
-            {/* Agent Sidebar visual */}
+          <div className="flex-1 overflow-y-auto scrollbar-hide flex flex-col items-center pt-4">
+            
+            {/* Restored Avatar in Sidebar */}
             <div className="w-full relative mb-4">
                <Sidebar3DAvatar agentState={agentState} />
             </div>
-            
+
             <div className="text-center mb-8">
-              <h2 className="text-[var(--color-text)] font-semibold text-lg flex items-center justify-center gap-2">
-                Sahayam
+              <h2 className="text-[var(--color-text)] font-semibold text-xl flex items-center justify-center gap-2">
+                {mounted ? activeCompanion.name : "..."}
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
               </h2>
-              <p className="text-[var(--color-text-muted)] text-sm">Career Guide</p>
+              <p className="text-[var(--color-text-muted)] text-sm">{mounted ? activeCompanion.description : "..."}</p>
             </div>
 
             {/* Navigation Menu */}
@@ -192,7 +199,7 @@ export default function ChatPage() {
               </button>
 
               <div className="space-y-1 overflow-y-auto max-h-[220px] scrollbar-hide pr-1 -mx-2 px-2">
-                {sessions.map(([id, session]: [string, any]) => {
+                {sessions.map(([id, session]) => {
                   const isActive = id === activeSessionId;
                   return (
                     <div 
@@ -200,12 +207,12 @@ export default function ChatPage() {
                       onClick={() => {
                         setActiveSessionId(id);
                         // Convert DB serialized messages back to ChatMessage UI format
-                        const loadedMessages = (session.messages || []).map((m: any, idx: number) => ({
+                        const loadedMessages: ChatMessage[] = (session.messages || []).map((m, idx) => ({
                           id: `msg-${id}-${idx}`,
-                          sender: m.role,
+                          sender: (m.role === 'ai' ? 'agent' : m.role) as ChatMessage['sender'],
                           text: m.content,
                           timestamp: m.timestamp ? new Date(m.timestamp).getTime() : Date.now() - (session.messages.length - idx) * 1000,
-                          phase: 'exploration'
+                          phase: 'exploration' as const,
                         }));
                         if (loadedMessages.length > 0) {
                           setMessages(loadedMessages);

@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useRef, useEffect, KeyboardEvent, useMemo } from 'react';
+import { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Mic, MicOff, Send } from 'lucide-react';
+import { PhoneCall, Send } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import TypingIndicator from './TypingIndicator';
 import PhaseProgress from './PhaseProgress';
 import { useChatStore } from '@/lib/store/chatStore';
-import { useUserProfileStore } from '@/stores/userProfileStore';
 import { useDemoChat } from '@/hooks/useChat';
+import VoiceCallModal from './VoiceCallModal';
 
 // Phase-aware placeholders — change what the textarea hints at based on current phase
 const PHASE_PLACEHOLDERS: Record<string, string> = {
@@ -23,10 +23,9 @@ const DEFAULT_PLACEHOLDER = "Share whatever's on your mind…";
 
 export default function ChatContainer() {
   const { messages, agentState, currentPhase } = useChatStore();
-  const { profile } = useUserProfileStore();
   const { sendMessage } = useDemoChat();
   const [input, setInput] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
+  const [isVoiceCallOpen, setIsVoiceCallOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -74,7 +73,17 @@ export default function ChatContainer() {
         className="px-5 pt-5 pb-4 flex-shrink-0"
         style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}
       >
-        <PhaseProgress />
+        <div className="flex items-start gap-3">
+          <PhaseProgress />
+          <button
+            onClick={() => setIsVoiceCallOpen(true)}
+            className="mt-3 shrink-0 inline-flex items-center gap-2 rounded-full bg-[var(--color-secondary)] px-3 py-2 text-xs font-semibold text-white shadow-[0_0_16px_rgba(99,102,241,0.45)] transition hover:brightness-110"
+            aria-label="Start a voice call with Sahayam"
+          >
+            <PhoneCall className="h-4 w-4" aria-hidden="true" />
+            <span className="hidden sm:inline">Voice Call</span>
+          </button>
+        </div>
       </div>
 
       {/* ── Message list — role="log" for screen readers ── */}
@@ -137,20 +146,6 @@ export default function ChatContainer() {
             style={{ minHeight: '44px', maxHeight: '120px' }}
           />
 
-          {/* Voice button */}
-          <button
-            onClick={() => setIsRecording((p) => !p)}
-            aria-label={isRecording ? 'Stop recording' : 'Start voice input'}
-            aria-pressed={isRecording}
-            className={`flex-shrink-0 p-3 rounded-full transition-all ${
-              isRecording
-                ? 'text-red-500 bg-red-50 shadow-inner'
-                : 'text-[var(--color-text-muted)] hover:text-[var(--color-secondary)] hover:bg-[var(--color-secondary)]/10'
-            }`}
-          >
-            {isRecording ? <MicOff className="w-5 h-5" aria-hidden="true" /> : <Mic className="w-5 h-5" aria-hidden="true" />}
-          </button>
-
           {/* Send button */}
           <button
             onClick={handleSend}
@@ -167,6 +162,7 @@ export default function ChatContainer() {
           Enter to send · Shift+Enter for new line
         </p>
       </div>
+      <VoiceCallModal isOpen={isVoiceCallOpen} onClose={() => setIsVoiceCallOpen(false)} />
     </div>
   );
 }

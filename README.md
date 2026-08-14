@@ -30,12 +30,13 @@ Baagupadu is powered by a **Multi-Agent Directed Acyclic Graph (LangGraph)**. Ra
 
 This ensures Sahayam is an empathetic psychological coach, while complex logic runs invisibly in the background.
 
-### 1. The 5-Agent LangGraph Node System
-- **Planner Agent (Logic/Qwen):** Analyzes the conversation history against our rules (the `router.md`). It dictates the goal for the turn (e.g. "Pivot to teenage years to explore fears of failure"). It strictly enforces the psychological coaching frame.
-- **Evaluator Agent (Logic/Qwen):** Acts as the strict gatekeeper. It reviews the Planner's proposed plan against our psychological `guardrails.md`. If the plan is unsafe or tone-deaf, it is rejected and replanned.
-- **Executor Agent (Chat/Llama):** The empathetic Chat LLM. It receives the approved plan, the active phase rules via RAG, and Long-Term Memory context. It focuses entirely on talking human-to-human with the user.
-- **Synthesizer Agent (Logic/Qwen):** Analyzes the Executor's outgoing response to determine if the user has naturally advanced to a new psychological phase (e.g., transitioning from *Trust Building* to *Childhood Exploration*).
-- **Extractor Agent (Logic/Qwen):** Extracts structured JSON traits (e.g., `resilience`, `autonomy`) from the conversation and updates the user's Psychological Profile in real-time.
+### 1. The 5-Agent Architecture & Background Evaluation
+- **Planner Agent (Logic/Qwen):** Analyzes the conversation history against our rules (the `router.md`). It dictates the goal for the turn and dictates **Organic Trust Transitions**—moving from small talk to deep exploration organically based on user comfort rather than rigid message counts.
+- **Safety Evaluator (Logic/Qwen):** Acts as the strict gatekeeper. It reviews the Planner's proposed plan against our psychological `guardrails.md`. If the plan is unsafe or tone-deaf, it is rejected and replanned.
+- **Executor Agent (Chat/Llama):** The empathetic Chat LLM. It receives the approved plan and uses natural texting habits (emojis, casual reactions) to talk human-to-human with the user.
+- **Synthesizer Agent (Logic/Qwen):** Analyzes the Executor's outgoing response to determine if the user has naturally advanced to a new psychological phase.
+- **Extractor Agent (Logic/Qwen):** Extracts structured JSON traits from the conversation and updates the user's Psychological Profile in real-time.
+- **Real-Time Quality Evaluator (Judge/Phi-3):** An asynchronous background agent that strictly grades the AI's chat response on Empathy, Resonance, and Insight without blocking the user's chat flow.
 
 ### 2. Session-Scoped Memory & Vector Database
 The database uses `pgvector` in PostgreSQL for both **Rules RAG** (fetching the correct coaching methodology based on the phase) and **Long-Term Memory** (semantic search of past user messages).
@@ -48,7 +49,10 @@ The database uses `pgvector` in PostgreSQL for both **Rules RAG** (fetching the 
 
 - **Frontend:** Next.js 16 (App Router), React 19, Zustand, Tailwind CSS v4, Framer Motion, React Three Fiber.
 - **Backend:** FastAPI, Uvicorn, LangGraph, SQLAlchemy (Async), PostgreSQL (`pgvector`).
-- **AI / LLM:** 100% Local AI via Ollama (Llama 3.1 8B for Chatting, Qwen 2.5 7B for Logic & Planning). (AWS Bedrock, OpenAI, and Gemini are also supported via fallback config).
+- **AI / LLM:** 100% Local AI via Ollama:
+  - `llama3.1:8b` for Empathetic Chatting.
+  - `qwen2.5:7b` for Logic, Planning, & Extraction.
+  - `phi3:mini` for Real-Time Background Quality Evaluation.
 
 ---
 
@@ -79,6 +83,7 @@ Open a new terminal window and pull the required models. Note: This will downloa
 ```bash
 ollama run llama3.1:8b  # The empathetic conversational agent
 ollama run qwen2.5:7b   # The strict logic and planning agent
+ollama run phi3:mini    # The lightweight, unbiased background judge
 ```
 *Leave the Ollama application running in the background.*
 
@@ -171,7 +176,7 @@ If you want to deploy Baagupadu to an office server so that your entire team can
    ```
 3. Wait about 3-5 minutes for the first boot. The system will automatically:
    - Create a PostgreSQL database with `pgvector`.
-   - Download the `llama3.1:8b` and `qwen2.5:7b` AI models.
+   - Download the `llama3.1:8b`, `qwen2.5:7b`, and `phi3:mini` AI models.
    - Run backend database migrations and ingest the psychological rules into vector space.
 4. Your team can now access the app at `http://<your-server-ip>:3000`.
 

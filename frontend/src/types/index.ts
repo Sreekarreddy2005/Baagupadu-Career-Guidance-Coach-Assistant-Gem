@@ -3,6 +3,10 @@
 export type Phase =
   | 'idle'
   | 'discovery'
+  | 'trust'
+  | 'childhood'
+  | 'teenage'
+  | 'adult'
   | 'exploration'
   | 'synthesis'
   | 'guidance';
@@ -78,23 +82,10 @@ export const PHASES: PhaseConfig[] = [
     chatMood: 'premium',
   },
   {
-    id: 'trust',
-    label: 'Building Trust',
-    shortLabel: 'Trust',
-    index: 1,
-    agentMood: 'Getting to know you',
-    agentEmoji: '🤝',
-    moodColor: '#4ADE80',
-    particleColors: ['#4ADE80', '#FFB84D', '#74B9FF'],
-    gradient: ['#14532D', '#4ADE80', '#74B9FF'],
-    bgDescription: 'Forest Light',
-    chatMood: 'friendly & relaxed',
-  },
-  {
     id: 'discovery',
     label: 'Initial Discovery',
     shortLabel: 'Discovery',
-    index: 2,
+    index: 1,
     agentMood: 'Getting to know you',
     agentEmoji: '👂',
     moodColor: '#FF6B8A',
@@ -102,6 +93,19 @@ export const PHASES: PhaseConfig[] = [
     gradient: ['#FFB84D', '#FF6B8A', '#6C3CE1'],
     bgDescription: 'Warm Sunset',
     chatMood: 'warm & friendly',
+  },
+  {
+    id: 'trust',
+    label: 'Building Trust',
+    shortLabel: 'Trust',
+    index: 2,
+    agentMood: 'Getting to know you',
+    agentEmoji: '🤝',
+    moodColor: '#4ADE80',
+    particleColors: ['#4ADE80', '#FFB84D', '#74B9FF'],
+    gradient: ['#14532D', '#4ADE80', '#74B9FF'],
+    bgDescription: 'Forest Light',
+    chatMood: 'friendly & relaxed',
   },
   {
     id: 'exploration',
