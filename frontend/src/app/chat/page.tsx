@@ -9,7 +9,7 @@ import ChatContainer from '@/components/chat/ChatContainer';
 import PersonaVisualization from '@/components/visualization/PersonaVisualization';
 import { useChatStore } from '@/lib/store/chatStore';
 import { useUserProfileStore } from '@/stores/userProfileStore';
-import { PHASES } from '@/types';
+import { PHASES, type ChatMessage } from '@/types';
 import { Sparkles, LayoutDashboard, MessageSquare, Wrench, Map as MapIcon, Settings, RefreshCw, Plus, MoreHorizontal } from 'lucide-react';
 import Sidebar3DAvatar from '@/components/agent/Sidebar3DAvatar';
 import CareerRoadmap from '@/components/visualization/CareerRoadmap';
@@ -107,7 +107,7 @@ export default function ChatPage() {
             </Link>
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <UserButton afterSignOutUrl="/" />
+              <UserButton />
             </div>
           </div>
 
@@ -199,7 +199,7 @@ export default function ChatPage() {
               </button>
 
               <div className="space-y-1 overflow-y-auto max-h-[220px] scrollbar-hide pr-1 -mx-2 px-2">
-                {sessions.map(([id, session]: [string, any]) => {
+                {sessions.map(([id, session]) => {
                   const isActive = id === activeSessionId;
                   return (
                     <div 
@@ -207,12 +207,12 @@ export default function ChatPage() {
                       onClick={() => {
                         setActiveSessionId(id);
                         // Convert DB serialized messages back to ChatMessage UI format
-                        const loadedMessages = (session.messages || []).map((m: any, idx: number) => ({
+                        const loadedMessages: ChatMessage[] = (session.messages || []).map((m, idx) => ({
                           id: `msg-${id}-${idx}`,
-                          sender: m.role,
+                          sender: (m.role === 'ai' ? 'agent' : m.role) as ChatMessage['sender'],
                           text: m.content,
                           timestamp: m.timestamp ? new Date(m.timestamp).getTime() : Date.now() - (session.messages.length - idx) * 1000,
-                          phase: 'exploration'
+                          phase: 'exploration' as const,
                         }));
                         if (loadedMessages.length > 0) {
                           setMessages(loadedMessages);

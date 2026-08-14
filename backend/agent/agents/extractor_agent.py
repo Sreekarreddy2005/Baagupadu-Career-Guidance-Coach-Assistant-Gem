@@ -10,11 +10,25 @@ import asyncio
 embedder = SentenceTransformer('all-MiniLM-L6-v2')
 
 
+class GraphEdge(BaseModel):
+    source: str = Field(description="The subject or entity, e.g. 'College Placements' or 'Math'")
+    relation: str = Field(description="The relational link, e.g. 'triggers_anxiety_because_of', 'loves_because'")
+    target: str = Field(description="The object or root cause, e.g. 'Fear of public failure', 'It feels logical'")
+
 class BrainPersonaOutput(BaseModel):
     """
     A rich, holistic extraction of who the user is as a PERSON — not just
     their career. This builds a "brain map" of how they think, feel, and operate.
     """
+    mental_graph_edges: List[GraphEdge] = Field(
+        default_factory=list,
+        description=(
+            "Extract semantic relationships (Mini GraphRAG) between concepts the user mentions. "
+            "e.g. source: 'Startup idea', relation: 'is_blocked_by', target: 'Fear of parents judgement'. "
+            "Only extract if there is a clear relationship linking two concepts. Empty list if none."
+        )
+    )
+
     # --- CORE IDENTITY ---
     traits_uncovered: List[str] = Field(
         default_factory=list,
@@ -104,6 +118,36 @@ class BrainPersonaOutput(BaseModel):
         )
     )
 
+    # --- COGNITIVE CAPABILITIES ---
+    cognitive_capabilities: List[str] = Field(
+        default_factory=list,
+        description="How fast they learn, analytical vs creative thinking, problem-solving style."
+    )
+    
+    # --- CURIOSITY & ENTHUSIASM ---
+    curiosity_and_enthusiasm: List[str] = Field(
+        default_factory=list,
+        description="What naturally sparks their curiosity, what makes them lose track of time, what they geek out about."
+    )
+    
+    # --- HABITS & ROUTINES ---
+    habits_and_routines: List[str] = Field(
+        default_factory=list,
+        description="Daily routines, how they structure (or don't structure) their day."
+    )
+    
+    # --- FREE TIME PREFERENCES ---
+    free_time_preferences: List[str] = Field(
+        default_factory=list,
+        description="What they do when nobody is watching or asking them to do anything."
+    )
+    
+    # --- LIFESTYLE & ENVIRONMENT ---
+    lifestyle_and_environment: List[str] = Field(
+        default_factory=list,
+        description="Where they thrive, how they like to live and work."
+    )
+
     # --- HARD FACTS (concrete life data) ---
     hard_facts: List[str] = Field(
         default_factory=list,
@@ -138,10 +182,25 @@ class ExtractorAgent(BaseAgent):
         # Initialise all persona keys if this is the first run
         for key in [
             "traits_uncovered", "emotional_drivers", "values",
-            "energy_sources", "hard_facts"
+            "energy_sources", "hard_facts", "cognitive_capabilities",
+            "curiosity_and_enthusiasm", "habits_and_routines",
+            "free_time_preferences", "lifestyle_and_environment",
+            "mental_graph_edges"
         ]:
             if key not in extracted_traits:
                 extracted_traits[key] = []
+                
+        if "trait_weights" not in extracted_traits:
+            extracted_traits["trait_weights"] = {}
+        if "coverage_matrix" not in extracted_traits:
+            extracted_traits["coverage_matrix"] = {
+                "cognitive_capabilities": 0,
+                "curiosity_and_enthusiasm": 0,
+                "habits_and_routines": 0,
+                "free_time_preferences": 0,
+                "lifestyle_and_environment": 0,
+                "overall_score": 0
+            }
 
         db = state.get("db_session")
         profile = state.get("profile", {})
@@ -162,9 +221,12 @@ class ExtractorAgent(BaseAgent):
             "who they are as a HUMAN BEING: how they think, what drives them emotionally, "
             "what they value, how they handle failure, how they relate to people, how they "
             "see themselves, and what energises or drains them.\n\n"
+            "ANTI-HALLUCINATION PROTOCOL (CRITICAL):\n"
+            "1. DO NOT extract conversational pleasantries or common small-talk actions (e.g. 'appreciates a safe space', 'can form a connection', 'is open to sharing', 'likes casual conversation').\n"
+            "2. ONLY extract deep, structural, undeniable cognitive traits. If the user is just saying 'my day was good', extract NOTHING. Return empty arrays.\n"
+            "3. If a field has no profound evidence, leave it EMPTY.\n\n"
             "Read the exchange below very carefully. Extract ONLY what is genuinely evidenced "
-            "by what the user said. Do NOT guess or invent. If a field has no evidence, "
-            "leave it as null or empty.\n\n"
+            "by what the user said.\n\n"
             f"=== EXCHANGE ===\n"
             f"User said: {user_msg}\n"
             f"Companion replied: {ai_msg}\n"
@@ -180,10 +242,26 @@ class ExtractorAgent(BaseAgent):
 
             # --- Merge new discoveries into the running persona ---
 
-            # Core traits
+            # Core traits with dynamic confidence weighting
+            trait_weights = extracted_traits.get("trait_weights", {})
             for t in res.traits_uncovered:
-                if t and t not in extracted_traits["traits_uncovered"]:
-                    extracted_traits["traits_uncovered"].append(t)
+                if t:
+                    if t not in extracted_traits["traits_uncovered"]:
+                        extracted_traits["traits_uncovered"].append(t)
+                        trait_weights[t] = round(trait_weights.get(t, 0.0) + 0.15, 2)
+                    else:
+                        # Reinforce confidence weight for recurring traits
+                        trait_weights[t] = round(min(1.0, trait_weights.get(t, 0.15) + 0.15), 2)
+            extracted_traits["trait_weights"] = trait_weights
+
+            # Graph Edges (Mini GraphRAG)
+            if hasattr(res, "mental_graph_edges") and res.mental_graph_edges:
+                for edge in res.mental_graph_edges:
+                    edge_dict = {"source": edge.source, "relation": edge.relation, "target": edge.target}
+                    # Prevent exact duplicate edges
+                    if edge_dict not in extracted_traits["mental_graph_edges"]:
+                        extracted_traits["mental_graph_edges"].append(edge_dict)
+            extracted_traits["trait_weights"] = trait_weights
 
             # Emotional drivers (accumulated list)
             for d in res.emotional_drivers:
@@ -200,6 +278,26 @@ class ExtractorAgent(BaseAgent):
                 if e and e not in extracted_traits["energy_sources"]:
                     extracted_traits["energy_sources"].append(e)
 
+            for item in res.cognitive_capabilities:
+                if item and item not in extracted_traits["cognitive_capabilities"]:
+                    extracted_traits["cognitive_capabilities"].append(item)
+                    
+            for item in res.curiosity_and_enthusiasm:
+                if item and item not in extracted_traits["curiosity_and_enthusiasm"]:
+                    extracted_traits["curiosity_and_enthusiasm"].append(item)
+                    
+            for item in res.habits_and_routines:
+                if item and item not in extracted_traits["habits_and_routines"]:
+                    extracted_traits["habits_and_routines"].append(item)
+                    
+            for item in res.free_time_preferences:
+                if item and item not in extracted_traits["free_time_preferences"]:
+                    extracted_traits["free_time_preferences"].append(item)
+                    
+            for item in res.lifestyle_and_environment:
+                if item and item not in extracted_traits["lifestyle_and_environment"]:
+                    extracted_traits["lifestyle_and_environment"].append(item)
+
             # Single-value fields — only update if we have new info and none yet
             if res.thinking_style and not extracted_traits.get("thinking_style"):
                 extracted_traits["thinking_style"] = res.thinking_style
@@ -212,6 +310,25 @@ class ExtractorAgent(BaseAgent):
 
             if res.self_image and not extracted_traits.get("self_image"):
                 extracted_traits["self_image"] = res.self_image
+
+            # --- Calculate 5-Dimension Persona Coverage Matrix ---
+            # Denominator set to 12.0 so Brain Map grows realistically and takes time to reach 100%
+            cog_score = min(100, int((len(extracted_traits["cognitive_capabilities"]) / 12.0) * 100))
+            cur_score = min(100, int((len(extracted_traits["curiosity_and_enthusiasm"]) / 12.0) * 100))
+            hab_score = min(100, int((len(extracted_traits["habits_and_routines"]) / 12.0) * 100))
+            free_score = min(100, int((len(extracted_traits["free_time_preferences"]) / 12.0) * 100))
+            life_score = min(100, int((len(extracted_traits["lifestyle_and_environment"]) / 12.0) * 100))
+            
+            overall = int((cog_score + cur_score + hab_score + free_score + life_score) / 5.0)
+            
+            extracted_traits["coverage_matrix"] = {
+                "cognitive_capabilities": cog_score,
+                "curiosity_and_enthusiasm": cur_score,
+                "habits_and_routines": hab_score,
+                "free_time_preferences": free_score,
+                "lifestyle_and_environment": life_score,
+                "overall_score": overall
+            }
 
             # --- Save Hard Facts to Long-Term Vector Memory ---
             if db and conversation_id and res.hard_facts:
@@ -243,6 +360,16 @@ class ExtractorAgent(BaseAgent):
                 persona_insights_to_save.append(f"Self-image: {res.self_image}")
             for e in res.energy_sources:
                 persona_insights_to_save.append(f"Energy source: {e}")
+            for item in res.cognitive_capabilities:
+                persona_insights_to_save.append(f"Cognitive capability: {item}")
+            for item in res.curiosity_and_enthusiasm:
+                persona_insights_to_save.append(f"Curiosity/Enthusiasm: {item}")
+            for item in res.habits_and_routines:
+                persona_insights_to_save.append(f"Habit/Routine: {item}")
+            for item in res.free_time_preferences:
+                persona_insights_to_save.append(f"Free time preference: {item}")
+            for item in res.lifestyle_and_environment:
+                persona_insights_to_save.append(f"Lifestyle/Environment: {item}")
 
             if db and conversation_id and persona_insights_to_save:
                 for insight in persona_insights_to_save:

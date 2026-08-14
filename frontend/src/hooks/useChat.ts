@@ -12,7 +12,6 @@ export function useDemoChat() {
     setAgentState,
     setPhase,
     completePhase,
-    setPersonaResult,
     setShowVisualization,
     currentPhase,
     activeSessionId,
@@ -22,7 +21,7 @@ export function useDemoChat() {
   const { getToken } = useAuth();
 
   const sendMessage = useCallback(
-    async (text: string) => {
+    async (text: string, isVoiceSession = false) => {
       // Add user message
       addMessage({ sender: 'user', text, phase: currentPhase });
       setAgentState('listening');
@@ -42,7 +41,7 @@ export function useDemoChat() {
         }
         
         // Fetch from backend using api.ts which passes the token and session ID
-        const data = await chatWithSahayam(text, sessionId, token);
+        const data = await chatWithSahayam(text, sessionId, token, isVoiceSession);
         let reply = data.response;
 
         // Force a re-fetch of the profile from the backend to instantly sync new health metrics
@@ -87,7 +86,7 @@ export function useDemoChat() {
         });
       }
     },
-    [addMessage, setAgentState, setPhase, completePhase, setPersonaResult, setShowVisualization, currentPhase, activeSessionId, setActiveSessionId, getToken, loadProfile]
+    [addMessage, setAgentState, setPhase, completePhase, setShowVisualization, currentPhase, activeSessionId, setActiveSessionId, getToken, loadProfile]
   );
 
   return { sendMessage };

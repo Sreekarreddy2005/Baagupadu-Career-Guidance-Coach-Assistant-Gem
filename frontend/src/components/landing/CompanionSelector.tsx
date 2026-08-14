@@ -134,9 +134,6 @@ export default function CompanionSelector() {
                 alt={activeCompanion.name}
                 className="w-auto h-full object-contain select-none object-bottom"
                 draggable={false}
-                style={{
-                  WebkitUserDrag: 'none'
-                }}
               />
             </motion.div>
 

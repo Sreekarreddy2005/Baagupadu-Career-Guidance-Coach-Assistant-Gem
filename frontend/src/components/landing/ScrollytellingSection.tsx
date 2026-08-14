@@ -3,7 +3,6 @@
 import { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent, MotionValue, useMotionTemplate } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-import PersonaVisualization from './PersonaVisualization';
 import { useCompanionStore } from "@/lib/store/companionStore";
 import { COMPANIONS } from "@/lib/companions";
 

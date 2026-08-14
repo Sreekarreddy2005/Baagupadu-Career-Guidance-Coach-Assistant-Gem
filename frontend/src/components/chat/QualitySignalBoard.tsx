@@ -13,16 +13,16 @@ export const QualitySignalBoard: React.FC = () => {
     : {
         empathy_score: "Calibrating...",
         user_resonance: "Pending",
-        routine_adherence: "Pending",
-        clarity: "Pending"
+        insight_score: "Pending",
+        overall_rating: "Pending"
       };
 
   const renderIcon = (key: string) => {
     switch(key.toLowerCase()) {
       case 'empathy_score': return <Heart size={16} className="text-rose-500" />;
       case 'user_resonance': return <Zap size={16} className="text-amber-500" />;
-      case 'routine_adherence': return <CheckCircle2 size={16} className="text-emerald-500" />;
-      case 'clarity': return <Compass size={16} className="text-blue-500" />;
+      case 'insight_score': return <Compass size={16} className="text-blue-500" />;
+      case 'overall_rating': return <CheckCircle2 size={16} className="text-emerald-500" />;
       default: return <Activity size={16} className="text-slate-500" />;
     }
   };

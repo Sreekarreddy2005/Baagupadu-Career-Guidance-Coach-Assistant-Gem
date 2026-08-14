@@ -1,0 +1,203 @@
+{
+  "name": "Baagupadu - Sahayam Agentic Pipeline (Interactive Demo)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "node_trigger",
+      "name": "1. User Message (Click 'Test workflow')",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Realistic incoming chat payload and existing user profile state\nreturn [{\n  json: {\n    user_id: \"user_2tNx8...\",\n    conversation_id: \"conv_active_session_88\",\n    message: \"Hey Sahayam! I really love building small scripts on weekends and figuring out why things break, but lately I feel overwhelmed and unsure what direction to take.\",\n    messages: [\n      { role: \"assistant\", content: \"Hey! I'm Sahayam 😊 I'm so glad you're here. Think of me like a close friend who really gets you. No judgment here at all. Ready to hang out?\" },\n      { role: \"user\", content: \"Yeah I'm ready! Excited to chat.\" },\n      { role: \"assistant\", content: \"Awesome! Before we get into anything deep, how has your day been going so far?\" },\n      { role: \"user\", content: \"Hey Sahayam! I really love building small scripts on weekends and figuring out why things break, but lately I feel overwhelmed and unsure what direction to take.\" }\n    ],\n    existing_persona: {\n      traits_uncovered: [\"builder_instinct\", \"curious\"],\n      trait_weights: { \"builder_instinct\": 0.35, \"curious\": 0.35 },\n      coverage_matrix: {\n        cognitive_capabilities: 40,\n        curiosity_and_enthusiasm: 50,\n        habits_and_routines: 10,\n        free_time_preferences: 20,\n        lifestyle_and_environment: 15,\n        overall_score: 27\n      }\n    },\n    current_phase: \"trust\"\n  }\n}];"
+      },
+      "id": "node_session_init",
+      "name": "2. Session Scoping & Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [360, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simulate HuggingFace all-MiniLM-L6-v2 384-dimensional dense vector calculation\nconst inputMsg = $input.first().json.message;\nconst vectorSample = [0.0421, -0.1284, 0.8931, 0.3128, -0.4512, 0.0892, 0.6519, -0.2214];\n\nreturn [{\n  json: {\n    ...($input.first().json),\n    embedding_model: \"sentence-transformers/all-MiniLM-L6-v2 (HuggingFace)\",\n    vector_dimension: 384,\n    embedding_preview: vectorSample\n  }\n}];"
+      },
+      "id": "node_hf_embeddings",
+      "name": "3. HuggingFace MiniLM Embedder",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [620, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// PostgreSQL pgvector Cosine Distance Search (<=> query_embedding)\n// Scoped strictly to current conversation_id\nconst convId = $input.first().json.conversation_id;\n\nconst retrievedMemories = [\n  {\n    fact: \"User mentioned enjoying Python scripting and tinkering with electronics on weekends\",\n    category: \"curiosity\",\n    cosine_distance: 0.124\n  },\n  {\n    fact: \"Expressed mild anxiety about career clarity and future options\",\n    category: \"emotional_state\",\n    cosine_distance: 0.189\n  }\n];\n\nreturn [{\n  json: {\n    ...($input.first().json),\n    ltm_query_sql: `SELECT content, embedding <=> '[vector]' as dist FROM long_term_memories WHERE conversation_id = '${convId}' ORDER BY dist ASC LIMIT 3;`,\n    retrieved_memories: retrievedMemories\n  }\n}];"
+      },
+      "id": "node_pgvector_ltm",
+      "name": "4. pgvector Current-Session LTM",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 180]
+    },
+    {
+      "parameters": {
+        "jsCode": "// PostgreSQL pgvector Knowledge Base RAG Search over ingested prompt files:\nconst kbGuidance = [\n  {\n    prompt_file: \"gems/nenu_evaru/prompts/trust_building_phase.md\",\n    phase: \"Phase 1: Trust Building\",\n    guideline: \"Never grill the user or rush into solutions. Validate their vulnerability first with empathetic WhatsApp friend tone.\",\n    cosine_distance: 0.098\n  },\n  {\n    prompt_file: \"gems/nenu_evaru/prompts/guardrails.md\",\n    phase: \"Safety Guardrails\",\n    guideline: \"Max 1 question per turn. Never give unsolicited career advice in early exploration.\",\n    cosine_distance: 0.142\n  },\n  {\n    prompt_file: \"gems/nenu_evaru/prompts/question_transformation.md\",\n    phase: \"Hybrid Questioning\",\n    guideline: \"Transform dry psychometric questions into conversational buddy dialogue.\",\n    cosine_distance: 0.165\n  }\n];\n\nreturn [{\n  json: {\n    ...($input.first().json),\n    kb_rag_sql: \"SELECT content, embedding <=> '[vector]' as dist FROM knowledge_base_chunks ORDER BY dist ASC LIMIT 3;\",\n    prompt_files_referenced: [\n      \"gems/nenu_evaru/prompts/trust_building_phase.md\",\n      \"gems/nenu_evaru/prompts/guardrails.md\",\n      \"gems/nenu_evaru/prompts/question_transformation.md\",\n      \"gems/nenu_evaru/prompts/system_prompt.md\"\n    ],\n    knowledge_base_rules: kbGuidance\n  }\n}];"
+      },
+      "id": "node_pgvector_rag",
+      "name": "5. pgvector Coaching KB (RAG)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 420]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Planner Node (gems/nenu_evaru/prompts/router.md & efficient_persona_engine.md)\nconst data = $input.first().json;\nconst msgCount = data.messages.filter(m => m.role === 'user').length;\nconst cov = data.existing_persona.coverage_matrix;\n\nlet activePhase = \"trust\";\nif (msgCount <= 2) {\n  activePhase = \"trust\";\n} else {\n  activePhase = \"exploration\";\n}\n\n// Heatmap evaluation per efficient_persona_engine.md\nconst dimensions = [\n  { name: \"Habits & Routines\", score: cov.habits_and_routines, prompt: \"gems/nenu_evaru/prompts/adult_exploration.md\" },\n  { name: \"Lifestyle & Environment\", score: cov.lifestyle_and_environment, prompt: \"gems/nenu_evaru/prompts/adult_exploration.md\" },\n  { name: \"Free Time Preferences\", score: cov.free_time_preferences, prompt: \"gems/nenu_evaru/prompts/childhood_exploration.md\" },\n  { name: \"Cognitive Capabilities\", score: cov.cognitive_capabilities, prompt: \"gems/nenu_evaru/prompts/teenage_exploration.md\" },\n  { name: \"Curiosity & Enthusiasm\", score: cov.curiosity_and_enthusiasm, prompt: \"gems/nenu_evaru/prompts/childhood_exploration.md\" }\n];\ndimensions.sort((a, b) => a.score - b.score);\nconst lowestDimension = dimensions[0];\n\nconst strategicPlan = `Phase: ${activePhase.toUpperCase()}. Per router.md & trust_building_phase.md: Acknowledge builder instinct warmly ('that feeling when a script finally runs'). Validate overwhelm. Gently explore lowest-coverage area (${lowestDimension.name} @ ${lowestDimension.score}%) via ${lowestDimension.prompt}.`;\n\nreturn [{\n  json: {\n    ...data,\n    active_phase: activePhase,\n    lowest_dimension: lowestDimension,\n    user_exchanges: msgCount,\n    strategic_plan: strategicPlan,\n    governing_prompt_files: [\n      \"gems/nenu_evaru/prompts/router.md\",\n      \"gems/nenu_evaru/prompts/efficient_persona_engine.md\",\n      \"gems/nenu_evaru/prompts/guardrails.md\"\n    ],\n    empathy_rubric: { safety: \"PASS\", necessity: \"PASS\", tone: \"PASS (Warm Friend)\" }\n  }\n}];"
+      },
+      "id": "node_planner_heatmap",
+      "name": "6. Planner & Heatmap Routing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1160, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+                "conditions": [
+                  { "leftValue": "={{ $json.active_phase }}", "rightValue": "trust", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "trust_flow"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+                "conditions": [
+                  { "leftValue": "={{ $json.active_phase }}", "rightValue": "exploration", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "exploration_flow"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_phase_switch",
+      "name": "7. Phase Switch Node",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1420, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Executor Agent (Ollama Llama 3.1) - Prompt: gems/nenu_evaru/prompts/trust_building_phase.md & system_prompt.md\nconst plan = $input.first().json.strategic_plan;\nconst promptApplied = `[System Instructions: gems/nenu_evaru/prompts/system_prompt.md]\\n[Phase Prompt: gems/nenu_evaru/prompts/trust_building_phase.md]\\n[Plan: ${plan}]\\n[Tone: Casual WhatsApp friend, contractions, no robotic praise, 1 question max]`;\n\nconst generatedResponse = \"Oh man, that feeling when you write a script and it finally runs with zero errors is honestly pure magic! 🙌 But I totally get how daunting it feels when you start zooming out to 'the big career picture'—it's super easy for that overwhelm to creep in. When you're in the zone building something on a Saturday, what kind of problems usually pull you in the most?\";\n\nreturn [{\n  json: {\n    ...($input.first().json),\n    active_prompt_file: \"gems/nenu_evaru/prompts/trust_building_phase.md\",\n    system_prompt_file: \"gems/nenu_evaru/prompts/system_prompt.md\",\n    system_prompt_compiled: promptApplied,\n    llm_model: \"llama3.1 (temperature=0.8, presence_penalty=0.6)\",\n    response_text: generatedResponse\n  }\n}];"
+      },
+      "id": "node_executor_trust",
+      "name": "8A. Ollama (Trust Executor - Llama 3.1)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1700, 160]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Executor Agent (Ollama Llama 3.1) - Prompt: gems/nenu_evaru/prompts/adult_exploration.md & childhood_exploration.md\nconst generatedResponse = \"I love how you naturally gravitate towards building and debugging. It says a lot about how your brain works. When you hit a roadblock during your routines, do you prefer solving it alone in deep focus, or bouncing ideas off someone else?\";\n\nreturn [{\n  json: {\n    ...($input.first().json),\n    active_prompt_file: \"gems/nenu_evaru/prompts/adult_exploration.md\",\n    system_prompt_file: \"gems/nenu_evaru/prompts/system_prompt.md\",\n    llm_model: \"llama3.1 (temperature=0.8, presence_penalty=0.6)\",\n    response_text: generatedResponse\n  }\n}];"
+      },
+      "id": "node_executor_explore",
+      "name": "8B. Ollama (Discovery Executor - Llama 3.1)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1700, 420]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extractor Agent (Ollama Qwen 2.5 Structured JSON)\n// Governing Prompts: gems/nenu_evaru/prompts/trait_inference.md & persona_building.md\nconst userMsg = $input.first().json.message;\n\nconst extractedData = {\n  new_traits: [\"builder_instinct\", \"analytical_troubleshooter\", \"curiosity_driven\"],\n  new_facts: [\"Builds scripts on weekends\", \"Enjoys debugging and understanding system failures\"],\n  dimension_hits: {\n    curiosity_and_enthusiasm: 2,\n    cognitive_capabilities: 1,\n    habits_and_routines: 1\n  }\n};\n\nreturn [{\n  json: {\n    ...($input.first().json),\n    governing_prompt_files: [\n      \"gems/nenu_evaru/prompts/trait_inference.md\",\n      \"gems/nenu_evaru/prompts/persona_building.md\"\n    ],\n    extraction_llm: \"qwen2.5 (temperature=0.1, structured_json)\",\n    extracted_persona_updates: extractedData\n  }\n}];"
+      },
+      "id": "node_extractor_qwen",
+      "name": "9. Extractor Agent (Qwen 2.5)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1980, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Trait Confidence Weight Calculator (+0.25 Reinforcement per trait_inference.md)\nconst data = $input.first().json;\nconst existingWeights = data.existing_persona.trait_weights || {};\nconst newTraits = data.extracted_persona_updates.new_traits;\n\nconst updatedWeights = { ...existingWeights };\nnewTraits.forEach(trait => {\n  if (updatedWeights[trait]) {\n    // Reinforce existing trait up to 1.0 confidence\n    updatedWeights[trait] = Math.min(1.0, parseFloat((updatedWeights[trait] + 0.25).toFixed(2)));\n  } else {\n    // First mention initial confidence\n    updatedWeights[trait] = 0.35;\n  }\n});\n\n// Update coverage matrix scores per efficient_persona_engine.md\nconst prevCov = data.existing_persona.coverage_matrix;\nconst updatedCov = {\n  cognitive_capabilities: Math.min(100, prevCov.cognitive_capabilities + 15),\n  curiosity_and_enthusiasm: Math.min(100, prevCov.curiosity_and_enthusiasm + 20),\n  habits_and_routines: Math.min(100, prevCov.habits_and_routines + 10),\n  free_time_preferences: prevCov.free_time_preferences,\n  lifestyle_and_environment: prevCov.lifestyle_and_environment,\n  overall_score: 0\n};\nupdatedCov.overall_score = Math.round(\n  (updatedCov.cognitive_capabilities + updatedCov.curiosity_and_enthusiasm + updatedCov.habits_and_routines + updatedCov.free_time_preferences + updatedCov.lifestyle_and_environment) / 5\n);\n\nreturn [{\n  json: {\n    ...data,\n    final_persona_state: {\n      traits: Object.keys(updatedWeights),\n      trait_confidence_weights: updatedWeights,\n      coverage_matrix: updatedCov\n    }\n  }\n}];"
+      },
+      "id": "node_calc_weights",
+      "name": "10. Weight & Confidence Calculator",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// PostgreSQL Transaction Persistence Simulation\nconst data = $input.first().json;\nconst convId = data.conversation_id;\nconst persona = data.final_persona_state;\n\nreturn [{\n  json: {\n    status: \"SUCCESS_200\",\n    db_operations: [\n      `UPDATE profile_states SET persona = '${JSON.stringify(persona)}' WHERE conversation_id = '${convId}';`,\n      `INSERT INTO long_term_memories (conversation_id, content, embedding) VALUES ('${convId}', 'Enjoys debugging scripts', '[384-dim vector]');`,\n      `INSERT INTO messages (conversation_id, role, content) VALUES ('${convId}', 'assistant', '${data.response_text.replace(/'/g, \"''\")}');`\n    ],\n    delivered_response: data.response_text,\n    persona_snapshot: persona\n  }\n}];"
+      },
+      "id": "node_postgres_persistence",
+      "name": "11. PostgreSQL Profile & LTM Commit",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2500, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Final Client Presentation Payload\nconst data = $input.first().json;\nreturn [{\n  json: {\n    status: \"success\",\n    assistant_reply: data.delivered_response,\n    brain_mapping_progress: `${data.persona_snapshot.coverage_matrix.overall_score}% Mapped`,\n    weighted_traits: data.persona_snapshot.trait_confidence_weights,\n    coverage_matrix: data.persona_snapshot.coverage_matrix,\n    prompt_files_executed: [\n      \"gems/nenu_evaru/prompts/system_prompt.md\",\n      \"gems/nenu_evaru/prompts/trust_building_phase.md\",\n      \"gems/nenu_evaru/prompts/router.md\",\n      \"gems/nenu_evaru/prompts/efficient_persona_engine.md\",\n      \"gems/nenu_evaru/prompts/guardrails.md\",\n      \"gems/nenu_evaru/prompts/trait_inference.md\",\n      \"gems/nenu_evaru/prompts/persona_building.md\"\n    ],\n    message: \"Workflow executed with all prompt files active! 🚀\"\n  }\n}];"
+      },
+      "id": "node_demo_output",
+      "name": "12. Output Display (Chat Bubble)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2760, 300]
+    }
+  ],
+  "connections": {
+    "1. User Message (Click 'Test workflow')": {
+      "main": [[{ "node": "2. Session Scoping & Context", "type": "main", "index": 0 }]]
+    },
+    "2. Session Scoping & Context": {
+      "main": [[{ "node": "3. HuggingFace MiniLM Embedder", "type": "main", "index": 0 }]]
+    },
+    "3. HuggingFace MiniLM Embedder": {
+      "main": [
+        [{ "node": "4. pgvector Current-Session LTM", "type": "main", "index": 0 }],
+        [{ "node": "5. pgvector Coaching KB (RAG)", "type": "main", "index": 0 }]
+      ]
+    },
+    "4. pgvector Current-Session LTM": {
+      "main": [[{ "node": "6. Planner & Heatmap Routing", "type": "main", "index": 0 }]]
+    },
+    "5. pgvector Coaching KB (RAG)": {
+      "main": [[{ "node": "6. Planner & Heatmap Routing", "type": "main", "index": 0 }]]
+    },
+    "6. Planner & Heatmap Routing": {
+      "main": [[{ "node": "7. Phase Switch Node", "type": "main", "index": 0 }]]
+    },
+    "7. Phase Switch Node": {
+      "main": [
+        [{ "node": "8A. Ollama (Trust Executor - Llama 3.1)", "type": "main", "index": 0 }],
+        [{ "node": "8B. Ollama (Discovery Executor - Llama 3.1)", "type": "main", "index": 0 }]
+      ]
+    },
+    "8A. Ollama (Trust Executor - Llama 3.1)": {
+      "main": [[{ "node": "9. Extractor Agent (Qwen 2.5)", "type": "main", "index": 0 }]]
+    },
+    "8B. Ollama (Discovery Executor - Llama 3.1)": {
+      "main": [[{ "node": "9. Extractor Agent (Qwen 2.5)", "type": "main", "index": 0 }]]
+    },
+    "9. Extractor Agent (Qwen 2.5)": {
+      "main": [[{ "node": "10. Weight & Confidence Calculator", "type": "main", "index": 0 }]]
+    },
+    "10. Weight & Confidence Calculator": {
+      "main": [[{ "node": "11. PostgreSQL Profile & LTM Commit", "type": "main", "index": 0 }]]
+    },
+    "11. PostgreSQL Profile & LTM Commit": {
+      "main": [[{ "node": "12. Output Display (Chat Bubble)", "type": "main", "index": 0 }]]
+    }
+  }
+}
