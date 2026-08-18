@@ -3,8 +3,9 @@ from pydantic import BaseModel, Field
 from langchain_core.messages import SystemMessage, AIMessage, HumanMessage
 from backend.agent.state import AgentState
 from backend.agent.agents.base_agent import BaseAgent
-from backend.models import LongTermMemory
+from backend.models import LongTermMemory, MemoryNode, MemoryEdge
 from sentence_transformers import SentenceTransformer
+from sqlalchemy.future import select
 import asyncio
 
 embedder = SentenceTransformer('all-MiniLM-L6-v2')
@@ -254,13 +255,48 @@ class ExtractorAgent(BaseAgent):
                         trait_weights[t] = round(min(1.0, trait_weights.get(t, 0.15) + 0.15), 2)
             extracted_traits["trait_weights"] = trait_weights
 
-            # Graph Edges (Mini GraphRAG)
-            if hasattr(res, "mental_graph_edges") and res.mental_graph_edges:
-                for edge in res.mental_graph_edges:
-                    edge_dict = {"source": edge.source, "relation": edge.relation, "target": edge.target}
-                    # Prevent exact duplicate edges
-                    if edge_dict not in extracted_traits["mental_graph_edges"]:
-                        extracted_traits["mental_graph_edges"].append(edge_dict)
+            # Graph Edges (Mini GraphRAG) -> True Graph Database
+            if db and hasattr(res, "mental_graph_edges") and res.mental_graph_edges:
+                user_id = profile.get("user_id")
+                if user_id:
+                    for edge in res.mental_graph_edges:
+                        # 1. Get or create Source Node
+                        source_res = await db.execute(select(MemoryNode).where(MemoryNode.user_id == user_id, MemoryNode.name == edge.source))
+                        source_node = source_res.scalars().first()
+                        if not source_node:
+                            source_node = MemoryNode(user_id=user_id, label="Entity", name=edge.source)
+                            db.add(source_node)
+                            await db.flush()
+                            
+                        # 2. Get or create Target Node
+                        target_res = await db.execute(select(MemoryNode).where(MemoryNode.user_id == user_id, MemoryNode.name == edge.target))
+                        target_node = target_res.scalars().first()
+                        if not target_node:
+                            target_node = MemoryNode(user_id=user_id, label="Entity", name=edge.target)
+                            db.add(target_node)
+                            await db.flush()
+                            
+                        # 3. Create Edge (skip if already exists)
+                        edge_res = await db.execute(select(MemoryEdge).where(
+                            MemoryEdge.source_id == source_node.id, 
+                            MemoryEdge.target_id == target_node.id, 
+                            MemoryEdge.relation == edge.relation
+                        ))
+                        if not edge_res.scalars().first():
+                            new_edge = MemoryEdge(
+                                user_id=user_id, 
+                                source_id=source_node.id, 
+                                target_id=target_node.id, 
+                                relation=edge.relation
+                            )
+                            db.add(new_edge)
+                            
+                        # Still save to JSON blob for frontend visualization
+                        edge_dict = {"source": edge.source, "relation": edge.relation, "target": edge.target}
+                        if edge_dict not in extracted_traits["mental_graph_edges"]:
+                            extracted_traits["mental_graph_edges"].append(edge_dict)
+                            
+                    await db.commit()
             extracted_traits["trait_weights"] = trait_weights
 
             # Emotional drivers (accumulated list)
@@ -339,8 +375,7 @@ class ExtractorAgent(BaseAgent):
                         ltm = LongTermMemory(
                             conversation_id=conversation_id,
                             content=fact,
-                            embedding=embedding.tolist(),
-                            metadata_tags={"type": "hard_fact"}
+                            embedding=embedding.tolist()
                         )
                         db.add(ltm)
 
@@ -377,8 +412,7 @@ class ExtractorAgent(BaseAgent):
                     ltm = LongTermMemory(
                         conversation_id=conversation_id,
                         content=insight,
-                        embedding=embedding.tolist(),
-                        metadata_tags={"type": "persona_insight"}
+                        embedding=embedding.tolist()
                     )
                     db.add(ltm)
 

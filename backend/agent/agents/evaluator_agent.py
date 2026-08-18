@@ -5,10 +5,10 @@ from langchain_core.prompts import ChatPromptTemplate
 from backend.core.config import config
 
 class QualitySignals(BaseModel):
-    empathy_score: int = Field(description="Score 0-100: How well the AI validated feelings without sounding robotic.", ge=0, le=100)
-    user_resonance: int = Field(description="Score 0-100: How deeply the response connected with the user's specific context.", ge=0, le=100)
-    insight_score: int = Field(description="Score 0-100: Did the AI uncover something meaningful (high) or just make small talk (low)?", ge=0, le=100)
-    overall_rating: int = Field(description="Score 0-100: Overall evaluation of this response.", ge=0, le=100)
+    empathy_index: int = Field(description="Score 0-100: Focus on emotional validation and trust-building (The Hug).", ge=0, le=100)
+    curiosity_index: int = Field(description="Score 0-100: Focus on deep questioning and probing the user's mind (The Mirror).", ge=0, le=100)
+    tactical_index: int = Field(description="Score 0-100: Focus on giving actionable advice, structure, or pushing towards a goal (The Push).", ge=0, le=100)
+    winning_signal: str = Field(description="Explicitly categorize the dominant trait based on the highest index score: 'Empathetic Validation', 'Deep Exploration', or 'Tactical Push'")
 
 class EvaluatorAgent:
     def __init__(self):
@@ -26,11 +26,13 @@ class EvaluatorAgent:
         
         self.prompt = ChatPromptTemplate.from_messages([
             ("system", """You are an expert psychological conversation evaluator. 
-Your ONLY job is to grade the AI's response to the User based on 4 metrics (0-100).
-- Empathy: 100 means true, human-like validation. 0 means robotic or dismissive.
-- Resonance: 100 means highly specific to the user's context. 0 means generic platitudes.
-- Insight: 100 means it asks a deep, revealing question. 0 means basic small-talk.
-- Overall: The aggregated score of how good this response is.
+Your ONLY job is to grade the AI's response to the User based on 3 COMPETING metrics (0-100) and declare a clear winner.
+- Empathy Index (The Hug): Did the AI focus primarily on validating feelings, building trust, and being supportive?
+- Curiosity Index (The Mirror): Did the AI focus primarily on asking deep questions, extracting core truths, and exploring the user's past/fears?
+- Tactical Index (The Push): Did the AI focus primarily on actionable advice, structured frameworks, or pushing the user towards a goal?
+
+These scores should COMPETE. If the AI was highly curious (asking a deep question), the Curiosity Index should be high (80-100) while the Empathy and Tactical indexes should be lower. 
+Based on the highest score, set the `winning_signal` exactly to one of these three strings: "Empathetic Validation", "Deep Exploration", or "Tactical Push".
 
 Be strict but fair. Output ONLY the JSON grading schema. DO NOT output any text explanation.
 """),
@@ -48,8 +50,8 @@ Be strict but fair. Output ONLY the JSON grading schema. DO NOT output any text 
             print(f"Evaluator Agent Error: {e}")
             # Fallback values if evaluation fails (e.g. model timeout or format error)
             return {
-                "empathy_score": 50,
-                "user_resonance": 50,
-                "insight_score": 50,
-                "overall_rating": 50
+                "empathy_index": 50,
+                "curiosity_index": 50,
+                "tactical_index": 50,
+                "winning_signal": "Evaluating..."
             }

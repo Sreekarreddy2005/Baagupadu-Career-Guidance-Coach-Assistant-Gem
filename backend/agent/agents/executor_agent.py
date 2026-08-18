@@ -243,6 +243,25 @@ class ExecutorAgent(BaseAgent):
                 "4. You can optionally end with an invitation (not a question) to continue when they're ready.\n\n"
             )
 
+        tool_context = state.get("tool_context", "")
+        tool_instruction = ""
+        if tool_context:
+            tool_instruction = (
+                "🌐 LIVE WEB DATA AVAILABLE:\n"
+                f"{tool_context}\n"
+                "Use this factual data naturally in your response to ground your advice. Do not sound like a robot reading a report.\n\n"
+            )
+
+        reflection_thought = state.get("reflection_thought", "")
+        reflection_instruction = ""
+        if reflection_thought:
+            reflection_instruction = (
+                "🧠 INTERNAL REFLECTION (REACT LOOP):\n"
+                "You noticed the user deflected or resisted a probe. Here is your internal reasoning:\n"
+                f"'{reflection_thought}'\n"
+                "Use this insight to guide your tone. Retreat, validate, and rebuild trust instead of pushing.\n\n"
+            )
+
         system_prompt = (
             "<system_instructions>\n"
             "You are Sahayam. You are NOT a career coach, a therapist, or a productivity tool.\n\n"
@@ -276,16 +295,21 @@ class ExecutorAgent(BaseAgent):
             f"{first_message_instruction}"
             f"{trust_instruction}"
             f"{resistance_instruction}"
+            f"{reflection_instruction}"
+            f"{tool_instruction}"
             f"{voice_instruction}"
             f"{few_shot_context}"
-            f"PLAN FOR THIS RESPONSE:\n{proposed_plan}\n\n"
-            f"{ltm_context}{kb_context}"
+            f"{ltm_context}"
+            f"{kb_context}"
+            "</system_instructions>\n\n"
+            "Here is the strict PLAN you MUST follow for this exact turn:\n"
+            f"<PLAN>\n{proposed_plan}\n</PLAN>\n\n"
+            "Execute the plan above seamlessly.\n"
             f"{_get_profile_context(profile)}"
             "YOUR RESPONSE:\n"
             "Write your response directly. Keep it natural, warm, human. "
             "If the plan asks you to explore something, do it conversationally — like a friend asking "
             "out of genuine curiosity, not like a form to fill in.\n"
-            "</system_instructions>"
         )
 
         try:

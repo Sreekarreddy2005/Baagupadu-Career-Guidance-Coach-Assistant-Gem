@@ -7,6 +7,10 @@ from backend.models import LongTermMemory, KnowledgeBaseChunk
 from sentence_transformers import SentenceTransformer
 from backend.knowledge_base.loader import KnowledgeBaseLoader
 import asyncio
+from sqlalchemy.future import select
+from sqlalchemy.orm import aliased
+from backend.agent.agents.shadow_agents import ShadowEngine
+from backend.models import KnowledgeBaseChunk, MemoryNode, MemoryEdge
 
 embedder = SentenceTransformer('all-MiniLM-L6-v2')
 kb_loader = KnowledgeBaseLoader()
@@ -33,10 +37,20 @@ class PlannerOutput(BaseModel):
     micro_phase: Optional[str] = Field(
         description="The life-stage domain to explore: 'childhood', 'teenage', 'adult', or 'none'."
     )
+    search_query: Optional[str] = Field(
+        description="If the user asks a factual question (e.g., about salaries, job markets, specific companies), provide a search query to ground the advice. Otherwise, leave null."
+    )
+    is_deflection: bool = Field(
+        description="True if the user dodged a deep question or gave a resistant non-answer."
+    )
+    reflection_thought: Optional[str] = Field(
+        description="If is_deflection is True, explicitly write out your internal reasoning on why they deflected and how you should adjust your strategy to rebuild trust."
+    )
 
 
 class PlannerAgent(BaseAgent):
     def __init__(self):
+        self.shadow_engine = ShadowEngine()
         super().__init__(purpose="logic", structured_output_model=PlannerOutput)
 
     async def invoke(self, state: AgentState) -> Dict[str, Any]:
@@ -63,6 +77,8 @@ class PlannerAgent(BaseAgent):
                 "micro_phase": None
             }
 
+        user_msg_count = len([m for m in messages if hasattr(m, 'type') and m.type == 'human'])
+
         recent_history = self.get_recent_history(messages, k=6)
 
         kb_context = ""
@@ -86,6 +102,48 @@ class PlannerAgent(BaseAgent):
                     )
             except Exception as e:
                 print(f"RAG Error in Planner: {e}")
+
+        graph_context = ""
+        if db and user_input:
+            user_id = profile.get("user_id")
+            if user_id:
+                try:
+                    # 1. Very basic entity extraction via split (a real app uses LLM/SpaCy here, this is a fast POC)
+                    words = [w.strip(".,?!;:") for w in user_input.split() if len(w) > 4]
+                    
+                    matched_nodes = []
+                    for word in words:
+                        res = await db.execute(select(MemoryNode).where(
+                            MemoryNode.user_id == user_id, 
+                            MemoryNode.name.ilike(f"%{word}%")
+                        ).limit(3))
+                        matched_nodes.extend(res.scalars().all())
+                    
+                    # 2. Get edges for those nodes
+                    if matched_nodes:
+                        node_ids = [n.id for n in matched_nodes]
+                        
+                        SourceNode = aliased(MemoryNode)
+                        TargetNode = aliased(MemoryNode)
+                        
+                        edges_res = await db.execute(
+                            select(MemoryEdge, SourceNode.name, TargetNode.name)
+                            .join(SourceNode, MemoryEdge.source_id == SourceNode.id)
+                            .join(TargetNode, MemoryEdge.target_id == TargetNode.id)
+                            .where(MemoryEdge.user_id == user_id)
+                            .where((SourceNode.id.in_(node_ids)) | (TargetNode.id.in_(node_ids)))
+                            .limit(10)
+                        )
+                        edge_results = edges_res.all()
+                        
+                        if edge_results:
+                            graph_context = "🕸️ USER MEMORY GRAPH (GraphRAG Context):\n"
+                            graph_context += "The following are deeply ingrained connections in the user's brain related to what they just said:\n"
+                            for edge, source_name, target_name in edge_results:
+                                graph_context += f"- (User/Concept: '{source_name}') --[{edge.relation}]--> ('{target_name}')\n"
+                            graph_context += "\n"
+                except Exception as e:
+                    print(f"GraphRAG Error in Planner: {e}")
 
         # Detect user resistance signals
         resistance_signals = [
@@ -130,6 +188,22 @@ class PlannerAgent(BaseAgent):
                 "If they are still giving one-word answers, plan a response where the Executor: (1) casually validates what they just said, and (2) asks ONE very light, everyday small-talk question.\n\n"
             )
 
+        shadow_instruction = ""
+        if user_input and user_msg_count > 0:
+            shadow_results = await self.shadow_engine.analyze(user_input)
+            empath_hyp = shadow_results.get("empath_hypothesis", "")
+            skeptic_hyp = shadow_results.get("skeptic_hypothesis", "")
+            if empath_hyp or skeptic_hyp:
+                shadow_instruction = (
+                    "👥 SHADOW AGENT HYPOTHESES (INTERNAL USE ONLY):\n"
+                    "Your background shadow agents have analyzed the user's last message. Here are their psychological hypotheses:\n"
+                    f"- The Empath thinks: {empath_hyp}\n"
+                    f"- The Skeptic thinks: {skeptic_hyp}\n\n"
+                    "CRITICAL RULE: Use these hypotheses to UNDERSTAND the user deeply, but NEVER interrogate them about it. "
+                    "Do NOT ask 'Are you avoiding this?' or 'What made you think that?'. Act like a total human friend who just happens to be incredibly perceptive. "
+                    "Incorporate this deep understanding smoothly into your proposed plan without breaking the 'friendly companion' UX.\n\n"
+                )
+
         prompt = (
             "You are the Strategic Planner for Sahayam — a warm AI companion whose PRIMARY goal is "
             "to understand the user as a complete HUMAN BEING, not just guide their career.\n\n"
@@ -140,6 +214,8 @@ class PlannerAgent(BaseAgent):
             f"{trust_buffer_rule}"
             f"{coverage_str}"
             f"{kb_context}"
+            f"{graph_context}"
+            f"{shadow_instruction}"
             f"{resistance_rule}"
             f"CURRENT PHASE: {current_phase}\n"
             f"RECENT CONVERSATION:\n{recent_history}\n\n"
@@ -150,15 +226,11 @@ class PlannerAgent(BaseAgent):
             "a project, a frustration — go there. Let their energy guide the micro-phase.\n"
             "4. TRUST BEFORE DEPTH: In the first 4-5 messages, stay purely in light, friendly small-talk. Do not probe deeply until psychological safety is established.\n"
             "5. KEEP MOVING: If you've explored one thread enough, plan to gently transition to a new "
-            "aspect of their life or personality. Do not drill down endlessly on one topic.\n"
-            "5. RESISTANCE PROTOCOL: If the user shows frustration or impatience, plan to STOP questioning "
-            "and instead share what you've noticed about them so far.\n"
-            "6. PHASE DISCIPLINE: Phases move forward only: trust → exploration → synthesis → guidance. "
-            "Only move to 'exploration' once at least 2-3 rapport exchanges have occurred and genuine comfort exists. Only move to 'synthesis' when you "
-            "have a rich understanding of their personality across multiple dimensions.\n"
-            "7. ONE QUESTION RULE: Whatever you plan, the Executor must ask a MAXIMUM of one question. "
-            "Build your plan around a single, precise conversational move.\n"
-            "8. HEATMAP-GUIDED EXPLORATION: Check the Persona Coverage Matrix. If one dimension has very low coverage "
+            "5. AVOID LISTS & INTERVIEWS: Do not output plans that result in bullet points or '20 questions'. If you need information, get it conversationally.\n"
+            "6. NO PREACHING: Give space. Let them figure it out. Do not rush to 'fix' them.\n"
+            "7. TOOL USE (GROUNDING): If the user asks a factual question about careers, salaries, or the real world, output a `search_query` so the system can fetch live internet data to ground the response.\n"
+            "8. REACT LOOP (DEFLECTION HANDLING): If the user dodges a question, gives a non-answer, or resists, set `is_deflection=True`. Write a `reflection_thought` analyzing why they resisted. Then, use that reflection to form a `proposed_plan` that retreats and validates them instead of pushing harder.\n"
+            "9. HEATMAP-GUIDED EXPLORATION: Check the Persona Coverage Matrix. If one dimension has very low coverage "
             "(e.g. Free Time or Habits are under 30%), plan a friendly, conversational move to naturally touch on that uncharted area.\n\n"
             f"GUARDRAILS (CRITICAL RULES):\n{guardrails_text}\n\n"
             "EVALUATION RUBRIC:\n"
@@ -170,42 +242,45 @@ class PlannerAgent(BaseAgent):
         )
 
         try:
-            res: PlannerOutput = await self.structured_llm.ainvoke([SystemMessage(content=prompt)])
+            result: PlannerOutput = await self.structured_llm.ainvoke([SystemMessage(content=prompt)])
 
-            plan = res.proposed_plan
-            phase = res.new_phase.lower() if res.new_phase and res.new_phase.lower() != "none" else current_phase
+            new_phase = result.new_phase.lower() if result.new_phase and result.new_phase.lower() != "none" else current_phase
 
             # Enforce 4-exchange trust buffer
             if user_msg_count <= 4:
-                phase = "trust"
+                new_phase = "trust"
 
             # Enforce strictly forward progression
             phase_order = {"trust": 1, "exploration": 2, "synthesis": 3, "guidance": 4}
-            if phase in phase_order and current_phase in phase_order:
-                if phase_order[phase] < phase_order[current_phase]:
-                    phase = current_phase
+            if new_phase in phase_order and current_phase in phase_order:
+                if phase_order[new_phase] < phase_order[current_phase]:
+                    new_phase = current_phase
 
-            micro_phase = (
-                res.micro_phase.lower()
-                if res.micro_phase and res.micro_phase.lower() in ["childhood", "teenage", "adult"]
+            micro_phase_str = (
+                result.micro_phase.lower()
+                if result.micro_phase and result.micro_phase.lower() in ["childhood", "teenage", "adult"]
                 else None
             )
 
-            if not plan or not res.is_approved:
+            if not result.proposed_plan or not result.is_approved:
                 return {
                     "proposed_plan": "Continue the conversation warmly and naturally. Explore the next unknown dimension of their personality.",
                     "new_phase": current_phase,
                     "micro_phase": None,
                     "is_approved": False,
-                    "evaluator_feedback": res.internal_critique
+                    "evaluator_feedback": result.internal_critique,
+                    "is_deflection": False
                 }
 
             return {
-                "proposed_plan": plan, 
-                "new_phase": phase, 
-                "micro_phase": micro_phase,
-                "is_approved": res.is_approved,
-                "evaluator_feedback": res.internal_critique
+                "proposed_plan": result.proposed_plan,
+                "is_approved": result.is_approved,
+                "evaluator_feedback": result.internal_critique,
+                "new_phase": new_phase,
+                "micro_phase": micro_phase_str,
+                "search_query": result.search_query,
+                "is_deflection": result.is_deflection,
+                "reflection_thought": result.reflection_thought
             }
 
         except Exception as e:

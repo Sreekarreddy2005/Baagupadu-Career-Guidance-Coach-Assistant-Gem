@@ -18,3 +18,6 @@ class AgentState(TypedDict):
     is_approved: Optional[bool]     # Evaluator's approval of the plan
     evaluator_feedback: Optional[str] # Evaluator's feedback if rejected
     extracted_traits: dict          # Incrementally extracted traits
+    tool_context: Optional[str]     # Context from external tools (e.g., DuckDuckGo)
+    is_deflection: Optional[bool]   # Whether the user deflected the previous probe
+    reflection_thought: Optional[str] # The Planner's internal thought on how to handle the deflection

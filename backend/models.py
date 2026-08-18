@@ -96,3 +96,38 @@ class KnowledgeBaseChunk(Base):
     embedding = Column(Vector(384))
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class MemoryNode(Base):
+    """
+    GraphRAG: Represents a concept, skill, emotion, or entity in the user's brain.
+    """
+    __tablename__ = "memory_nodes"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(String(255), ForeignKey("users.id"), index=True)
+    label = Column(String(50)) # e.g., 'Skill', 'Fear', 'Goal', 'Person'
+    name = Column(String(255), index=True) # e.g., 'Public Speaking', 'Anxiety', 'Software Engineering'
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Relationships
+    user = relationship("User")
+
+class MemoryEdge(Base):
+    """
+    GraphRAG: Represents the relationship between two MemoryNodes.
+    """
+    __tablename__ = "memory_edges"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(String(255), ForeignKey("users.id"), index=True)
+    source_id = Column(Integer, ForeignKey("memory_nodes.id"))
+    target_id = Column(Integer, ForeignKey("memory_nodes.id"))
+    relation = Column(String(100)) # e.g., 'FEARS', 'DESIRES', 'STRUGGLES_WITH'
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Relationships
+    user = relationship("User")
+    source_node = relationship("MemoryNode", foreign_keys=[source_id])
+    target_node = relationship("MemoryNode", foreign_keys=[target_id])

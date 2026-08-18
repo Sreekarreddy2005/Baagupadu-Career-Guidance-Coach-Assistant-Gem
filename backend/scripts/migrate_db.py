@@ -1,6 +1,6 @@
 import asyncio
 from backend.database import engine, Base
-from backend.models import User, Conversation, Message, ProfileState, LongTermMemory, KnowledgeBaseChunk
+from backend.models import User, Conversation, Message, ProfileState, LongTermMemory, KnowledgeBaseChunk, MemoryNode, MemoryEdge
 import sys
 import os
 

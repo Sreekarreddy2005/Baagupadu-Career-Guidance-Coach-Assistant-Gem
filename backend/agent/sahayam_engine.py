@@ -9,6 +9,22 @@ from backend.agent.utils import should_synthesize
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from backend.models import Message
+import asyncio
+
+async def search_node(state: AgentState):
+    query = state.get("search_query")
+    if query:
+        try:
+            from langchain_community.tools import DuckDuckGoSearchRun
+            # We must run this in a thread because DuckDuckGoSearchRun is blocking
+            search = DuckDuckGoSearchRun()
+            results = await asyncio.to_thread(search.invoke, query)
+            print(f"WEB SEARCH EXECUTED: '{query}'", flush=True)
+            return {"tool_context": f"Live Web Search Results for '{query}':\n{results}"}
+        except Exception as e:
+            print(f"Web search failed: {e}", flush=True)
+            return {"tool_context": None}
+    return {"tool_context": None}
 
 class SahayamAgent:
     def __init__(self):
@@ -22,13 +38,15 @@ class SahayamAgent:
         
         # Add Nodes
         workflow.add_node("planner", planner.invoke)
+        workflow.add_node("search", search_node)
         workflow.add_node("executor", executor.invoke)
         workflow.add_node("synthesis", synthesizer.invoke)
         workflow.add_node("roadmap", roadmap.invoke)
         
         # 1. Routing
         workflow.add_edge(START, "planner")
-        workflow.add_edge("planner", "executor")
+        workflow.add_edge("planner", "search")
+        workflow.add_edge("search", "executor")
         
         # 2. Final Synthesis Check
         workflow.add_conditional_edges(

@@ -19,6 +19,7 @@ from backend.models import User, ProfileState, Conversation, Message, LongTermMe
 from backend.agent.sahayam_engine import SahayamAgent
 from backend.agent.agents.extractor_agent import ExtractorAgent
 from backend.agent.agents.evaluator_agent import EvaluatorAgent
+from backend.agent.agents.subconscious_agent import SubconsciousAgent
 
 
 app = FastAPI(title="Baagupadu AI Coach API")
@@ -157,6 +158,19 @@ async def run_evaluation_background(user_msg: str, ai_msg: str, conversation_id:
         print("Starting background evaluation...", flush=True)
         evaluator = EvaluatorAgent()
         result = await evaluator.evaluate(user_msg, ai_msg)
+        
+        # Log the evaluation to a file for later review
+        import json, datetime, os
+        os.makedirs("logs", exist_ok=True)
+        with open("logs/evaluations.jsonl", "a") as f:
+            log_entry = {
+                "timestamp": datetime.datetime.now().isoformat(),
+                "conversation_id": conversation_id,
+                "user_msg": user_msg,
+                "ai_msg": ai_msg,
+                "metrics": result
+            }
+            f.write(json.dumps(log_entry) + "\n")
         
         async with AsyncSessionLocal() as db:
             db_profile = await db.scalar(select(ProfileState).where(ProfileState.conversation_id == conversation_id))
@@ -393,3 +407,11 @@ async def get_dashboard(user_id: str = Depends(verify_token), db: AsyncSession =
         "clarity_index": len(profile.persona.get("traits_uncovered", [])) * 10
     }
     return {"metrics": metrics}
+@app.post("/api/subconscious/trigger")
+async def trigger_subconscious(user_id: str = Depends(verify_token)):
+    try:
+        agent = SubconsciousAgent()
+        result = await agent.trigger(user_id)
+        return {"status": "success", "message": result}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
