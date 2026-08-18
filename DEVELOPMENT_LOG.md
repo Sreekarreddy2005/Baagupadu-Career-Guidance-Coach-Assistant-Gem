@@ -24,3 +24,11 @@ This document is a living record of our progress, design decisions, and upcoming
 
 > [!TIP]
 > **To the User:** Whenever we start a new feature or resolve a bug, I will append my notes here. You can always refer to this file to see where we left off.
+
+### 📌 Strategy & Market Validation (August 18, 2026)
+- **Market Feasibility Strategy Created:** Formulated a brutally honest go-to-market and validation strategy specific to the Indian demographic. 
+- **Key Takeaways:** 
+  - Emphasized "WhatsApp-first" testing over complex app builds.
+  - Highlighted the "Fake Door" payment test to gauge actual Willingness to Pay (WTP).
+  - Addressed the "Parental Bypass" factor (selling the outcome to parents vs. companionship to students).
+  - Linked Artifact: `market_validation_india.md`
