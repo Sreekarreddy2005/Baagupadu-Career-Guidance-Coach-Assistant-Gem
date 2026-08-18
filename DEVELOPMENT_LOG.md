@@ -32,3 +32,4 @@ This document is a living record of our progress, design decisions, and upcoming
   - Highlighted the "Fake Door" payment test to gauge actual Willingness to Pay (WTP).
   - Addressed the "Parental Bypass" factor (selling the outcome to parents vs. companionship to students).
   - Linked Artifact: `market_validation_india.md`
+  - Created a step-by-step [Market Research Guide](file:///Users/sreekarreddypindi/.gemini/antigravity-ide/brain/fd24801d-82e0-4a87-93ba-a3d54615a805/market_research_india.md) focusing on secondary data, competitor analysis, primary unstructured interviews, and search intent.
