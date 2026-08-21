@@ -37,3 +37,5 @@ This document is a living record of our progress, design decisions, and upcoming
 ### 📌 Team & Operations (August 21, 2026)
 - **Onboarding Syllabus Created:** Outlined the specific technical skills required for new developers to contribute to the project, heavily focusing on the Agentic AI/ML stack (LangGraph, RAG, Ollama), alongside the Next.js/FastAPI components.
 - Linked Artifact: `team_onboarding_skills.md`
+- **Interview Q&A Guide Created:** Drafted scenario-based interview questions (with good answers and red flags) across LangGraph, pgvector, Ollama, FastAPI, and Next.js to properly vet candidates.
+- Linked Artifact: `interview_qa_guide.md`
