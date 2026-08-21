@@ -33,3 +33,7 @@ This document is a living record of our progress, design decisions, and upcoming
   - Addressed the "Parental Bypass" factor (selling the outcome to parents vs. companionship to students).
   - Linked Artifact: `market_validation_india.md`
   - Created a step-by-step [Market Research Guide](file:///Users/sreekarreddypindi/.gemini/antigravity-ide/brain/fd24801d-82e0-4a87-93ba-a3d54615a805/market_research_india.md) focusing on secondary data, competitor analysis, primary unstructured interviews, and search intent.
+
+### 📌 Team & Operations (August 21, 2026)
+- **Onboarding Syllabus Created:** Outlined the specific technical skills required for new developers to contribute to the project, heavily focusing on the Agentic AI/ML stack (LangGraph, RAG, Ollama), alongside the Next.js/FastAPI components.
+- Linked Artifact: `team_onboarding_skills.md`
