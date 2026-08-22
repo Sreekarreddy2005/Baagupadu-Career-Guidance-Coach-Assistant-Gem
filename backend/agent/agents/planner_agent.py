@@ -218,6 +218,7 @@ class PlannerAgent(BaseAgent):
             f"{shadow_instruction}"
             f"{resistance_rule}"
             f"CURRENT PHASE: {current_phase}\n"
+            f"MESSAGE NUMBER: {user_msg_count} (If this is <= 4, YOU MUST STAY IN 'TRUST' PHASE, SET MICRO_PHASE TO 'none', AND ONLY DO LIGHT SMALL TALK)\n"
             f"RECENT CONVERSATION:\n{recent_history}\n\n"
             "PLANNING RULES:\n"
             "1. PERSON FIRST (FOUNDATION): Gathering the user persona in extreme detail is the absolute prerequisite for everything else. Career advice will be built on this foundation later. Right now, focus ONLY on mapping their psychology, habits, and life story.\n"
@@ -249,6 +250,7 @@ class PlannerAgent(BaseAgent):
             # Enforce 4-exchange trust buffer
             if user_msg_count <= 4:
                 new_phase = "trust"
+                result.micro_phase = "none"
 
             # Enforce strictly forward progression
             phase_order = {"trust": 1, "exploration": 2, "synthesis": 3, "guidance": 4}

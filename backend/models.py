@@ -131,3 +131,17 @@ class MemoryEdge(Base):
     user = relationship("User")
     source_node = relationship("MemoryNode", foreign_keys=[source_id])
     target_node = relationship("MemoryNode", foreign_keys=[target_id])
+
+class AuditLog(Base):
+    """
+    Observability: Tracks security events, RAG retrievals, and prompt shield blocks.
+    """
+    __tablename__ = "audit_logs"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(String(255), ForeignKey("users.id"), index=True, nullable=False)
+    action = Column(String(50), nullable=False) # e.g., 'GUARDRAIL_BLOCK', 'GRAPH_RETRIEVAL', 'VECTOR_RETRIEVAL'
+    details = Column(JSON, default=dict) # Details about the event
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    
+    user = relationship("User")

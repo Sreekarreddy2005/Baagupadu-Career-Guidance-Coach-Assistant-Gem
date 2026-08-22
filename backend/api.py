@@ -15,11 +15,12 @@ from langchain_core.messages import HumanMessage, AIMessage
 
 from backend.core.config import config
 from backend.database import get_db, init_db, AsyncSessionLocal
-from backend.models import User, ProfileState, Conversation, Message, LongTermMemory
+from backend.models import User, ProfileState, Conversation, Message, LongTermMemory, AuditLog
 from backend.agent.sahayam_engine import SahayamAgent
 from backend.agent.agents.extractor_agent import ExtractorAgent
 from backend.agent.agents.evaluator_agent import EvaluatorAgent
 from backend.agent.agents.subconscious_agent import SubconsciousAgent
+from backend.agent.agents.guardrail_agent import GuardrailAgent
 
 
 app = FastAPI(title="Baagupadu AI Coach API")
@@ -205,6 +206,35 @@ async def chat_endpoint(
         user = User(id=user_id)
         db.add(user)
         await db.commit()
+
+    # --- SECURITY: Prompt Shield ---
+    print("Running Prompt Shield...", flush=True)
+    guardrail = GuardrailAgent()
+    check_result = await guardrail.check_input(request.message)
+    
+    if not check_result.is_safe:
+        # Log the blocked attempt
+        audit = AuditLog(
+            user_id=user_id,
+            action="GUARDRAIL_BLOCK",
+            details={"blocked_input": request.message, "reason": check_result.reason}
+        )
+        db.add(audit)
+        await db.commit()
+        return {
+            "response": f"Safety Guardrail Triggered: I cannot process this request. Reason: {check_result.reason}",
+            "current_phase": "trust",
+            "chat_completed": False
+        }
+    
+    # Log the successful interaction for full observability
+    audit = AuditLog(
+        user_id=user_id,
+        action="USER_MESSAGE",
+        details={"message_length": len(request.message)}
+    )
+    db.add(audit)
+    # --------------------------------
 
     # 1. Get active conversation
     conv_result = await db.execute(
