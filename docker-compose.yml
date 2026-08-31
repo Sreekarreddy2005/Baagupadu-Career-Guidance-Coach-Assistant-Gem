@@ -84,6 +84,8 @@ services:
       - OLLAMA_LOGIC_MODEL=qwen2.5:7b
       - OLLAMA_JUDGE_MODEL=phi3:mini
       - DATABASE_URL=postgresql+asyncpg://postgres:password@db/baagupadu
+    volumes:
+      - ./gems:/gems
     depends_on:
       db:
         condition: service_healthy

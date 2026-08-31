@@ -18,3 +18,5 @@ langchain-aws
 duckduckgo-search
 langchain-ollama
 langgraph
+einops
+transformers
