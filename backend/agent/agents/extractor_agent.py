@@ -8,7 +8,7 @@ from sentence_transformers import SentenceTransformer
 from sqlalchemy.future import select
 import asyncio
 
-embedder = SentenceTransformer('all-MiniLM-L6-v2')
+embedder = SentenceTransformer("nomic-ai/nomic-embed-text-v1.5", trust_remote_code=True)
 
 
 class GraphEdge(BaseModel):
@@ -215,6 +215,17 @@ class ExtractorAgent(BaseAgent):
 
         if not user_msg:
             return {"extracted_traits": extracted_traits}
+
+        def calculate_distinct_n(text: str, n: int = 2) -> float:
+            words = text.lower().split()
+            if len(words) < n:
+                return 1.0
+            ngrams = set(tuple(words[i:i+n]) for i in range(len(words)-n+1))
+            return len(ngrams) / (len(words) - n + 1)
+            
+        if ai_msg:
+            d2_score = calculate_distinct_n(ai_msg, 2)
+            print(f"\n📊 [CakeChat Methodology] Distinct-2 Metric (AI Response): {d2_score:.2f} (lower means more repetitive)\n", flush=True)
 
         prompt = (
             "You are a silent background psychological analyst. Your job is to build a rich, "

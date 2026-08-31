@@ -12,7 +12,7 @@ from sqlalchemy.orm import aliased
 from backend.agent.agents.shadow_agents import ShadowEngine
 from backend.models import KnowledgeBaseChunk, MemoryNode, MemoryEdge
 
-embedder = SentenceTransformer('all-MiniLM-L6-v2')
+embedder = SentenceTransformer("nomic-ai/nomic-embed-text-v1.5", trust_remote_code=True)
 kb_loader = KnowledgeBaseLoader()
 
 
@@ -45,6 +45,9 @@ class PlannerOutput(BaseModel):
     )
     reflection_thought: Optional[str] = Field(
         description="If is_deflection is True, explicitly write out your internal reasoning on why they deflected and how you should adjust your strategy to rebuild trust."
+    )
+    detected_emotion: str = Field(
+        description="The primary emotion the user is currently feeling. Pick ONE of: 'Joy', 'Anger', 'Sadness', 'Anxiety', 'Curiosity', 'Apathy', 'Neutral'."
     )
 
 
@@ -83,25 +86,23 @@ class PlannerAgent(BaseAgent):
 
         kb_context = ""
         micro_phase_str = state.get("micro_phase", "")
-        if db and user_input:
+        if db:
             try:
-                kb_search_query = f"Phase: {current_phase}. Micro-phase: {micro_phase_str}. Relevant rules, frameworks, and instructions for context: {user_input}"
-                query_embedding = await asyncio.to_thread(embedder.encode, kb_search_query)
-                query_embedding = query_embedding.tolist()
+                # Deterministic Hierarchical RAG based on current state
+                target_phase = micro_phase_str.lower() if micro_phase_str else current_phase.lower()
                 rag_result = await db.execute(
                     select(KnowledgeBaseChunk)
-                    .order_by(KnowledgeBaseChunk.embedding.cosine_distance(query_embedding))
-                    .limit(2)
+                    .where(KnowledgeBaseChunk.phase == target_phase)
                 )
                 rag_chunks = rag_result.scalars().all()
                 if rag_chunks:
                     kb_context = (
-                        "=== RELEVANT ROUTING RULES ===\n"
-                        + "\n".join([f"- {c.content}" for c in rag_chunks])
+                        "=== DETERMINISTIC COACHING RULES ===\n"
+                        + "\n".join([f"- {c.header_step}: {c.content}" for c in rag_chunks])
                         + "\n\n"
                     )
             except Exception as e:
-                print(f"RAG Error in Planner: {e}")
+                print(f"Hierarchical RAG Error in Planner: {e}")
 
         graph_context = ""
         if db and user_input:
@@ -271,24 +272,31 @@ class PlannerAgent(BaseAgent):
                     "micro_phase": None,
                     "is_approved": False,
                     "evaluator_feedback": result.internal_critique,
-                    "is_deflection": False
+                    "is_deflection": False,
+                    "detected_emotion": "Neutral",
+                    "retrieved_rules": kb_context
                 }
 
             return {
                 "proposed_plan": result.proposed_plan,
                 "is_approved": result.is_approved,
+                "detected_emotion": getattr(result, "detected_emotion", "Neutral"),
                 "evaluator_feedback": result.internal_critique,
                 "new_phase": new_phase,
                 "micro_phase": micro_phase_str,
                 "search_query": result.search_query,
                 "is_deflection": result.is_deflection,
-                "reflection_thought": result.reflection_thought
+                "reflection_thought": result.reflection_thought,
+                "retrieved_rules": kb_context
             }
 
         except Exception as e:
             print(f"Planner Agent Error: {e}")
             return {
-                "proposed_plan": "Continue the conversation warmly and naturally. Explore the next unknown dimension of their personality.",
+                "proposed_plan": "Continue the conversation warmly.",
+                "is_approved": True,
+                "evaluator_feedback": None,
+                "detected_emotion": "Neutral",
                 "new_phase": current_phase,
                 "micro_phase": None
             }

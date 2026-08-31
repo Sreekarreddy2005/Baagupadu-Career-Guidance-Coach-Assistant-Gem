@@ -10,7 +10,7 @@ from sqlalchemy.future import select
 from backend.models import LongTermMemory, KnowledgeBaseChunk
 
 kb_loader = KnowledgeBaseLoader()
-embedder = SentenceTransformer('all-MiniLM-L6-v2')
+embedder = SentenceTransformer("nomic-ai/nomic-embed-text-v1.5", trust_remote_code=True)
 
 # Load few-shot tone examples into memory for fast RAG
 few_shot_examples = []
@@ -124,45 +124,60 @@ class ExecutorAgent(BaseAgent):
             try:
                 query_embedding = await asyncio.to_thread(embedder.encode, user_input)
                 query_embedding = query_embedding.tolist()
-                # LTM — retrieve relevant memories (traits, facts, insights about this user)
-                result = await db.execute(
+                # 1. Vector Search
+                vector_result = await db.execute(
                     select(LongTermMemory)
                     .where(LongTermMemory.conversation_id == profile.get("conversation_id"))
                     .order_by(LongTermMemory.embedding.cosine_distance(query_embedding))
-                    .limit(4)
+                    .limit(10)
                 )
-                memories = result.scalars().all()
-                if memories:
+                vector_memories = vector_result.scalars().all()
+
+                # 2. Keyword Search (FTS)
+                from sqlalchemy import func
+                keyword_result = await db.execute(
+                    select(LongTermMemory)
+                    .where(
+                        LongTermMemory.conversation_id == profile.get("conversation_id"),
+                        func.to_tsvector('english', LongTermMemory.content).op('@@')(func.plainto_tsquery('english', user_input))
+                    )
+                    .limit(10)
+                )
+                keyword_memories = keyword_result.scalars().all()
+
+                # 3. Reciprocal Rank Fusion (RRF)
+                k = 60
+                rrf_scores = {}
+                
+                # Rank vectors
+                for rank, memory in enumerate(vector_memories):
+                    if memory.id not in rrf_scores:
+                        rrf_scores[memory.id] = {"score": 0.0, "memory": memory}
+                    rrf_scores[memory.id]["score"] += 1.0 / (k + rank + 1)
+                    
+                # Rank keywords
+                for rank, memory in enumerate(keyword_memories):
+                    if memory.id not in rrf_scores:
+                        rrf_scores[memory.id] = {"score": 0.0, "memory": memory}
+                    rrf_scores[memory.id]["score"] += 1.0 / (k + rank + 1)
+                    
+                # Sort by score descending and take top 4
+                sorted_memories = sorted(rrf_scores.values(), key=lambda x: x["score"], reverse=True)
+                top_memories = [x["memory"] for x in sorted_memories[:4]]
+                
+                if top_memories:
                     ltm_context = (
                         "=== MEMORIES FROM THIS CURRENT CONVERSATION (CALLBACK TARGETS) ===\n"
-                        + "\n".join([f"- {m.content}" for m in memories])
+                        + "\n".join([f"- {m.content}" for m in top_memories])
                         + "\n\n"
                         "CALLBACK INSTRUCTION: If naturally relevant, reference 1 specific detail from the memories above (e.g. 'Earlier you mentioned...'). Use it to show you remember their words like a close friend, but do not force it.\n\n"
                     )
 
-                # We inject the current phase and micro-phase into the semantic query
-                # so pgvector naturally surfaces the correct rules, frameworks, and question banks
-                # from ANY file in gems/nenu_evaru (e.g. trust_building_phase, system_prompt, etc.)
-                micro_phase = state.get("micro_phase", "")
-                kb_search_query = f"Phase: {current_phase}. Micro-phase: {micro_phase}. Relevant rules, frameworks, and instructions for context: {user_input}"
-                
-                kb_query_embedding = await asyncio.to_thread(embedder.encode, kb_search_query)
-                kb_query_embedding = kb_query_embedding.tolist()
-                
-                rag_result = await db.execute(
-                    select(KnowledgeBaseChunk)
-                    .order_by(KnowledgeBaseChunk.embedding.cosine_distance(kb_query_embedding))
-                    .limit(3)
-                )
-                rag_chunks = rag_result.scalars().all()
-                if rag_chunks:
-                    kb_context = (
-                        "=== RELEVANT GUIDANCE RULES ===\n"
-                        + "\n".join([f"- {c.content}" for c in rag_chunks])
-                        + "\n\n"
-                    )
+                # We use the highly concentrated, deterministic rules retrieved by the PlannerAgent
+                # to prevent duplicate database loads and vector math hallucinations.
+                kb_context = state.get("retrieved_rules", "")
             except Exception as e:
-                print(f"RAG Error in Executor: {e}")
+                print(f"Memory/RAG Error in Executor: {e}")
 
         # --- DYNAMIC FEW-SHOT INJECTION ---
         few_shot_context = ""
@@ -262,8 +277,17 @@ class ExecutorAgent(BaseAgent):
                 "Use this insight to guide your tone. Retreat, validate, and rebuild trust instead of pushing.\n\n"
             )
 
+        detected_emotion = state.get("detected_emotion", "Neutral")
+        emotion_instruction = (
+            f"🎭 EMOTIONAL DIRECTIVE:\n"
+            f"The user's detected emotional state is: {detected_emotion}.\n"
+            "You MUST condition the tone of your response to mirror, validate, or gently guide this emotion. "
+            "If they are anxious, be a calming anchor. If they are joyful, share the energy.\n\n"
+        )
+
         system_prompt = (
             "<system_instructions>\n"
+            f"{emotion_instruction}"
             "You are Sahayam. You are NOT a career coach, a therapist, or a productivity tool.\n\n"
             "You are a WARM, GENUINE AI COMPANION — like that one friend who truly gets you, remembers "
             "everything you've told them, and somehow always knows the right thing to say. You just happen "
@@ -300,28 +324,46 @@ class ExecutorAgent(BaseAgent):
             f"{voice_instruction}"
             f"{few_shot_context}"
             f"{ltm_context}"
-            f"{kb_context}"
             "</system_instructions>\n\n"
             "Here is the strict PLAN you MUST follow for this exact turn:\n"
             f"<PLAN>\n{proposed_plan}\n</PLAN>\n\n"
             "Execute the plan above seamlessly.\n"
             f"{_get_profile_context(profile)}"
+            f"{kb_context}"
             "YOUR RESPONSE:\n"
             "Write your response directly. Keep it natural, warm, human. "
             "If the plan asks you to explore something, do it conversationally — like a friend asking "
             "out of genuine curiosity, not like a form to fill in.\n"
         )
 
+        import asyncio
         try:
-            res = await self.llm.ainvoke([SystemMessage(content=system_prompt)] + messages)
-            content = res.content
-
+            # Generate 3 candidates for MMI Evaluator
+            async def generate_candidate():
+                return await self.llm.ainvoke([
+                    SystemMessage(content=system_prompt),
+                    *messages
+                ])
+                
+            candidates = await asyncio.gather(
+                generate_candidate(),
+                generate_candidate(),
+                generate_candidate()
+            )
+            
+            candidate_texts = [c.content for c in candidates]
+            
             # Clean up any hallucinated meta-commentary
-            content = re.sub(r'\(Note:.*?\)', '', content, flags=re.IGNORECASE | re.DOTALL)
-            content = re.sub(r'\[Note:.*?\]', '', content, flags=re.IGNORECASE | re.DOTALL)
-            content = re.sub(r'\[[A-Z_]+\]', '', content).strip()
-
-            return {"messages": [AIMessage(content=content)]}
+            processed_texts = []
+            for content in candidate_texts:
+                content = re.sub(r'\(Note:.*?\)', '', content, flags=re.IGNORECASE | re.DOTALL)
+                content = re.sub(r'\[Note:.*?\]', '', content, flags=re.IGNORECASE | re.DOTALL)
+                content = re.sub(r'\[[A-Z_]+\]', '', content).strip()
+                processed_texts.append(content)
+            
+            return {
+                "candidate_responses": processed_texts,
+                "current_response": processed_texts[0] # Fallback
+            }
         except Exception as e:
-            print(f"Executor Agent Error: {e}")
             return {"messages": [AIMessage(content="Hey, I hit a tiny glitch on my end. Give me a second — can you say that again?")]}

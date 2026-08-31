@@ -15,7 +15,7 @@ from sentence_transformers import SentenceTransformer
 
 # Load the embedding model (same as used for LongTermMemory)
 print("Loading embedding model...")
-embedder = SentenceTransformer('all-MiniLM-L6-v2')
+embedder = SentenceTransformer("nomic-ai/nomic-embed-text-v1.5", trust_remote_code=True)
 print("Model loaded.")
 
 GEMS_DIR = backend_dir.parent / "gems" / "nenu_evaru"
@@ -24,57 +24,28 @@ async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-def chunk_markdown(content: str, max_words=100) -> list[str]:
-    """Splits markdown intelligently by Headers, preserving semantic context."""
+def chunk_markdown(content: str) -> list[dict]:
+    """Splits markdown strictly by Headers, regardless of word count."""
     chunks = []
-    current_header = ""
+    current_header = "General"
     current_text = ""
     
     for line in content.split('\n'):
         if line.startswith('#'):
-            # Save accumulated text under the old header
             if current_text.strip():
-                combined_len = len((current_header + " " + current_text).split())
-                if combined_len > max_words:
-                    # Too big, split by paragraphs while preserving header
-                    paras = current_text.split('\n\n')
-                    sub_chunk = ""
-                    for p in paras:
-                        if len(sub_chunk.split()) + len(p.split()) > max_words:
-                            if sub_chunk: chunks.append(f"{current_header}\n{sub_chunk.strip()}".strip())
-                            sub_chunk = p
-                        else:
-                            sub_chunk += "\n\n" + p if sub_chunk else p
-                    if sub_chunk: chunks.append(f"{current_header}\n{sub_chunk.strip()}".strip())
-                else:
-                    chunks.append(f"{current_header}\n{current_text.strip()}".strip())
-            
-            # Start new header
+                chunks.append({"header_step": current_header, "content": f"{current_header}\n{current_text.strip()}"})
             current_header = line.strip()
             current_text = ""
         else:
             current_text += line + "\n"
             
-    # Flush remaining text
     if current_text.strip():
-        combined_len = len((current_header + " " + current_text).split())
-        if combined_len > max_words:
-            paras = current_text.split('\n\n')
-            sub_chunk = ""
-            for p in paras:
-                if len(sub_chunk.split()) + len(p.split()) > max_words:
-                    if sub_chunk: chunks.append(f"{current_header}\n{sub_chunk.strip()}".strip())
-                    sub_chunk = p
-                else:
-                    sub_chunk += "\n\n" + p if sub_chunk else p
-            if sub_chunk: chunks.append(f"{current_header}\n{sub_chunk.strip()}".strip())
-        else:
-            chunks.append(f"{current_header}\n{current_text.strip()}".strip())
+        chunks.append({"header_step": current_header, "content": f"{current_header}\n{current_text.strip()}"})
             
     return chunks
 
-def chunk_json(data: dict | list, parent_key="") -> list[str]:
-    """Converts JSON structure into readable text chunks."""
+def chunk_json(data: dict | list, parent_key="") -> list[dict]:
+    """Converts JSON structure into readable text chunks with metadata."""
     chunks = []
     
     if isinstance(data, dict):
@@ -82,13 +53,13 @@ def chunk_json(data: dict | list, parent_key="") -> list[str]:
             if isinstance(value, (dict, list)):
                 chunks.extend(chunk_json(value, key))
             else:
-                chunks.append(f"{parent_key + ' - ' if parent_key else ''}{key}: {value}")
+                chunks.append({"header_step": parent_key or "JSON Data", "content": f"{parent_key + ' - ' if parent_key else ''}{key}: {value}"})
     elif isinstance(data, list):
         for item in data:
             if isinstance(item, (dict, list)):
                 chunks.extend(chunk_json(item, parent_key))
             else:
-                chunks.append(f"{parent_key}: {item}")
+                chunks.append({"header_step": parent_key or "JSON List", "content": f"{parent_key}: {item}"})
                 
     return chunks
 
@@ -130,14 +101,16 @@ async def ingest():
                             chunks = chunk_json(data)
                             # Re-group small json chunks into slightly larger semantic blocks
                             grouped = []
-                            curr = ""
+                            curr_header = "JSON Data"
+                            curr_content = ""
                             for c in chunks:
-                                if len(curr.split()) + len(c.split()) > 50:
-                                    grouped.append(curr)
-                                    curr = c
+                                if len(curr_content.split()) + len(c["content"].split()) > 50:
+                                    grouped.append({"header_step": curr_header, "content": curr_content})
+                                    curr_content = c["content"]
+                                    curr_header = c["header_step"]
                                 else:
-                                    curr += "\n" + c if curr else c
-                            if curr: grouped.append(curr)
+                                    curr_content += "\n" + c["content"] if curr_content else c["content"]
+                            if curr_content: grouped.append({"header_step": curr_header, "content": curr_content})
                             chunks = grouped
                         except json.JSONDecodeError:
                             print(f"Failed to parse JSON in {filepath.name}")
@@ -147,16 +120,29 @@ async def ingest():
                         
                     print(f"  -> Extracted {len(chunks)} chunks. Embedding...")
                     
+                    # Determine Phase
+                    phase = "general"
+                    name_lower = filepath.name.lower()
+                    if "childhood" in name_lower: phase = "childhood"
+                    elif "teenage" in name_lower: phase = "teenage"
+                    elif "adult" in name_lower: phase = "adult"
+                    elif "trust" in name_lower: phase = "trust"
+                    elif "exploration" in name_lower: phase = "exploration"
+                    elif "guardrails" in name_lower: phase = "guardrails"
+                    
                     # Batch embed for speed
-                    embeddings = embedder.encode(chunks).tolist()
+                    texts = [c["content"] for c in chunks]
+                    embeddings = embedder.encode(texts).tolist()
                     
                     db_chunks = []
-                    for i, (chunk_text, emb) in enumerate(zip(chunks, embeddings)):
-                        if not chunk_text.strip(): continue
+                    for i, (chunk_dict, emb) in enumerate(zip(chunks, embeddings)):
+                        if not chunk_dict["content"].strip(): continue
                         db_chunks.append(KnowledgeBaseChunk(
                             source_file=filepath.name,
+                            phase=phase,
+                            header_step=chunk_dict["header_step"][:255],
                             chunk_index=i,
-                            content=chunk_text,
+                            content=chunk_dict["content"],
                             embedding=emb
                         ))
                     

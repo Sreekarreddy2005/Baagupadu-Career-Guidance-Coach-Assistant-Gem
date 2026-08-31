@@ -18,6 +18,15 @@ class AgentState(TypedDict):
     is_approved: Optional[bool]     # Evaluator's approval of the plan
     evaluator_feedback: Optional[str] # Evaluator's feedback if rejected
     extracted_traits: dict          # Incrementally extracted traits
+    # Emotion Conditioning
+    detected_emotion: Optional[str] # Emotion classified by the Planner
+    candidate_responses: list       # List of generated responses for MMI evaluation
+    # Output state
+    current_response: str # The response the agent is building
+    extracted_variables: dict # Any key variables extracted this turn
+    
+    # Internal routing state
+    retrieved_rules: str # The deterministic rules loaded for this turn
     tool_context: Optional[str]     # Context from external tools (e.g., DuckDuckGo)
     is_deflection: Optional[bool]   # Whether the user deflected the previous probe
     reflection_thought: Optional[str] # The Planner's internal thought on how to handle the deflection

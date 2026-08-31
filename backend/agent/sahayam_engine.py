@@ -5,6 +5,7 @@ from backend.agent.agents.planner_agent import PlannerAgent
 from backend.agent.agents.executor_agent import ExecutorAgent
 from backend.agent.agents.synthesizer_agent import SynthesizerAgent
 from backend.agent.agents.roadmap_agent import RoadmapAgent
+from backend.agent.agents.mmi_evaluator_agent import MMIEvaluatorAgent
 from backend.agent.utils import should_synthesize
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -33,6 +34,7 @@ class SahayamAgent:
         # Instantiate Agents
         planner = PlannerAgent()
         executor = ExecutorAgent()
+        mmi_evaluator = MMIEvaluatorAgent()
         synthesizer = SynthesizerAgent()
         roadmap = RoadmapAgent()
         
@@ -40,6 +42,7 @@ class SahayamAgent:
         workflow.add_node("planner", planner.invoke)
         workflow.add_node("search", search_node)
         workflow.add_node("executor", executor.invoke)
+        workflow.add_node("mmi_evaluator", mmi_evaluator.invoke)
         workflow.add_node("synthesis", synthesizer.invoke)
         workflow.add_node("roadmap", roadmap.invoke)
         
@@ -47,10 +50,11 @@ class SahayamAgent:
         workflow.add_edge(START, "planner")
         workflow.add_edge("planner", "search")
         workflow.add_edge("search", "executor")
+        workflow.add_edge("executor", "mmi_evaluator")
         
         # 2. Final Synthesis Check
         workflow.add_conditional_edges(
-            "executor",
+            "mmi_evaluator",
             should_synthesize,
             {
                 "synthesize": "synthesis",

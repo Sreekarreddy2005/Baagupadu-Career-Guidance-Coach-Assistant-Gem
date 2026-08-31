@@ -73,8 +73,8 @@ class LongTermMemory(Base):
     memory_type = Column(String(100)) # e.g., 'childhood_insight', 'career_pattern', 'user_preference'
     content = Column(Text) # The actual insight text
     
-    # all-MiniLM-L6-v2 produces 384-dimensional embeddings
-    embedding = Column(Vector(384))
+    # nomic-embed-text produces 768-dimensional embeddings
+    embedding = Column(Vector(768))
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -89,11 +89,13 @@ class KnowledgeBaseChunk(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     source_file = Column(String(255), index=True) # e.g., 'router.md', 'childhood_questions.json'
+    phase = Column(String(50), index=True, nullable=True) # e.g., 'childhood', 'trust'
+    header_step = Column(String(255), nullable=True) # e.g., '## Step 1'
     chunk_index = Column(Integer)
     content = Column(Text)
     
-    # all-MiniLM-L6-v2 produces 384-dimensional embeddings
-    embedding = Column(Vector(384))
+    # nomic-embed-text produces 768-dimensional embeddings
+    embedding = Column(Vector(768))
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
