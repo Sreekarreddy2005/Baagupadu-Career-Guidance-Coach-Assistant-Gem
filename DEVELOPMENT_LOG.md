@@ -66,3 +66,15 @@ This document is a living record of our progress, design decisions, and upcoming
   - **Resolution:** 
     1. Removed the buggy rewrite array from `next.config.ts`.
     2. Built a manual, highly observable Catch-all API Route at `frontend/src/app/api/[...slug]/route.ts`. This custom handler intercepts all `/api/*` calls and uses standard `fetch` to securely bridge the frontend to the backend while providing exact JSON error messages instead of blind 500 errors.
+
+### 📌 Architecture & NLP Engine (August 31, 2026)
+- **Nomic-Embed-Text Migration:**
+  - Upgraded the embedding engine from the small `all-MiniLM-L6-v2` to the massive 8,192-token context `nomic-embed-text-v1.5`.
+  - Migrated PostgreSQL `pgvector` tables (`KnowledgeBaseChunk` and `LongTermMemory`) from 384 dimensions to 768 dimensions.
+- **CakeChat Methodologies Integration:**
+  - **Emotional Conditioning:** Implemented "Thought Vectors". The `PlannerAgent` now classifies user emotion and forces the `ExecutorAgent` to condition its tone.
+  - **MMI Reranking:** Built a new `MMIEvaluatorAgent`. The `ExecutorAgent` uses `asyncio.gather` to generate 3 response candidates. The Evaluator scores them on uniqueness (Distinct-N) and emotional alignment, ensuring high-quality, non-robotic responses.
+  - **Distinct-N Logging:** Added background calculation of `Distinct-2` metrics in `ExtractorAgent` to monitor AI vocabulary repetitiveness.
+- **Docker Infrastructure Fix:**
+  - Mapped the `gems/` directory as a live volume (`- ./gems:/gems`) in `docker-compose.yml` to allow the containerized ingestion script to read the knowledge base without needing Docker image rebuilds.
+  - Added `einops` and `transformers` to `requirements.txt` to support the Nomic model.

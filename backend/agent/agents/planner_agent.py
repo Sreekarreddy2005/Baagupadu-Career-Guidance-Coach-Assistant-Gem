@@ -35,7 +35,7 @@ class PlannerOutput(BaseModel):
                     "Use 'none' if staying in the current phase."
     )
     micro_phase: Optional[str] = Field(
-        description="The life-stage domain to explore: 'childhood', 'teenage', 'adult', or 'none'."
+        description="The current domain to explore. Options: 'childhood', 'teenage', 'adult', 'habits', 'fears', 'values', or 'none'. Pick the most natural one based on their last message."
     )
     search_query: Optional[str] = Field(
         description="If the user asks a factual question (e.g., about salaries, job markets, specific companies), provide a search query to ground the advice. Otherwise, leave null."
@@ -81,6 +81,26 @@ class PlannerAgent(BaseAgent):
             }
 
         user_msg_count = len([m for m in messages if hasattr(m, 'type') and m.type == 'human'])
+
+        if user_msg_count == 1:
+            return {
+                "proposed_plan": (
+                    "The user just gave their very first reply. Do NOT ask any deep questions yet. "
+                    "Your ONLY goal right now is to make them feel extremely comfortable. "
+                    "Explicitly introduce your vibe: tell them 'I am your friend', 'I will always listen to you', 'I'm here for you as a companion', and guarantee them that 'everything stays completely safe between us'. "
+                    "After reassuring them, just initiate some extremely light, casual small talk (e.g., 'How is your day going so far?' or 'What are you up to right now?'). "
+                    "Do NOT ask what they haven't put into words. Be very human and warm."
+                ),
+                "new_phase": "trust",
+                "micro_phase": None,
+                "is_approved": True,
+                "evaluator_feedback": "Hardcoded warm introduction for first user message.",
+                "detected_emotion": "Neutral",
+                "search_query": None,
+                "is_deflection": False,
+                "reflection_thought": None,
+                "retrieved_rules": ""
+            }
 
         recent_history = self.get_recent_history(messages, k=6)
 
@@ -219,15 +239,16 @@ class PlannerAgent(BaseAgent):
             f"{shadow_instruction}"
             f"{resistance_rule}"
             f"CURRENT PHASE: {current_phase}\n"
-            f"MESSAGE NUMBER: {user_msg_count} (If this is <= 4, YOU MUST STAY IN 'TRUST' PHASE, SET MICRO_PHASE TO 'none', AND ONLY DO LIGHT SMALL TALK)\n"
+            f"MESSAGE NUMBER: {user_msg_count}\n"
+            "DYNAMIC OPEN-UP DETECTION: If the current phase is 'trust', your goal is to make them comfortable. The moment they share a genuine feeling, fear, or personal detail, you MUST transition the new_phase to 'exploration'. Do not wait for a specific message count.\n"
             f"RECENT CONVERSATION:\n{recent_history}\n\n"
             "PLANNING RULES:\n"
             "1. PERSON FIRST (FOUNDATION): Gathering the user persona in extreme detail is the absolute prerequisite for everything else. Career advice will be built on this foundation later. Right now, focus ONLY on mapping their psychology, habits, and life story.\n"
-            "2. NON-LINEAR LIFE STAGES: During exploration, fluidly switch between 'childhood', 'teenage', and 'adult' micro-phases depending on the situation. If they mention college stress, explore the 'adult' or 'teenage' angle. If they mention an old hobby, naturally pivot to 'childhood'. Do not force chronological order.\n"
+            "2. NON-LINEAR EXPLORATION: Do NOT force a chronological life-story (childhood -> teenage -> adult). Follow the user's energy! If they mention a current hobby, explore that. If they mention a past regret, explore that. Let the situation dictate the topic.\n"
             "3. FOLLOW THE USER'S LEAD: Do NOT force a linear path. If they bring up a memory, a feeling, "
-            "a project, a frustration — go there. Let their energy guide the micro-phase.\n"
-            "4. TRUST BEFORE DEPTH: In the first 4-5 messages, stay purely in light, friendly small-talk. Do not probe deeply until psychological safety is established.\n"
-            "5. KEEP MOVING: If you've explored one thread enough, plan to gently transition to a new "
+            "a project, a frustration — go there. Let their energy guide the exploration.\n"
+            "4. ACTIVE LISTENING & NO INTERROGATION: When proposing a plan, DO NOT command the Executor to ask 'Why?' or blindly interrogate the user. Instead, direct the Executor to extract the core essence/emotion, validate it, and ONLY ask for confirmation if absolutely necessary. Otherwise, just validate and flow.\n"
+            "5. KEEP MOVING: If you've explored one thread enough, plan to gently transition to a new thread.\n"
             "5. AVOID LISTS & INTERVIEWS: Do not output plans that result in bullet points or '20 questions'. If you need information, get it conversationally.\n"
             "6. NO PREACHING: Give space. Let them figure it out. Do not rush to 'fix' them.\n"
             "7. TOOL USE (GROUNDING): If the user asks a factual question about careers, salaries, or the real world, output a `search_query` so the system can fetch live internet data to ground the response.\n"
@@ -248,11 +269,7 @@ class PlannerAgent(BaseAgent):
 
             new_phase = result.new_phase.lower() if result.new_phase and result.new_phase.lower() != "none" else current_phase
 
-            # Enforce 4-exchange trust buffer
-            if user_msg_count <= 4:
-                new_phase = "trust"
-                result.micro_phase = "none"
-
+            # Phase progression is now handled dynamically by the LLM based on "Open-Up Detection"
             # Enforce strictly forward progression
             phase_order = {"trust": 1, "exploration": 2, "synthesis": 3, "guidance": 4}
             if new_phase in phase_order and current_phase in phase_order:
@@ -261,13 +278,13 @@ class PlannerAgent(BaseAgent):
 
             micro_phase_str = (
                 result.micro_phase.lower()
-                if result.micro_phase and result.micro_phase.lower() in ["childhood", "teenage", "adult"]
+                if result.micro_phase and result.micro_phase.lower() in ["childhood", "teenage", "adult", "habits", "fears", "values"]
                 else None
             )
 
             if not result.proposed_plan or not result.is_approved:
                 return {
-                    "proposed_plan": "Continue the conversation warmly and naturally. Explore the next unknown dimension of their personality.",
+                    "proposed_plan": "Continue the conversation warmly and naturally with light small-talk. Do not ask deep psychological questions yet.",
                     "new_phase": current_phase,
                     "micro_phase": None,
                     "is_approved": False,

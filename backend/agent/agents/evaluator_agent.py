@@ -17,8 +17,8 @@ class EvaluatorAgent:
         
         self.llm = ChatOllama(
             model=judge_model,
-            base_url=config.OLLAMA_BASE_URL,
-            temperature=0.1,  # Low temperature for strict grading
+            base_url=config.OLLAMA_BASE_URL.replace("/v1", ""),
+            temperature=0.1,  
         )
         
         # We use with_structured_output to force JSON grading

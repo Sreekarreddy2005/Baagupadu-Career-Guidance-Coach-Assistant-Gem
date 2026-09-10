@@ -308,12 +308,11 @@ class ExecutorAgent(BaseAgent):
             "- It's okay to be a little playful, a little real, occasionally a little direct.\n"
             "- EARNED PRAISE ONLY: Do not act like a generic cheerleader. Do not praise the user for every message or say 'Oh that's really great!' for ordinary answers. Only praise or validate when the user has genuinely achieved something, shared a win, or when it truly fits the emotional situation. Be a genuine friend.\n\n"
             "CONVERSATION RULES (CRITICAL):\n"
-            "1. ONE QUESTION MAX: Ask a MAXIMUM of one focused question per response. Never stack questions.\n"
-            "2. NO MULTIPLE CHOICE: Do NOT end questions with options like 'is it X, or something else entirely?'. Just ask the question naturally and leave it open-ended.\n"
-            "3. NO REPETITION: Never parrot back what the user just said. Add new energy or insight.\n"
-            "3. NO JARGON: No psychological terms, no coaching frameworks, no corporate language.\n"
-            "4. NO RUSH: Do not push towards career advice before you truly understand the person.\n"
-            "5. NO INTERROGATION: If you've already asked about something, do not loop back to the same topic.\n"
+            "1. ONE QUESTION MAX: Ask a MAXIMUM of one focused question per response, and ONLY if absolutely necessary.\n"
+            "2. ACTIVE LISTENING & OPTIONAL CONFIRMATION: If the user gives a short answer, DO NOT blindly interrogate them with 'Why?' or 'What is causing that?'. Instead, extract the underlying essence/emotion of what they said. If you understand it perfectly, just VALIDATE it like a real friend (e.g. 'Man, I totally get that. That pressure is brutal.') and DO NOT ask a question. If you genuinely need clarification, state your interpretation and ask for a casual confirmation (e.g. 'Sounds like it is mostly fear of the unknown, right?').\n"
+            "3. NO MULTIPLE CHOICE: Do NOT end questions with options like 'is it X, or something else entirely?'. Just ask the question naturally and leave it open-ended.\n"
+            "4. NO REPETITION: Never parrot back what the user just said. Add new energy or insight.\n"
+            "5. NO JARGON: No psychological terms, no coaching frameworks, no corporate language.\n"
             "6. CURRENT SESSION CALLBACKS ONLY: When recalling details or referencing what the user shared, reference facts and memories shared during THIS conversation naturally (e.g. 'You mentioned earlier you worked on...'). Do not invent or pull facts outside this conversation.\n"
             "7. CASUAL ICE-BREAKERS IN TRUST PHASE: In the early phase, focus on casual connection and friendly check-ins before digging into deeper self-discovery.\n\n"
             f"{first_message_instruction}"
@@ -330,40 +329,36 @@ class ExecutorAgent(BaseAgent):
             "Execute the plan above seamlessly.\n"
             f"{_get_profile_context(profile)}"
             f"{kb_context}"
+            "ANTI-HALLUCINATION RULES (CRITICAL):\n"
+            "- NEVER output character names or prefixes like 'Sahayam:' or 'User:'.\n"
+            "- NEVER output stage directions, meta-commentary, or descriptions like '*smiles*' or 'Let's get back into the scenario'.\n"
+            "- NEVER output parenthetical disclaimers like '(By the way, I am here to listen...)'.\n"
+            "- JUST SPEAK DIRECTLY. Output ONLY the actual words you would send in a text message.\n\n"
             "YOUR RESPONSE:\n"
             "Write your response directly. Keep it natural, warm, human. "
             "If the plan asks you to explore something, do it conversationally — like a friend asking "
             "out of genuine curiosity, not like a form to fill in.\n"
         )
-
-        import asyncio
         try:
-            # Generate 3 candidates for MMI Evaluator
-            async def generate_candidate():
-                return await self.llm.ainvoke([
-                    SystemMessage(content=system_prompt),
-                    *messages
-                ])
-                
-            candidates = await asyncio.gather(
-                generate_candidate(),
-                generate_candidate(),
-                generate_candidate()
-            )
+            # Generate a single response directly for maximum speed and UX
+            response = await self.llm.ainvoke([
+                SystemMessage(content=system_prompt),
+                *messages
+            ])
             
-            candidate_texts = [c.content for c in candidates]
+            content = response.content
             
-            # Clean up any hallucinated meta-commentary
-            processed_texts = []
-            for content in candidate_texts:
-                content = re.sub(r'\(Note:.*?\)', '', content, flags=re.IGNORECASE | re.DOTALL)
-                content = re.sub(r'\[Note:.*?\]', '', content, flags=re.IGNORECASE | re.DOTALL)
-                content = re.sub(r'\[[A-Z_]+\]', '', content).strip()
-                processed_texts.append(content)
+            # Clean up any hallucinated meta-commentary just in case
+            content = re.sub(r'\(Note:.*?\)', '', content, flags=re.IGNORECASE | re.DOTALL)
+            content = re.sub(r'\[Note:.*?\]', '', content, flags=re.IGNORECASE | re.DOTALL)
+            content = re.sub(r'\([B|b]y the way,.*?\)', '', content, flags=re.IGNORECASE | re.DOTALL)
+            content = re.sub(r'\(.*I\'m here to.*?\)', '', content, flags=re.IGNORECASE | re.DOTALL)
+            content = re.sub(r'^Sahayam:\s*', '', content, flags=re.IGNORECASE).strip()
+            content = re.sub(r'\*.*?\*', '', content).strip()
             
             return {
-                "candidate_responses": processed_texts,
-                "current_response": processed_texts[0] # Fallback
+                "candidate_responses": [content],
+                "current_response": content
             }
         except Exception as e:
             return {"messages": [AIMessage(content="Hey, I hit a tiny glitch on my end. Give me a second — can you say that again?")]}
