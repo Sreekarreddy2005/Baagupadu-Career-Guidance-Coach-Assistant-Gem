@@ -43,6 +43,8 @@ This document is a living record of our progress, design decisions, and upcoming
 - **Production Deployment Plan Created:** Drafted a high-level architecture and load mitigation strategy to handle 600 concurrent users. 
 - **Key Decisions:** Replacing Ollama with vLLM (for PagedAttention/Continuous Batching), introducing Redis for semantic caching and queues, and using NGINX for load balancing.
 - Linked Artifact: `production_deployment_plan.md`
+- **Costing & Hardware Strategy Formulated:** Clarified that vLLM is 100% free and equally accurate to Ollama. Recommended a dual-server setup for redundancy and provided "Budget Best" estimates for cloud renting (RunPod) vs. buying physical bare-metal hardware for long-term ROI.
+- Linked Artifact: `vllm_and_server_costing.md`
 
 ### 📌 Security & Architecture (August 22, 2026)
 - **RAG Security & Observability Architecture Implemented:** 
