@@ -39,6 +39,11 @@ This document is a living record of our progress, design decisions, and upcoming
 - **Interview Q&A Guide Updated:** Replaced complex scenario questions with simple, foundational questions (covering Python dicts/lists, React hooks, APIs, Git/Docker, and simple RAG/LLM concepts) to easily vet junior/mid-level candidates.
 - Linked Artifact: `interview_qa_guide.md`
 
+### 📌 Infrastructure & Scaling (September 11, 2026)
+- **Production Deployment Plan Created:** Drafted a high-level architecture and load mitigation strategy to handle 600 concurrent users. 
+- **Key Decisions:** Replacing Ollama with vLLM (for PagedAttention/Continuous Batching), introducing Redis for semantic caching and queues, and using NGINX for load balancing.
+- Linked Artifact: `production_deployment_plan.md`
+
 ### 📌 Security & Architecture (August 22, 2026)
 - **RAG Security & Observability Architecture Implemented:** 
   - **Input Sanitization:** Built and integrated a "Prompt Shield" (`GuardrailAgent`) in `api.py` to intercept and block prompt injection attempts before they reach the main pipeline.
