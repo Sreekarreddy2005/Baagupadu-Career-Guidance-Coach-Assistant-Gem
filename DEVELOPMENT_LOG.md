@@ -45,7 +45,7 @@ This document is a living record of our progress, design decisions, and upcoming
 - Linked Artifact: `production_deployment_plan.md`
 - **Costing & Hardware Strategy Formulated:** Clarified that vLLM is 100% free and equally accurate to Ollama. Recommended a dual-server setup for redundancy and provided "Budget Best" estimates for cloud renting (RunPod) vs. buying physical bare-metal hardware for long-term ROI.
 - Linked Artifact: `vllm_and_server_costing.md`
-- **Detailed Server Cost-Benefit Analysis:** Authored a professional hardware procurement breakdown comparing a $4,600/month OpEx cloud deployment versus a $30,000 CapEx bare-metal build, highlighting a 6.4-month ROI break-even point for the physical hardware.
+- **Detailed Server Cost-Benefit Analysis:** Authored a professional hardware procurement breakdown comparing a $4,628/month OpEx cloud deployment versus a $30,600 CapEx bare-metal build (including dedicated Load Balancer proxy servers for both), highlighting a 6.6-month ROI break-even point for the physical hardware.
 - Linked Artifact: `server_cost_analysis.md`
 
 ### 📌 Security & Architecture (August 22, 2026)
