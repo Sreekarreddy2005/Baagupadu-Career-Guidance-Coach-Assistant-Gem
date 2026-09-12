@@ -43,6 +43,8 @@ This document is a living record of our progress, design decisions, and upcoming
 - **Production Deployment Plan Created:** Drafted a high-level architecture and load mitigation strategy to handle 600 concurrent users. 
 - **Key Decisions:** Replacing Ollama with vLLM (for PagedAttention/Continuous Batching), introducing Redis for semantic caching and queues, and using NGINX for load balancing.
 - Linked Artifact: `production_deployment_plan.md`
+- **Senior Production Master Plan (Security & Architecture):** Synthesized all prior infrastructure, costing, and security planning into a definitive "Boardroom Ready" master plan. Heavily emphasized the Security Matrix (Zero Trust, Intranet Isolation, Clerk JWTs, Guardrail Agents) and the critical swap to vLLM.
+- Linked Artifact: `senior_production_master_plan.md`
 - **Costing & Hardware Strategy Formulated:** Clarified that vLLM is 100% free and equally accurate to Ollama. Recommended a dual-server setup for redundancy and provided "Budget Best" estimates for cloud renting (RunPod) vs. buying physical bare-metal hardware for long-term ROI.
 - Linked Artifact: `vllm_and_server_costing.md`
 - **Detailed Server Cost-Benefit Analysis:** Authored a professional hardware procurement breakdown comparing a $4,628/month OpEx cloud deployment versus a $30,600 CapEx bare-metal build (including dedicated Load Balancer proxy servers for both), highlighting a 6.6-month ROI break-even point for the physical hardware. Added a strong executive business justification explaining why heavy GPUs are required for Data Privacy, Agentic Multiplier load, and Latency mitigation.
