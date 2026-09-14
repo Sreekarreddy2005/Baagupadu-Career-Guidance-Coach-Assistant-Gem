@@ -51,6 +51,8 @@ This document is a living record of our progress, design decisions, and upcoming
 - Linked Artifact: `team_development_environment.md`
 - **Virtualization in Development:** Explored virtualization options (VDI Cloud Desktops vs GPU Virtualization/MIG). Concluded that Cloud Desktops are too expensive for AI, but GPU Virtualization (slicing a physical A6000 into smaller virtual GPUs via Proxmox) is the ultimate solution if the college purchases the physical on-prem server.
 - Linked Artifact: `virtualization_dev_options.md`
+- **Cloud Hardware Deployment Guide:** Created a step-by-step tutorial for purchasing, configuring, and deploying the exact "Goldilocks" GPU setup on RunPod, including how to select the vLLM template and retrieve the endpoint URL for team use.
+- Linked Artifact: `runpod_purchasing_guide.md`
 - **Costing & Hardware Strategy Formulated:** Clarified that vLLM is 100% free and equally accurate to Ollama. Recommended a dual-server setup for redundancy and provided "Budget Best" estimates for cloud renting (RunPod) vs. buying physical bare-metal hardware for long-term ROI.
 - Linked Artifact: `vllm_and_server_costing.md`
 - **Detailed Server Cost-Benefit Analysis:** Authored a professional hardware procurement breakdown comparing a $4,628/month OpEx cloud deployment versus a $30,600 CapEx bare-metal build (including dedicated Load Balancer proxy servers for both), highlighting a 6.6-month ROI break-even point for the physical hardware. Added a strong executive business justification explaining why heavy GPUs are required for Data Privacy, Agentic Multiplier load, and Latency mitigation.
