@@ -49,6 +49,8 @@ This document is a living record of our progress, design decisions, and upcoming
 ### 📌 Team & Operations (September 14, 2026)
 - **Team Development Environment Strategy:** Analyzed options for transitioning from solo development to a GitHub Team structure. Recommended a "Hybrid Shared AI" model where developers run Next.js/FastAPI locally on cheap laptops but point their `.env` files to a single shared GPU Dev Server to bypass hardware bottlenecks.
 - Linked Artifact: `team_development_environment.md`
+- **Virtualization in Development:** Explored virtualization options (VDI Cloud Desktops vs GPU Virtualization/MIG). Concluded that Cloud Desktops are too expensive for AI, but GPU Virtualization (slicing a physical A6000 into smaller virtual GPUs via Proxmox) is the ultimate solution if the college purchases the physical on-prem server.
+- Linked Artifact: `virtualization_dev_options.md`
 - **Costing & Hardware Strategy Formulated:** Clarified that vLLM is 100% free and equally accurate to Ollama. Recommended a dual-server setup for redundancy and provided "Budget Best" estimates for cloud renting (RunPod) vs. buying physical bare-metal hardware for long-term ROI.
 - Linked Artifact: `vllm_and_server_costing.md`
 - **Detailed Server Cost-Benefit Analysis:** Authored a professional hardware procurement breakdown comparing a $4,628/month OpEx cloud deployment versus a $30,600 CapEx bare-metal build (including dedicated Load Balancer proxy servers for both), highlighting a 6.6-month ROI break-even point for the physical hardware. Added a strong executive business justification explaining why heavy GPUs are required for Data Privacy, Agentic Multiplier load, and Latency mitigation.
